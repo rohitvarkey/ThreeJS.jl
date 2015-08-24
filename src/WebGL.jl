@@ -8,9 +8,13 @@ export initscene
 
 include("render.jl")
 
+"Outer div to keep the three-js tag in."
+function outerdiv(w::String="100%",h::String="600px")
+    Elem(:div, style=@compat Dict(:width=>w, :height=>h))
+end
+
 "Initiates a three-js scene"
-function initscene(w::String="100%", h::String="600px")
-    Elem(:div, style=@compat Dict(:width=>w, :height=>h)) <<
+function initscene()
         Elem(:"three-js")
 end
 
