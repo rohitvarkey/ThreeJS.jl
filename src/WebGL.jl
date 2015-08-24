@@ -6,6 +6,8 @@ using Compat
 
 export initscene
 
+include("render.jl")
+
 "Initiates a three-js scene"
 function initscene(w::String="100%", h::String="600px")
     Elem(:div, style=@compat Dict(:width=>w, :height=>h)) <<
