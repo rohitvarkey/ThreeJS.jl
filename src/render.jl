@@ -1,7 +1,7 @@
 import Compat
 
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
-       material
+       material, camera
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -100,4 +100,21 @@ Creates a material tag with properties passed in as a dictionary.
 """
 function material(props::Dict=@compat Dict())
     Elem(:"three-js-material") & props
+end
+
+"""
+Creates a camera tag.
+Perspective camera at position `(x,y,z)` created. Keyword arguments of `near`,
+`far`,`aspect`, and `fov` is accepted.
+"""
+function camera(
+    x::Float64,
+    y::Float64,
+    z::Float64;
+    fov::Float64=45.0,
+    aspect::Float64=16/9,
+    near::Float64=0.1,
+    far::Float64=10000.0
+    )
+    Elem(:"three-js-camera",x=x,y=y,z=z,fov=fov,aspect=aspect,near=near,far=far)
 end
