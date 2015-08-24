@@ -1,4 +1,7 @@
-export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines
+import Compat
+
+export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
+       material
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -90,4 +93,11 @@ function meshlines(
     yrange = linspace(p.yrange.start,p.yrange.stop,p.stacks+1)
     vertices=[Elem(:"three-js-vertex",x=x,z=y,y=p.f(x,y)) for x=xrange,y=yrange]
     geom = geom << vertices
+end
+
+"""
+Creates a material tag with properties passed in as a dictionary.
+"""
+function material(props::Dict=@compat Dict())
+    Elem(:"three-js-material") & props
 end
