@@ -1,4 +1,4 @@
-export mesh, box, sphere, pyramid, cylinder, torus
+export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -49,4 +49,45 @@ function torus(radius::Float64,tube::Float64)
     Elem(:"three-js-torus",r=radius, tube=tube)
 end
 
+"""
+Creates a parametric surface.
+Takes `x` values between `xrange` divided into `slices+1` equal intervals. 
+Takes `y` values between `yrange` divided into `stacks+1` equal intervals.
+Applies a function `f` passed to all such `x` and `y` values and creates vertices
+of coordinates `(x,y,z)` and a surface containing these vertices.
+"""
+function parametric(
+    slices::Int, 
+    stacks::Int, 
+    xrange::Range, 
+    yrange::Range, 
+    f::Function
+    )
+    geom = Elem(:"three-js-parametric",slices=p.slices,stacks=p.stacks)
+    xrange = linspace(p.xrange.start,p.xrange.stop,p.slices+1)
+    yrange = linspace(p.yrange.start,p.yrange.stop,p.stacks+1)
+    vertices=[Elem(:"three-js-vertex",x=x,z=y,y=p.f(x,y)) for x=xrange,y=yrange]
+    geom = geom << vertices
+end
 
+"""
+Creates a mesh plot.
+Takes `x` values between `xrange` divided into `slices+1` equal intervals. 
+Takes `y` values between `yrange` divided into `stacks+1` equal intervals.
+Applies a function `f` passed to all such `x` and `y` values and creates 
+vertices of coordinates `(x,y,z)` and a joins them horizontally and vertically,
+creating a mesh
+"""
+function meshlines(
+    slices::Int, 
+    stacks::Int, 
+    xrange::Range, 
+    yrange::Range, 
+    f::Function
+    )
+    geom = Elem(:"three-js-meshlines",slices=p.slices,stacks=p.stacks)
+    xrange = linspace(p.xrange.start,p.xrange.stop,p.slices+1)
+    yrange = linspace(p.yrange.start,p.yrange.stop,p.stacks+1)
+    vertices=[Elem(:"three-js-vertex",x=x,z=y,y=p.f(x,y)) for x=xrange,y=yrange]
+    geom = geom << vertices
+end
