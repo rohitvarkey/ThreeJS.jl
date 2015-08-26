@@ -1,7 +1,7 @@
 import Compat
-
+import Color
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
-       material, camera
+       material, camera, pointlight, spotlight, ambientlight
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -117,4 +117,72 @@ function camera(
     far::Float64=10000.0
     )
     Elem(:"three-js-camera",x=x,y=y,z=z,fov=fov,aspect=aspect,near=near,far=far)
+end
+
+"""
+Creates a point light tag.
+A point light at position `(x,y,z)` is created. Keyword arguments of `color`
+setting the color of the light, `intensity` and `distance` for setting the
+intensity and distance properties are also accepted.
+"""
+function pointlight(
+    x::Float64,
+    y::Float64,
+    z::Float64;
+    color::Color.RGB{Float64}=Color.color("white"),
+    intensity::Float64=1.0,
+    distance::Float64=0.0
+    )
+    colorString = string("#"*hex(color))
+    Elem(
+        :"three-js-light",
+        x=x, y=y, z=z,
+        kind="point",
+        color=colorString,
+        intensity=intensity,
+        distance=distance
+    )
+end
+
+"""
+Creates a spot light tag.
+A spot light at position `(x,y,z)` is created. Keyword arguments of `color`
+setting the color of the light, `intensity`, `distance`, `angle`, `exponent`,
+`shadow` for setting the intensity, distance, angle(in degrees) and exponent
+properties are also accepted. `Shadow` is a `Bool` to set if shadows are
+enabled or not.
+"""
+function spotlight(
+    x::Float64,
+    y::Float64,
+    z::Float64;
+    color::Color.RGB{Float64}=Color.color("white"),
+    intensity::Float64=1.0,
+    distance::Float64=0.0,
+    angle::Float64=60.0,
+    exponent::Float64=8.0,
+    shadow::Bool=false
+    )
+    colorString = string("#"*hex(color))
+    Elem(
+        :"three-js-light",
+        x=x, y=y, z=z,
+        kind="spot",
+        color=colorString,
+        intensity=intensity,
+        distance=distance,
+        angle=angle,
+        exponent=exponent,
+        shadow=shadow
+    )
+end
+
+"""
+Creates an ambient light tag.
+Ambient light is applied equally to all objects.
+The color of the light is set using the `color` argument.
+"""
+function ambientlight(color::Color.RGB{Float64}=Color.color("white"))
+    colorString = string("#"*hex(color))
+    Elem(:"three-js-light",kind="ambient",color=colorString)
 end
