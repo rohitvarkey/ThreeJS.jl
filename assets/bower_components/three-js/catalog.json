@@ -1,0 +1,10 @@
+{
+  "name": "three-js",
+  "label": "ThreeJs Elements",
+  "group": "threejs",
+  "owner": "polymer",
+  "demo": "http://polymer.github.io/three-js/components/three-js/smoke.html",
+  "index": "http://polymer.github.io/three-js/components/three-js/",
+  "thumbnail": "http://polymer.github.io/three-js/components/three-js/threejs.jpg",
+  "description": "ThreeJS objects wrapped into custom elements"
+}
