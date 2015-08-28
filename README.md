@@ -137,15 +137,15 @@ These tags should also be a child of the `scene`.
 
 ```julia
 using WebGL
-outerdiv() << initscene() <<
+outerdiv() << (initscene() <<
     [
         mesh(0.0, 0.0, 0.0) << 
         [
-            box(1.0,1.0,1.0), material(Dict(:kind=>"lambert",:color=>"red")
+            box(1.0,1.0,1.0), material(Dict(:kind=>"lambert",:color=>"red"))
         ],
         pointlight(3.0, 3.0, 3.0),
         camera(0.0, 0.0, 10.0)
-    ]
+    ])
 ```
 
 This should draw a red cube, which is illuminated by a light from a corner.

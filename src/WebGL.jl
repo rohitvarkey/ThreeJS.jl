@@ -4,7 +4,7 @@ import Patchwork
 import Patchwork.Elem
 using Compat
 
-export initscene
+export outerdiv, initscene
 
 include("render.jl")
 
