@@ -1,4 +1,4 @@
-module WebGL
+module ThreeJS 
 
 import Patchwork
 import Patchwork.Elem

@@ -1,6 +1,7 @@
-# WebGL
+# ThreeJS
 
-A Julia module to render graphical objects, especially 3-D objects, using WebGL.
+A Julia module to render graphical objects, especially 3-D objects, using
+the ThreeJS abstraction over WebGL.
 Outputs [Patchwork](https://github.com/shashi/Patchwork.jl) Elems of 
 [three-js](https://github.com/rohitvarkey/three-js) custom elements. Meant to be
 used to help packages like [Compose3D](https://github.com/rohitvarkey/Compose3D.jl)
@@ -23,13 +24,13 @@ For IJulia, the asset files need to be copied to the profile directory being
 served. 
 
 ```bash
-cp -r ~/.julia/v0.4/WebGL/assets/ ~/.ipython/<profile_name>/static/components/compose3d
+cp -r ~/.julia/v0.4/ThreeJS/assets/ ~/.ipython/<profile_name>/static/components/compose3d
 ```
 
 Then adding a HTML import to the `three-js.html` file in `bower_components/three-js`
 will get you all set up!
 
-Running Pkg.build("WebGL") will run a script that will copy the asset files to
+Running Pkg.build("ThreeJS") will run a script that will copy the asset files to
 the `profile_julia` folder. Then running `ipython notebook --profile=julia`
 should serve the static files.
 
@@ -41,7 +42,7 @@ is also required and can be created by using the `outerdiv` function.
 
 The code snippet below should get a scene initialized.
 ```julia
-using WebGL
+using ThreeJS 
 outerdiv() << initscene()
 ```
 
@@ -64,7 +65,7 @@ A `geometry` and a `material` element should be nested inside this `mesh`.
 Geometries hold all details necessary to describe a 3D model. These can be
 thought of as the shapes we want to display.
 
-WebGL.jl provides support to render the following geometry primitives:
+ThreeJS.jl provides support to render the following geometry primitives:
 
 - Boxes - `box(width, height, depth)`
 - Spheres - `sphere(radius)`
@@ -113,7 +114,7 @@ will create a cube of size 1.0 of red color and with the basic material.
 
 ### Cameras
 
-No 3D scene can be properly displayed without a camera to view from. WebGL.jl
+No 3D scene can be properly displayed without a camera to view from. ThreeJS.jl
 provides support for a Perspective Camera view using the `camera` function.
 
 This sets the position of the camera, along with properties like `near` plane,
@@ -123,7 +124,7 @@ The `camera` tag should be a child of the `scene`.
 
 ### Lights
 
-WebGL.jl provides support for 3 kinds of lighting.
+ThreeJS.jl provides support for 3 kinds of lighting.
 
 - [Ambient](http://threejs.org/docs/#Reference/Lights/AmbientLight) - `ambientlight(color)`
 - [Point](http://threejs.org/docs/#Reference/Lights/PointLight) -
@@ -136,7 +137,7 @@ These tags should also be a child of the `scene`.
 ### Example
 
 ```julia
-using WebGL
+using ThreeJS 
 outerdiv() << (initscene() <<
     [
         mesh(0.0, 0.0, 0.0) << 
