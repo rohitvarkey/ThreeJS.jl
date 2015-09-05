@@ -1,6 +1,9 @@
 # ThreeJS
 
-[![Build Status](https://travis-ci.org/rohitvarkey/ThreeJS.jl.svg?branch=master)](https://travis-ci.org/rohitvarkey/ThreeJS.jl)
+Linux, OSX: [![Build Status](https://travis-ci.org/rohitvarkey/ThreeJS.jl.svg?branch=master)](https://travis-ci.org/rohitvarkey/ThreeJS.jl)
+
+Windows: [![Build status](https://ci.appveyor.com/api/projects/status/0ldau5x8fxx09kgv/branch/master?svg=true)](https://ci.appveyor.com/project/rohitvarkey/threejs-jl/branch/master)
+
 
 A Julia module to render graphical objects, especially 3-D objects, using
 the ThreeJS abstraction over WebGL.
