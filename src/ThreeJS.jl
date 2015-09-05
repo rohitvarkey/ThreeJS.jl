@@ -19,9 +19,21 @@ function initscene()
 end
 
 if isdefined(Main, :IJulia)
+    assetpath = Pkg.dir("ThreeJS","assets","bower_components")
+    polymermicro = readall(joinpath(assetpath,"polymer","polymer-micro.html"))
+    polymermini = readall(joinpath(assetpath,"polymer","polymer-mini.html"))
+    polymer = readall(joinpath(assetpath,"polymer","polymer.html"))
+    three= readall(joinpath(assetpath,"three-js","threejs","three.js"))
+    trackball = readall(
+        joinpath(assetpath,"three-js","threejs","TrackballControls.js")
+        )
+    threejs = readall(joinpath(assetpath,"three-js","three-js.html"))
     display(
         MIME"text/html"(),
-        "<link rel=import href=/static/components/compose3d/bower_components/three-js/three-js.html>"
+        "$polymermicro$polymermini$polymer
+        <script>$three</script>
+        <script>$trackball</script>
+        $threejs"
     )
 end
 
