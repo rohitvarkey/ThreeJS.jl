@@ -13,4 +13,4 @@ notifications:
 #  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("ThreeJS"); Pkg.test("ThreeJS"; coverage=true)'
 after_success:
-- julia -e 'cd(Pkg.dir("ThreeJS")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
+- julia -e 'cd(Pkg.dir("ThreeJS")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
