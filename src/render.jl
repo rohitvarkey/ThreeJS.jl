@@ -53,6 +53,13 @@ function torus(radius::Float64,tube::Float64)
 end
 
 """
+Creates a vertex at position `(x,y,z)`.
+"""
+function vertex(x::Float64,y::Float64,z::Float64)
+    Elem(:"three-js-vertex", x=x, y=y, z=z)
+end
+
+"""
 Creates a parametric surface.
 Takes `x` values between `xrange` divided into `slices+1` equal intervals. 
 Takes `y` values between `yrange` divided into `stacks+1` equal intervals.
@@ -66,10 +73,10 @@ function parametric(
     yrange::Range, 
     f::Function
     )
-    geom = Elem(:"three-js-parametric",slices=p.slices,stacks=p.stacks)
-    xrange = linspace(p.xrange.start,p.xrange.stop,p.slices+1)
-    yrange = linspace(p.yrange.start,p.yrange.stop,p.stacks+1)
-    vertices=[Elem(:"three-js-vertex",x=x,z=y,y=p.f(x,y)) for x=xrange,y=yrange]
+    geom = Elem(:"three-js-parametric", slices=slices, stacks=stacks)
+    xrange = linspace(xrange.start, xrange.stop, slices+1)
+    yrange = linspace(yrange.start, yrange.stop, stacks+1)
+    vertices = [vertex(x, f(x,y), y) for x=xrange, y=yrange]
     geom = geom << vertices
 end
 
@@ -88,10 +95,10 @@ function meshlines(
     yrange::Range, 
     f::Function
     )
-    geom = Elem(:"three-js-meshlines",slices=p.slices,stacks=p.stacks)
-    xrange = linspace(p.xrange.start,p.xrange.stop,p.slices+1)
-    yrange = linspace(p.yrange.start,p.yrange.stop,p.stacks+1)
-    vertices=[Elem(:"three-js-vertex",x=x,z=y,y=p.f(x,y)) for x=xrange,y=yrange]
+    geom = Elem(:"three-js-meshlines", slices=slices, stacks=stacks)
+    xrange = linspace(xrange.start, xrange.stop, slices+1)
+    yrange = linspace(yrange.start, yrange.stop, stacks+1)
+    vertices = [vertex(x, f(x,y), y) for x=xrange, y=yrange]
     geom = geom << vertices
 end
 
