@@ -7,6 +7,7 @@ using Compat
 export outerdiv, initscene
 
 include("render.jl")
+include("properties.jl")
 
 "Outer div to keep the three-js tag in."
 function outerdiv(w::String="100%",h::String="600px")

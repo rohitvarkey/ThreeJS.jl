@@ -141,3 +141,23 @@ facts("Testing Render Outputs") do
             )
     end
 end
+
+facts("Testing property helpers") do
+    context("Testing meshcolor") do
+        @fact meshcolor(Color.color("red")) --> (:color, "#FF0000")
+    end
+    context("Testing kinds") do
+        @fact lambert() --> (:kind, "lambert")
+        @fact basic() --> (:kind, "basic")
+        @fact phong() --> (:kind, "phong")
+        @fact normal() --> (:kind, "normal")
+    end
+    context("Testing wireframe") do
+        @fact wireframe() --> (:wireframe, true)
+        @fact wireframe(false) --> (:wireframe, false)
+    end
+    context("Testing visibility") do
+        @fact visible() --> (:visible, true)
+        @fact visible(false) --> (:visible, false)
+    end
+end
