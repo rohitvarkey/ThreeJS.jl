@@ -2,17 +2,18 @@
   "name": "three-js",
   "private": true,
   "dependencies": {
-    "polymer": "Polymer/polymer#0.5.5"
+    "polymer": "Polymer/polymer"
   },
   "homepage": "https://github.com/rohitvarkey/three-js",
-  "_release": "521ba92410",
+  "version": "1.0.0",
+  "_release": "1.0.0",
   "_resolution": {
-    "type": "branch",
-    "branch": "master",
-    "commit": "521ba92410478bc075d5dcb60177014cc98ec417"
+    "type": "version",
+    "tag": "v1.0.0",
+    "commit": "32c955ea67b909384599289e96d65fbfde52dadd"
   },
   "_source": "git://github.com/rohitvarkey/three-js.git",
-  "_target": "master",
+  "_target": "~1.0.0",
   "_originalSource": "rohitvarkey/three-js",
   "_direct": true
 }
