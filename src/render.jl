@@ -1,7 +1,7 @@
 import Compat
 import Color
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
-       material, camera, pointlight, spotlight, ambientlight
+       material, camera, pointlight, spotlight, ambientlight, vertex
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
