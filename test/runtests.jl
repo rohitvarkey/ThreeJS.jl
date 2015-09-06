@@ -1,6 +1,6 @@
 using ThreeJS
 using FactCheck
-using Color
+using Colors
 using Compat
 
 import Patchwork: Elem
@@ -86,7 +86,7 @@ facts("Testing Render Outputs") do
             )
         @fact pointlight(
             10.0, 11.0, 12.0,
-            intensity = 2.0, distance = 1000.0, color = Color.color("red")
+            intensity = 2.0, distance = 1000.0, color = colorant"red"
             ) --> Elem(
                 :"three-js-light",
                 x = 10.0, y = 11.0 , z = 12.0,
@@ -109,7 +109,7 @@ facts("Testing Render Outputs") do
             )
         @fact spotlight(
             10.0, 11.0, 12.0,
-            intensity = 2.0, distance = 1000.0, color = Color.color("red"),
+            intensity = 2.0, distance = 1000.0, color = colorant"red",
             angle = 45.0, exponent = 10.0, shadow = true
             ) --> Elem(
                 :"three-js-light",
@@ -124,7 +124,7 @@ facts("Testing Render Outputs") do
             )
         @fact ambientlight() -->
             Elem(:"three-js-light",kind="ambient",color="#FFFFFF")
-        @fact ambientlight(Color.color("red")) -->
+        @fact ambientlight(colorant"red") -->
             Elem(:"three-js-light",kind="ambient",color="#FF0000")
     end
     context("Testing camera tag") do
@@ -144,7 +144,7 @@ end
 
 facts("Testing property helpers") do
     context("Testing meshcolor") do
-        @fact meshcolor(Color.color("red")) --> (:color, "#FF0000")
+        @fact meshcolor(colorant"red") --> (:color, "#FF0000")
     end
     context("Testing kinds") do
         @fact lambert() --> (:kind, "lambert")
