@@ -9,7 +9,7 @@ Code Coverage: [![Coverage Status](https://coveralls.io/repos/rohitvarkey/ThreeJ
 
 A Julia module to render graphical objects, especially 3-D objects, using
 the ThreeJS abstraction over WebGL.
-Outputs [Patchwork](https://github.com/shashi/Patchwork.jl) Elems of 
+Outputs [Patchwork](https://github.com/shashi/Patchwork.jl) Elems of
 [three-js](https://github.com/rohitvarkey/three-js) custom elements. Meant to be
 used to help packages like [Compose3D](https://github.com/rohitvarkey/Compose3D.jl)
 render 3D output.
@@ -17,8 +17,8 @@ render 3D output.
 ### Where can these be used?
 
 This can be used in [IJulia](https://github.com/JuliaLang/IJulia.jl/)
-notebooks to embed 3D Graphics. Support for [Escher](https://github.com/shashi/Escher.jl)
-is being worked on.
+notebooks to embed 3D Graphics. [Escher](https://github.com/shashi/Escher.jl)
+also supports ThreeJS, but you'll need the `master` version of Escher.
 
 ### Dependencies
 
@@ -26,20 +26,44 @@ WebGL lets you interact with the GPU in a browser. As long as you have a modern
 browser, and it supports WebGL (Check this [link](https://get.webgl.org/)
 to see if it does!), the output of this package will just work.
 
-You will need to serve the asset files found in `assets/` in your server.
-For IJulia, the asset files need to be copied to the profile directory being
-served. 
+### Set up
 
-```bash
-cp -r ~/.julia/v0.4/ThreeJS/assets/ ~/.ipython/<profile_name>/static/components/compose3d
+```julia
+Pkg.clone("https://github.com/rohitvarkey/ThreeJS.jl")
 ```
 
-Then adding a HTML import to the `three-js.html` file in `bower_components/three-js`
-will get you all set up!
+#### IJulia
 
-Running Pkg.build("ThreeJS") will run a script that will copy the asset files to
-the `profile_julia` folder. Then running `ipython notebook --profile=julia`
-should serve the static files.
+For use in IJulia notebooks, `using ThreeJS` will set up everything including
+static files.
+
+NOTE: If you are restarting the kernel, and doing `using ThreeJS` again, please
+reload the page.
+
+#### Escher
+
+You will need the `master` of Escher to run `ThreeJS`. The following Julia
+script can be used to set up ThreeJS to work with Escher on Julia 0.4.
+
+```julia
+Pkg.checkout("Escher")
+cp(Pkg.dir("ThreeJS","assets","bower_components","three-js"), Pkg.dir("Escher","assets","bower_components","three-js"), remove_destination=true)
+cp(Pkg.dir("ThreeJS","assets","threejs.html"), Pkg.dir("Escher","assets","threejs.html", remove_destination=true))
+```
+
+Now, adding `push!(window.assets,"threejs")` in your Escher code, will get the
+static files set up and you can do 3D Graphics in Escher!
+
+#### General web servers
+
+To use in a web server, you will need to serve the asset files found in the
+`assets/` directory. Then adding a HTML import to the `three-js.html` file in
+the `assets/bower_components/three-js` will get you all set up! This is done
+by adding the following line to your HTML file.
+
+```html
+<link rel="import" href="assets/bower_components/three-js/three-js.html>
+```
 
 ### How to create a scene?
 
@@ -49,7 +73,7 @@ is also required and can be created by using the `outerdiv` function.
 
 The code snippet below should get a scene initialized.
 ```julia
-using ThreeJS 
+using ThreeJS
 outerdiv() << initscene()
 ```
 
@@ -97,27 +121,25 @@ A `material` tag is created by using the `material` function. Properties are
 to be passed as a `Dict` to this function.
 
 Available properties are:
-    
+
 - `color` - Can be any CSS color value.
 - `kind` - Can be [`lambert`](http://threejs.org/docs/#Reference/Materials/MeshLambertMaterial),
 [`basic`](http://threejs.org/docs/#Reference/Materials/MeshBasicMaterial),
-[`phong`](http://threejs.org/docs/#Reference/Materials/MeshPhongMaterial), or 
+[`phong`](http://threejs.org/docs/#Reference/Materials/MeshPhongMaterial), or
 [`normal`](http://threejs.org/docs/#Reference/Materials/MeshNormalMaterial)
 - `wireframe` - `true` or `false`
 - `visible` - `true` or `false`
-- `edges` - `false` or color of the edges. This will attempt to show only
-hard edges and not all triangles as wireframe will display.
 
 Some helper functions to get these key value pairs is given in `src/properties.jl`.
 
 #### Putting them together
 
 ```julia
-mesh(0.0, 0.0, 0.0) << 
+mesh(0.0, 0.0, 0.0) <<
     [box(1.0,1.0,1.0), material(Dict(:kind=>"basic",:color=>"red")]
 ```
 
-will create a cube of size 1.0 of red color and with the basic material. 
+will create a cube of size 1.0 of red color and with the basic material.
 
 ### Cameras
 
@@ -141,13 +163,19 @@ ThreeJS.jl provides support for 3 kinds of lighting.
 
 These tags should also be a child of the `scene`.
 
+### Controls
+
+By default, ThreeJS adds [TrackballControls](http://threejs.org/examples/misc_controls_trackball.html)
+to every scene drawn. This lets you interact with the scene by using the
+trackpad or mouse to rotate, pan and zoom.
+
 ### Example
 
 ```julia
-using ThreeJS 
+using ThreeJS
 outerdiv() << (initscene() <<
     [
-        mesh(0.0, 0.0, 0.0) << 
+        mesh(0.0, 0.0, 0.0) <<
         [
             box(1.0,1.0,1.0), material(Dict(:kind=>"lambert",:color=>"red"))
         ],
@@ -156,4 +184,34 @@ outerdiv() << (initscene() <<
     ])
 ```
 
-This should draw a red cube, which is illuminated by a light from a corner.
+Running the above in an IJulia notebook should draw a red cube,
+which is illuminated by a light from a corner.
+
+For Escher, after the script above is run, the following code should give the
+same result.
+
+```julia
+using ThreeJS
+using Compat
+
+main(window) = begin
+    push!(window.assets,"threejs")
+    push!(window.assets,"widgets")
+    vbox(
+        title(2,"ThreeJS"),
+        outerdiv() <<
+        (
+        initscene() <<
+        [
+            mesh(0.0, 0.0, 0.0) <<
+                [
+                    ThreeJS.box(1.0, 1.0, 1.0),
+                    material(@compat(Dict(:kind=>"lambert",:color=>"red")))
+                ],
+            pointlight(3.0, 3.0, 3.0),
+            camera(0.0, 0.0, 10.0)
+        ]
+        )
+    )
+end
+```
