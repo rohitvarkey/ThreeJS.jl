@@ -38,21 +38,19 @@ For use in IJulia notebooks, `using ThreeJS` will set up everything including
 static files.
 
 NOTE: If you are restarting the kernel, and doing `using ThreeJS` again, please
-reload the page.
+reload the page, after deleting the cell where you did `using ThreeJS`.
 
 #### Escher
 
-You will need the `master` of Escher to run `ThreeJS`. The following Julia
-script can be used to set up ThreeJS to work with Escher on Julia 0.4.
+You will need the `master` of Escher to run `ThreeJS` which can be obtained by
+running the following in a Julia REPL.
 
 ```julia
 Pkg.checkout("Escher")
-cp(Pkg.dir("ThreeJS","assets","bower_components","three-js"), Pkg.dir("Escher","assets","bower_components","three-js"), remove_destination=true)
-cp(Pkg.dir("ThreeJS","assets","threejs.html"), Pkg.dir("Escher","assets","threejs.html", remove_destination=true))
 ```
 
-Now, adding `push!(window.assets,"threejs")` in your Escher code, will get the
-static files set up and you can do 3D Graphics in Escher!
+Now, adding `push!(window.assets,("ThreeJS","threejs"))` in your Escher code,
+will get the static files set up and you can do 3D Graphics in Escher!
 
 #### General web servers
 
@@ -195,8 +193,7 @@ using ThreeJS
 using Compat
 
 main(window) = begin
-    push!(window.assets,"threejs")
-    push!(window.assets,"widgets")
+    push!(window.assets,("ThreeJS","threejs"))
     vbox(
         title(2,"ThreeJS"),
         outerdiv() <<
