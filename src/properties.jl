@@ -1,9 +1,9 @@
 # Helper functions to help set material properties are defined here.
 
-import Color: ColorValue, hex
+import Colors: Color, hex
 export meshcolor, wireframe, edges, visible, lambert, basic, phong, normal
 
-function meshcolor(color::ColorValue)
+function meshcolor(color::Color)
     color = string("#" * hex(color))
     :color, color
 end
@@ -32,7 +32,7 @@ function visible(visible::Bool=true)
     :visible, visible
 end
 
-function edges(edgeColor::ColorValue)
+function edges(edgeColor::Color)
     color = string("#" * hex(color))
     :edges, color
 end

@@ -1,5 +1,5 @@
 import Compat
-import Color
+using Colors
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, vertex
 
@@ -136,7 +136,7 @@ function pointlight(
     x::Float64,
     y::Float64,
     z::Float64;
-    color::Color.RGB{Float64}=Color.color("white"),
+    color::Colors.RGB{U8}=colorant"white",
     intensity::Float64=1.0,
     distance::Float64=0.0
     )
@@ -163,7 +163,7 @@ function spotlight(
     x::Float64,
     y::Float64,
     z::Float64;
-    color::Color.RGB{Float64}=Color.color("white"),
+    color::Colors.RGB{U8}=colorant"white",
     intensity::Float64=1.0,
     distance::Float64=0.0,
     angle::Float64=60.0,
@@ -189,7 +189,7 @@ Creates an ambient light tag.
 Ambient light is applied equally to all objects.
 The color of the light is set using the `color` argument.
 """
-function ambientlight(color::Color.RGB{Float64}=Color.color("white"))
+function ambientlight(color::Colors.RGB{U8}=colorant"white")
     colorString = string("#"*hex(color))
     Elem(:"three-js-light",kind="ambient",color=colorString)
 end
