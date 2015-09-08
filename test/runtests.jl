@@ -24,7 +24,25 @@ end
 facts("Testing Render Outputs") do
     context("Testing mesh") do
         @fact mesh(10.0, 10.0, 10.0) -->
-            Elem(:"three-js-mesh", x = 10.0, y = 10.0, z = 10.0)
+            Elem(
+                :"three-js-mesh",
+                x = 10.0,
+                y = 10.0,
+                z = 10.0,
+                rx = 0.0,
+                ry = 0.0,
+                rz = 0.0
+            )
+        @fact mesh(10.0, 10.0, 10.0, rx = 20.0, ry = 15.0, rz = 240.0) -->
+             Elem(
+                :"three-js-mesh",
+                x = 10.0,
+                y = 10.0,
+                z = 10.0,
+                rx = 20.0,
+                ry = 15.0,
+                rz = 240.0
+            )
     end
     context("Testing geometry tags") do
         @fact box(10.0, 11.0, 12.0) -->

@@ -7,8 +7,15 @@ export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
 Creates a Three-js mesh at position (`x`,`y`,`z`).
 Geometry and Material tags are added as children to this Elem, to render a mesh.
 """
-function mesh(x::Float64,y::Float64,z::Float64)
-    Elem(:"three-js-mesh",x=x,y=y,z=z)
+function mesh(
+        x::Float64,
+        y::Float64,
+        z::Float64;
+        rx::Float64 = 0.0,
+        ry::Float64 = 0.0,
+        rz::Float64 = 0.0,
+    )
+    Elem(:"three-js-mesh",x = x, y = y, z = z, rx = rx, ry = ry, rz = rz)
 end
 
 """
