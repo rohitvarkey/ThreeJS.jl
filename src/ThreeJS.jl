@@ -6,6 +6,7 @@ using Compat
 
 export outerdiv, initscene
 
+include("util.jl")
 include("render.jl")
 include("properties.jl")
 

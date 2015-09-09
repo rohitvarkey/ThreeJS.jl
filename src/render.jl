@@ -5,6 +5,9 @@ export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
+Keyword arguments for rotation are available, being `rx`, `ry` and `rz` for
+rotation about X, Y and Z axes respectively. These are to be specified in
+degrees.
 Geometry and Material tags are added as children to this Elem, to render a mesh.
 """
 function mesh(
@@ -15,15 +18,20 @@ function mesh(
         ry::Float64 = 0.0,
         rz::Float64 = 0.0,
     )
-    Elem(:"three-js-mesh",x = x, y = y, z = z, rx = rx, ry = ry, rz = rz)
+    Elem(
+        :"three-js-mesh",
+        attributes = @d (
+            :x => x, :y => y, :z => z, :rx => rx, :ry => ry, :rz => rz
+        )
+    )
 end
 
 """
-Creates a Box geometry of width `w`, height `h` and depth `d`. 
+Creates a Box geometry of width `w`, height `h` and depth `d`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function box(w::Float64,h::Float64,d::Float64)
-   Elem(:"three-js-box",w=w,h=h,d=d) 
+   Elem(:"three-js-box", attributes = @d (:w=>w, :h=>h, :d=>d))
 end
 
 """
@@ -31,7 +39,7 @@ Creates a Sphere geometry of radius `r`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function sphere(r::Float64)
-    Elem(:"three-js-sphere",r=r)
+    Elem(:"three-js-sphere", attributes = @d (:r=>r))
 end
 
 """
@@ -39,7 +47,7 @@ Creates a square base Pyramid geometry of base `b` and height `h`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function pyramid(b::Float64,h::Float64)
-    Elem(:"three-js-pyramid",base=b,height=h)
+    Elem(:"three-js-pyramid", attributes = @d (:base => b, :height => h))
 end
 
 """
@@ -48,7 +56,10 @@ height `h`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function cylinder(top::Float64,bottom::Float64,height::Float64)
-    Elem(:"three-js-cylinder",top=top,bottom=bottom,height=height)
+    Elem(
+        :"three-js-cylinder",
+        attributes = @d (:top => top, :bottom => bottom, :height => height)
+    )
 end
 
 """
@@ -56,14 +67,17 @@ Creates a Torus geometry of radius `radius` and tube radius `tube`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function torus(radius::Float64,tube::Float64)
-    Elem(:"three-js-torus",r=radius, tube=tube)
+    Elem(
+        :"three-js-torus",
+        attributes = @d (:r => radius, :tube => tube)
+    )
 end
 
 """
 Creates a vertex at position `(x,y,z)`.
 """
 function vertex(x::Float64,y::Float64,z::Float64)
-    Elem(:"three-js-vertex", x=x, y=y, z=z)
+    Elem(:"three-js-vertex", attributes = @d (:x => x, :y => y, :z => z))
 end
 
 """
@@ -74,13 +88,16 @@ Applies a function `f` passed to all such `x` and `y` values and creates vertice
 of coordinates `(x,y,z)` and a surface containing these vertices.
 """
 function parametric(
-    slices::Int, 
-    stacks::Int, 
-    xrange::Range, 
-    yrange::Range, 
+    slices::Int,
+    stacks::Int,
+    xrange::Range,
+    yrange::Range,
     f::Function
     )
-    geom = Elem(:"three-js-parametric", slices=slices, stacks=stacks)
+    geom = Elem(
+        :"three-js-parametric",
+        attributes = @d (:slices => slices, :stacks => stacks)
+    )
     xrange = linspace(xrange.start, xrange.stop, slices+1)
     yrange = linspace(yrange.start, yrange.stop, stacks+1)
     vertices = [vertex(x, f(x,y), y) for x=xrange, y=yrange]
@@ -102,7 +119,10 @@ function meshlines(
     yrange::Range, 
     f::Function
     )
-    geom = Elem(:"three-js-meshlines", slices=slices, stacks=stacks)
+    geom = Elem(
+        :"three-js-meshlines",
+        attributes = @d( :slices => slices, :stacks => stacks)
+    )
     xrange = linspace(xrange.start, xrange.stop, slices+1)
     yrange = linspace(yrange.start, yrange.stop, stacks+1)
     vertices = [vertex(x, f(x,y), y) for x=xrange, y=yrange]
@@ -112,8 +132,8 @@ end
 """
 Creates a material tag with properties passed in as a dictionary.
 """
-function material(props::Dict=@compat Dict())
-    Elem(:"three-js-material") & props
+function material(props::Dict=@d ())
+    Elem(:"three-js-material", attributes = props)
 end
 
 """
@@ -130,7 +150,13 @@ function camera(
     near::Float64=0.1,
     far::Float64=10000.0
     )
-    Elem(:"three-js-camera",x=x,y=y,z=z,fov=fov,aspect=aspect,near=near,far=far)
+    Elem(
+        :"three-js-camera",
+        attributes = @d (
+            :x => x, :y => y,:z => z,
+            :fov => fov,:aspect => aspect, :near => near, :far => far
+        )
+    )
 end
 
 """
@@ -150,11 +176,13 @@ function pointlight(
     colorString = string("#"*hex(color))
     Elem(
         :"three-js-light",
-        x=x, y=y, z=z,
-        kind="point",
-        color=colorString,
-        intensity=intensity,
-        distance=distance
+        attributes = @d (
+            :x => x, :y => y, :z => z,
+            :kind => "point",
+            :color => colorString,
+            :intensity => intensity,
+            :distance => distance
+        )
     )
 end
 
@@ -180,14 +208,16 @@ function spotlight(
     colorString = string("#"*hex(color))
     Elem(
         :"three-js-light",
-        x=x, y=y, z=z,
-        kind="spot",
-        color=colorString,
-        intensity=intensity,
-        distance=distance,
-        angle=angle,
-        exponent=exponent,
-        shadow=shadow
+        attributes = @d (
+            :x => x, :y => y, :z => z,
+            :kind => "spot",
+            :color => colorString,
+            :intensity => intensity,
+            :distance => distance,
+            :angle => angle,
+            :exponent => exponent,
+            :shadow => shadow
+        )
     )
 end
 
@@ -198,5 +228,8 @@ The color of the light is set using the `color` argument.
 """
 function ambientlight(color::Colors.RGB{U8}=colorant"white")
     colorString = string("#"*hex(color))
-    Elem(:"three-js-light",kind="ambient",color=colorString)
+    Elem(
+        :"three-js-light",
+        attributes = @d (:kind => "ambient", :color => colorString)
+    )
 end
