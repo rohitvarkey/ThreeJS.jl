@@ -29,7 +29,7 @@ to see if it does!), the output of this package will just work.
 ### Set up
 
 ```julia
-Pkg.clone("https://github.com/rohitvarkey/ThreeJS.jl")
+Pkg.add("ThreeJS")
 ```
 
 #### IJulia
@@ -166,6 +166,20 @@ These tags should also be a child of the `scene`.
 By default, ThreeJS adds [TrackballControls](http://threejs.org/examples/misc_controls_trackball.html)
 to every scene drawn. This lets you interact with the scene by using the
 trackpad or mouse to rotate, pan and zoom.
+
+### Interactivity
+
+You can use the [reactive functionality](https://shashi.github.io/Escher.jl/reactive.html)
+provided by Escher to create Signals of the 3D graphic elements produced.
+These can let you create graphics that can be interacted with using UI elements
+like sliders. Try launching `escher --serve` (if you have Escher installed)
+in the `examples/` directory and heading to `localhost:5555/box.jl` on the
+browser. You can see a box whose width, depth, height and rotation about
+each axes can be set and the box will update accordingly!
+
+Currently, this functionality does not work in IJulia notebooks. Hopefully,
+this will be fixed soon and you can use `Interact`(https://github.com/JuliaLang/Interact.jl)
+to do the same in IJulia notebooks.
 
 ### Example
 
