@@ -1,4 +1,4 @@
-using ThreeJS 
+import ThreeJS 
 
 main(window) =  begin
     push!(window.assets,("ThreeJS","threejs"))
@@ -29,15 +29,15 @@ main(window) =  begin
         ),
         vskip(2em),
         lift(w, h, d, rx, ry, rz) do w, h, d, rx, ry, rz  
-        outerdiv() << 
-            (initscene() <<
+        ThreeJS.outerdiv() << 
+            (ThreeJS.initscene() <<
                 [
-                    mesh(0.0, 0.0, 0.0, rx = rx, ry = ry, rz = rz) << 
+                    ThreeJS.mesh(0.0, 0.0, 0.0, rx = rx, ry = ry, rz = rz) << 
                     [
-                        box(w, h, d), material(Dict(:kind=>"lambert",:color=>"red"))
+                        ThreeJS.box(w, h, d), ThreeJS.material(Dict(:kind=>"lambert",:color=>"red"))
                     ],
-                    pointlight(10.0, 10.0, 10.0),
-                    camera(0.0, 0.0, 10.0)
+                    ThreeJS.pointlight(10.0, 10.0, 10.0),
+                    ThreeJS.camera(0.0, 0.0, 10.0)
                 ]
             )
         end
