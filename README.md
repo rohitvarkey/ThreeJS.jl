@@ -181,6 +181,17 @@ Currently, this functionality does not work in IJulia notebooks. Hopefully,
 this will be fixed soon and you can use `Interact`(https://github.com/JuliaLang/Interact.jl)
 to do the same in IJulia notebooks.
 
+### Animations
+
+You can also do animations by using Reactive signals. See
+`examples/rotatingcube.jl` as an example. It is implemented in Escher,
+so running an Escher server from that directory and heading to
+`localhost:5555/rotatingcube.jl` should give you a cube which is
+rotating!
+
+NOTE: Adding new objects to a scene will force a redraw of the scene, resetting
+the camera.
+
 ### Example
 
 ```julia
