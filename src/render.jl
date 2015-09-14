@@ -20,9 +20,9 @@ function mesh(
     )
     Elem(
         :"three-js-mesh",
-        attributes = @d (
+        attributes = (@compat Dict(
             :x => x, :y => y, :z => z, :rx => rx, :ry => ry, :rz => rz
-        )
+        ))
     )
 end
 
@@ -31,34 +31,34 @@ Creates a Box geometry of width `w`, height `h` and depth `d`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function box(w::Float64,h::Float64,d::Float64)
-   Elem(:"three-js-box", attributes = @d (:w=>w, :h=>h, :d=>d))
+   Elem(:"three-js-box", attributes = @compat Dict(:w=>w, :h=>h, :d=>d))
 end
 
 """
-Creates a Sphere geometry of radius `r`. 
+Creates a Sphere geometry of radius `r`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function sphere(r::Float64)
-    Elem(:"three-js-sphere", attributes = @d (:r=>r))
+    Elem(:"three-js-sphere", attributes = @compat Dict(:r=>r))
 end
 
 """
-Creates a square base Pyramid geometry of base `b` and height `h`. 
+Creates a square base Pyramid geometry of base `b` and height `h`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function pyramid(b::Float64,h::Float64)
-    Elem(:"three-js-pyramid", attributes = @d (:base => b, :height => h))
+    Elem(:"three-js-pyramid", attributes = @compat Dict(:base => b, :height => h))
 end
 
 """
-Creates a Cylinder geometry of bottom radius `bottom`, top radius `top` and 
-height `h`. 
+Creates a Cylinder geometry of bottom radius `bottom`, top radius `top` and
+height `h`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function cylinder(top::Float64,bottom::Float64,height::Float64)
     Elem(
         :"three-js-cylinder",
-        attributes = @d (:top => top, :bottom => bottom, :height => height)
+        attributes = @compat Dict(:top => top, :bottom => bottom, :height => height)
     )
 end
 
@@ -69,7 +69,7 @@ Should be put in a `mesh` along with another material Elem to render.
 function torus(radius::Float64,tube::Float64)
     Elem(
         :"three-js-torus",
-        attributes = @d (:r => radius, :tube => tube)
+        attributes = @compat Dict(:r => radius, :tube => tube)
     )
 end
 
@@ -77,12 +77,12 @@ end
 Creates a vertex at position `(x,y,z)`.
 """
 function vertex(x::Float64,y::Float64,z::Float64)
-    Elem(:"three-js-vertex", attributes = @d (:x => x, :y => y, :z => z))
+    Elem(:"three-js-vertex", attributes = @compat Dict(:x => x, :y => y, :z => z))
 end
 
 """
 Creates a parametric surface.
-Takes `x` values between `xrange` divided into `slices+1` equal intervals. 
+Takes `x` values between `xrange` divided into `slices+1` equal intervals.
 Takes `y` values between `yrange` divided into `stacks+1` equal intervals.
 Applies a function `f` passed to all such `x` and `y` values and creates vertices
 of coordinates `(x,y,z)` and a surface containing these vertices.
@@ -96,7 +96,7 @@ function parametric(
     )
     geom = Elem(
         :"three-js-parametric",
-        attributes = @d (:slices => slices, :stacks => stacks)
+        attributes = @compat Dict(:slices => slices, :stacks => stacks)
     )
     xrange = linspace(xrange.start, xrange.stop, slices+1)
     yrange = linspace(yrange.start, yrange.stop, stacks+1)
@@ -106,22 +106,22 @@ end
 
 """
 Creates a mesh plot.
-Takes `x` values between `xrange` divided into `slices+1` equal intervals. 
+Takes `x` values between `xrange` divided into `slices+1` equal intervals.
 Takes `y` values between `yrange` divided into `stacks+1` equal intervals.
-Applies a function `f` passed to all such `x` and `y` values and creates 
+Applies a function `f` passed to all such `x` and `y` values and creates
 vertices of coordinates `(x,y,z)` and a joins them horizontally and vertically,
 creating a mesh
 """
 function meshlines(
-    slices::Int, 
-    stacks::Int, 
-    xrange::Range, 
-    yrange::Range, 
+    slices::Int,
+    stacks::Int,
+    xrange::Range,
+    yrange::Range,
     f::Function
     )
     geom = Elem(
         :"three-js-meshlines",
-        attributes = @d( :slices => slices, :stacks => stacks)
+        attributes = @compat Dict( :slices => slices, :stacks => stacks)
     )
     xrange = linspace(xrange.start, xrange.stop, slices+1)
     yrange = linspace(yrange.start, yrange.stop, stacks+1)
@@ -132,7 +132,7 @@ end
 """
 Creates a material tag with properties passed in as a dictionary.
 """
-function material(props::Dict=@d ())
+function material(props::Dict=@compat Dict())
     Elem(:"three-js-material", attributes = props)
 end
 
@@ -152,7 +152,7 @@ function camera(
     )
     Elem(
         :"three-js-camera",
-        attributes = @d (
+        attributes = @compat Dict(
             :x => x, :y => y,:z => z,
             :fov => fov,:aspect => aspect, :near => near, :far => far
         )
@@ -176,7 +176,7 @@ function pointlight(
     colorString = string("#"*hex(color))
     Elem(
         :"three-js-light",
-        attributes = @d (
+        attributes = @compat Dict(
             :x => x, :y => y, :z => z,
             :kind => "point",
             :color => colorString,
@@ -208,7 +208,7 @@ function spotlight(
     colorString = string("#"*hex(color))
     Elem(
         :"three-js-light",
-        attributes = @d (
+        attributes = @compat Dict(
             :x => x, :y => y, :z => z,
             :kind => "spot",
             :color => colorString,
@@ -230,6 +230,6 @@ function ambientlight(color::Colors.RGB{U8}=colorant"white")
     colorString = string("#"*hex(color))
     Elem(
         :"three-js-light",
-        attributes = @d (:kind => "ambient", :color => colorString)
+        attributes = @compat Dict(:kind => "ambient", :color => colorString)
     )
 end
