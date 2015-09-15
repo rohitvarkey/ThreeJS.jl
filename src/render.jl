@@ -2,7 +2,8 @@ import Compat
 using Colors
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, vertex, line,
-       linematerial, geometry, face
+       linematerial, geometry, face, dodecahedron, icosahedron, octahedron,
+       tetrahedron
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -71,6 +72,50 @@ function torus(radius::Float64,tube::Float64)
     Elem(
         :"three-js-torus",
         attributes = @compat Dict(:r => radius, :tube => tube)
+    )
+end
+
+"""
+Creates a Dodecahedron geometry of radius `radius`.
+Should be put in a `mesh` along with another material Elem to render.
+"""
+function dodecahedron(radius::Float64)
+    Elem(
+        :"three-js-dodecahedron",
+        attributes = @compat Dict(:r => radius)
+    )
+end
+
+"""
+Creates a icosahedron geometry of radius `radius`.
+Should be put in a `mesh` along with another material Elem to render.
+"""
+function icosahedron(radius::Float64)
+    Elem(
+        :"three-js-icosahedron",
+        attributes = @compat Dict(:r => radius)
+    )
+end
+
+"""
+Creates a icosahedron geometry of radius `radius`.
+Should be put in a `mesh` along with another material Elem to render.
+"""
+function octahedron(radius::Float64)
+    Elem(
+        :"three-js-octahedron",
+        attributes = @compat Dict(:r => radius)
+    )
+end
+
+"""
+Creates a tetrahedron geometry of radius `radius`.
+Should be put in a `mesh` along with another material Elem to render.
+"""
+function tetrahedron(radius::Float64)
+    Elem(
+        :"three-js-tetrahedron",
+        attributes = @compat Dict(:r => radius)
     )
 end
 
