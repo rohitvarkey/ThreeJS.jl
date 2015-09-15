@@ -190,6 +190,29 @@ facts("Testing Render Elem Outputs") do
                 attributes = @compat Dict(:x => 2.0, :y => 3.0, :z => 4.0)
             )
     end
+    context("Testing face") do
+        @fact face(1, 2, 3) -->
+            Elem(
+                :"three-js-face",
+                attributes = @compat Dict(
+                    :a => 1, :b => 2, :c => 3, :faceColor => "#FFFFFF"
+                )
+            )
+        @fact face(1, 2, 3; color = colorant"red") -->
+            Elem(
+                :"three-js-face",
+                attributes = @compat Dict(
+                    :a => 1, :b => 2, :c => 3, :faceColor => "#FF0000"
+                )
+            )
+    end
+    context("Testing geometry") do
+        @fact geometry(4, 5) -->
+            Elem(
+                :"three-js-geometry",
+                attributes = @compat Dict(:totalvertices => 4, :totalfaces => 5)
+            )
+    end
     context("Testing light tags") do
         @fact pointlight(10.0, 11.0, 12.0) -->
             Elem(

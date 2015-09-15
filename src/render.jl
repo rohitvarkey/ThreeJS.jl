@@ -2,7 +2,7 @@ import Compat
 using Colors
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, vertex, line,
-       linematerial
+       linematerial, geometry, face
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -71,6 +71,41 @@ function torus(radius::Float64,tube::Float64)
     Elem(
         :"three-js-torus",
         attributes = @compat Dict(:r => radius, :tube => tube)
+    )
+end
+
+"""
+Creates a geometry.
+This should be a child of a `mesh`.
+Vertices of the geometry are specified as `vertex` children of the `geometry`
+element. Faces are specified as `face` children.
+Total number of vertices and total number of faces are arguments to this
+function.
+"""
+function geometry(totalvertices::Int, totalfaces::Int)
+    Elem(
+        :"three-js-geometry",
+        attributes = @compat Dict(
+            :totalvertices => totalvertices,
+            :totalfaces => totalfaces
+        )
+    )
+end
+
+"""
+Creates a face with vertex indices `a`, `b` and `c`.
+
+A keyword argument `color` is accepted setting the color of the face.
+NOTE: Face colors come into effect only when the related material has
+`FaceColors` as its `colorkind` property.
+"""
+function face(a::Int, b::Int, c::Int; color::RGB{U8} = colorant"white")
+    colorString = string("#"*hex(color))
+    Elem(
+        :"three-js-face",
+        attributes = @compat Dict(
+            :a => a, :b => b, :c => c, :faceColor => colorString
+        )
     )
 end
 
