@@ -272,6 +272,48 @@ facts("Testing Render Elem Outputs") do
                 )
             )
     end
+    context("Testing line") do
+        @fact line(4, x = 10.0, y = 10.0, z = 10.0, rx = 20.0, ry = 15.0,
+                   rz = 240.0, kind = "pieces") -->
+             Elem(
+                :"three-js-line",
+                attributes = @compat Dict(
+                    :totalvertices => 4,
+                    :kind => "pieces",
+                    :x => 10.0,
+                    :y => 10.0,
+                    :z => 10.0,
+                    :rx => 20.0,
+                    :ry => 15.0,
+                    :rz => 240.0
+                )
+            )
+        @fact line(4) -->
+             Elem(
+                :"three-js-line",
+                attributes = @compat Dict(
+                    :totalvertices => 4,
+                    :kind => "strip",
+                    :x => 0.0,
+                    :y => 0.0,
+                    :z => 0.0,
+                    :rx => 0.0,
+                    :ry => 0.0,
+                    :rz => 0.0
+                )
+            )
+    end
+    context("Testing line material") do
+        @fact linematerial() --> Elem(:"three-js-line-material", attributes=@compat Dict())
+        @fact linematerial(@compat Dict(:kind=>"dashed", :color=>"red")) -->
+            Elem(
+            :"three-js-line-material",
+            attributes = @compat Dict(
+                :kind => "dashed",
+                :color => "red"
+            )
+        )
+    end
 end
 
 facts("Testing property helpers") do

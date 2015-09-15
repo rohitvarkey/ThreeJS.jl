@@ -1,7 +1,8 @@
 import Compat
 using Colors
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
-       material, camera, pointlight, spotlight, ambientlight, vertex
+       material, camera, pointlight, spotlight, ambientlight, vertex, line,
+       linematerial
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -232,4 +233,67 @@ function ambientlight(color::Colors.RGB{U8}=colorant"white")
         :"three-js-light",
         attributes = @compat Dict(:kind => "ambient", :color => colorString)
     )
+end
+
+"""
+Creates a line tag.
+Line tags should be a child of the scene tag created by `initscene`.
+Vertices of the line to be drawn should be nested inside this
+tag using `vertex`.
+The material to be associated with the line can be set using
+`linematerial` which should also be a child of the line tag.
+Requires the total number of vertices in the line as an argument.
+A keyword argument, `kind` is also provided to set how the lines
+should be drawn. `"strip"` and `"pieces"` are the possible values.
+
+The line can be translated and rotated using keyword arguments,
+`x`,`y`,`z` for the (x, y, z) coordinate and `rx`, `ry` and `rz`
+as the rotation about the X, Y and Z axes respectively.
+"""
+function line(
+        totalvertices::Int;
+        x::Float64 = 0.0,
+        y::Float64 = 0.0,
+        z::Float64 = 0.0,
+        rx::Float64 = 0.0,
+        ry::Float64 = 0.0,
+        rz::Float64 = 0.0,
+        kind::String = "strip"
+    )
+    Elem(
+        :"three-js-line",
+        attributes = @compat Dict(
+            :totalvertices => totalvertices,
+            :x => x,
+            :y => y,
+            :z => z,
+            :rx => rx,
+            :ry => ry,
+            :rz => rz,
+            :kind => kind,
+        )
+    )
+end
+
+"""
+Creates a line material tag.
+These tags should be the child of a line tag.
+Possible properties that can be set are:
+    - `kind` - `"basic"` or `"dashed"`
+    - `color` - Any CSS color value.
+    - `linewidth` - Sets the width of the line.
+    - `scale` - For `"dashed"` only. Scale of the dash.
+    - `dashSize` -  For `"dashed"` only. Sets size of the dash.
+    - `linecap` - Ends of the line. Possible values are `"round"`, `"butt"`, and
+    `"square"`.
+    - `linejoin` - Appearance of line joins. Possible values are `"round"`,
+    `"bevel"` and `"miter"`.
+Refer the ThreeJS docs for [`LineDashedMaterial`](http://threejs.org/docs/#Reference/Materials/LineDashedMaterial)
+and [`LineBasicMaterial`](http://threejs.org/docs/#Reference/Materials/LineBasicMaterial)
+for more details.
+
+These properties should be passed in as a `Dict`.
+"""
+function linematerial(props = @compat Dict())
+    Elem(:"three-js-line-material", attributes = props)
 end
