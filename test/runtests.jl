@@ -182,6 +182,14 @@ facts("Testing Render Elem Outputs") do
                         attributes = @compat Dict(:x => 2.0, :z => 3.0, :y => 5.0)
                     ),
                 ]
+        @fact dodecahedron(4.0) --> 
+            Elem(:"three-js-dodecahedron", attributes = @compat Dict(:r => 4.0))
+        @fact icosahedron(4.0) --> 
+            Elem(:"three-js-icosahedron", attributes = @compat Dict(:r => 4.0))
+        @fact octahedron(4.0) --> 
+            Elem(:"three-js-octahedron", attributes = @compat Dict(:r => 4.0))
+        @fact tetrahedron(4.0) --> 
+            Elem(:"three-js-tetrahedron", attributes = @compat Dict(:r => 4.0))
     end
     context("Testing vertex") do
         @fact vertex(2.0, 3.0, 4.0) -->
