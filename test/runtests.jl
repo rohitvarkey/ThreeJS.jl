@@ -337,6 +337,17 @@ facts("Testing Render Elem Outputs") do
             )
         )
     end
+    context("Testing material") do
+        @fact material() --> Elem(:"three-js-material", attributes = @compat Dict())
+        @fact material(@compat Dict(:kind=>"basic", :color=>"red")) -->
+            Elem(
+            :"three-js-material",
+            attributes = @compat Dict(
+                :kind => "basic",
+                :color => "red"
+            )
+        )
+    end
 end
 
 facts("Testing property helpers") do
