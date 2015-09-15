@@ -990,7 +990,7 @@
         var stacks = Number(this.stacks);
         var sliceCount = slices + 1;
         var a, b, c, d;
-        var material = new THREE.LineBasicMaterial({ color: "#ff0000"});
+        var material = new THREE.LineBasicMaterial({ color: "#ffffff", vertexColors:THREE.VertexColors});
         var verts = this.object.vertices;
         this.lines = [];
         for (i = 0; i < stacks; i++) {
@@ -998,6 +998,7 @@
           for (j = 0; j < slices; j++) {
             a = verts[i * sliceCount + j];
             this.lines[i].vertices.push(a);
+            this.lines[i].colors.push(a.color);
           }
           this.newLine = new THREE.Line(this.lines[i], material);
           if(Polymer.dom(this).parentNode.parentNode)
@@ -1007,6 +1008,7 @@
           this.lines.push(new THREE.Geometry());
           for (j = 0; j < stacks; j++) {
             a = verts[j * (stacks + 1) + i - stacks];
+            this.lines[i].colors.push(a.color);
             this.lines[i].vertices.push(a);
           }
           this.newLine = new THREE.Line(this.lines[i], material);
