@@ -156,9 +156,15 @@ end
 
 """
 Creates a vertex at position `(x,y,z)`.
+A keyword argument of `color` can also be passed to set the vertex color to that
+color.
 """
-function vertex(x::Float64,y::Float64,z::Float64)
-    Elem(:"three-js-vertex", attributes = @compat Dict(:x => x, :y => y, :z => z))
+function vertex(x::Float64,y::Float64,z::Float64; color::Colors.Color=colorant"black")
+    colorString = string("#"*hex(color))
+    Elem(
+        :"three-js-vertex",
+        attributes = @compat Dict(:x => x, :y => y, :z => z, :color => colorString)
+    )
 end
 
 """
@@ -167,13 +173,19 @@ Takes `x` values between `xrange` divided into `slices+1` equal intervals.
 Takes `y` values between `yrange` divided into `stacks+1` equal intervals.
 Applies a function `f` passed to all such `x` and `y` values and creates vertices
 of coordinates `(x,y,z)` and a surface containing these vertices.
+
+A colormap can also be passed to set the vertice colors to a corresponding color
+using the keyword argument `colormap`.
+NOTE: Such colors will be displayed only with a `material` with `colorkind` set
+to `"vertex"` and `color` to `"white"`.
 """
-function parametric(
+function parametric{T<:Colors.Color}(
     slices::Int,
     stacks::Int,
     xrange::Range,
     yrange::Range,
-    f::Function
+    f::Function;
+    colormap::AbstractVector{T} = Colors.colormap("RdBu")
     )
     geom = Elem(
         :"three-js-parametric",
@@ -181,7 +193,17 @@ function parametric(
     )
     xrange = linspace(xrange.start, xrange.stop, slices+1)
     yrange = linspace(yrange.start, yrange.stop, stacks+1)
-    vertices = [vertex(x, f(x,y), y) for x=xrange, y=yrange]
+    zs = [f(x,y) for x=xrange, y=yrange]
+    zrange = maximum(zs) - minimum(zs)
+    zmax = maximum(zs)
+    colormaplength = length(colormap)
+    vertices = [
+                    vertex(
+                        x, f(x,y), y;
+                        color = colormap[ceil(Int,(zmax - f(x,y))/zrange * (colormaplength-1)+1)]
+                    )
+                    for x=xrange, y=yrange
+                ]
     geom = geom << vertices
 end
 
@@ -192,13 +214,19 @@ Takes `y` values between `yrange` divided into `stacks+1` equal intervals.
 Applies a function `f` passed to all such `x` and `y` values and creates
 vertices of coordinates `(x,y,z)` and a joins them horizontally and vertically,
 creating a mesh
+
+A colormap can also be passed to set the vertice colors to a corresponding color
+using the keyword argument `colormap`.
+NOTE: Such colors will be displayed only with a `material` with `colorkind` set
+to `"vertex"` and `color` to `"white"`.
 """
-function meshlines(
+function meshlines{T<:Colors.Color}(
     slices::Int,
     stacks::Int,
     xrange::Range,
     yrange::Range,
-    f::Function
+    f::Function,
+    colormap::AbstractVector{T} = Colors.colormap("RdBu")
     )
     geom = Elem(
         :"three-js-meshlines",
@@ -206,7 +234,17 @@ function meshlines(
     )
     xrange = linspace(xrange.start, xrange.stop, slices+1)
     yrange = linspace(yrange.start, yrange.stop, stacks+1)
-    vertices = [vertex(x, f(x,y), y) for x=xrange, y=yrange]
+    zs = [f(x,y) for x=xrange, y=yrange]
+    zrange = maximum(zs) - minimum(zs)
+    zmax = maximum(zs)
+    colormaplength = length(colormap)
+    vertices = [
+                    vertex(
+                        x, f(x,y), y;
+                        color = colormap[ceil(Int,(zmax - f(x,y))/zrange * (colormaplength-1)+1)]
+                    )
+                    for x=xrange, y=yrange
+                ]
     geom = geom << vertices
 end
 
