@@ -72,7 +72,8 @@ facts("Testing Render Elem Outputs") do
             )
         @fact torus(12.0, 2.0) -->
             Elem(:"three-js-torus", attributes = @compat Dict(:r => 12.0, :tube => 2.0))
-        
+        @fact plane(12.0, 2.0) -->
+            Elem(:"three-js-plane", attributes = @compat Dict(:w => 12.0, :h => 2.0))
         #colormap = Colors.colormap("RdBu")
         #zs = [0.0, 1.0, 2.0, 1.0, 2.0, 3.0, 2.0, 3.0, 4.0, 3.0, 4.0, 5.0]
         #colors = map(z -> "#"*hex(colormap[ceil(Int,(5-z)/5 * (100-1)+1)]), zs)

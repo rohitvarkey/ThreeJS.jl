@@ -3,7 +3,7 @@ using Colors
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, vertex, line,
        linematerial, geometry, face, dodecahedron, icosahedron, octahedron,
-       tetrahedron
+       tetrahedron, plane
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -116,6 +116,18 @@ function tetrahedron(radius::Float64)
     Elem(
         :"three-js-tetrahedron",
         attributes = @compat Dict(:r => radius)
+    )
+end
+
+"""
+Creates a plane in the XY plane with specified width and height centered
+around the origin.
+Should be put in a `mesh` along with another material Elem to render.
+"""
+function plane(width::Float64, height::Float64)
+    Elem(
+        :"three-js-plane",
+        attributes = @compat Dict(:w => width, :h => height)
     )
 end
 
