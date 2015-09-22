@@ -9,6 +9,7 @@
 -->
 <html>
 <head>
+<link rel="import" href="../polymer/polymer.html">
 <script src="threejs/three.js"></script>
 <script src="threejs/TrackballControls.js"></script>
 
@@ -664,7 +665,7 @@
         });
       },
       newGeo: function () {
-        this.object = new THREE.PlaneGeometry(this.w, this.h, 1, 1);
+        this.object = new THREE.PlaneBufferGeometry(this.w, this.h, 1, 1);
         if(Polymer.dom(this).parentNode)
           Polymer.dom(this).parentNode.addGeom(this.object);
       }
@@ -836,7 +837,7 @@
         this.objectParent = Polymer.dom(this).parentNode;
         oldVertex = this.object;
         this.object = new THREE.Vector3(this.x, this.y, this.z);
-        if(this.objectParent && this.objectParent.replaceVertex != undefined)
+        if(this.objectParent)
         this.objectParent.replaceVertex(oldVertex, this.object);
       },
       attached: function () {
@@ -990,7 +991,7 @@
         var stacks = Number(this.stacks);
         var sliceCount = slices + 1;
         var a, b, c, d;
-        var material = new THREE.LineBasicMaterial({ color: "#ffffff", vertexColors:THREE.VertexColors});
+        var material = new THREE.LineBasicMaterial({ color: "#ffffff", vertexColors: THREE.VertexColors});
         var verts = this.object.vertices;
         this.lines = [];
         for (i = 0; i < stacks; i++) {
@@ -1008,8 +1009,8 @@
           this.lines.push(new THREE.Geometry());
           for (j = 0; j < stacks; j++) {
             a = verts[j * (stacks + 1) + i - stacks];
-            this.lines[i].colors.push(a.color);
             this.lines[i].vertices.push(a);
+            this.lines[i].colors.push(a.color);
           }
           this.newLine = new THREE.Line(this.lines[i], material);
           if(Polymer.dom(this).parentNode)
@@ -1295,6 +1296,55 @@
           this.object.vertexColors = this.vertexColors;
           this.addToGeom();
         }, 500);
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-grid">
+  <script>
+    Polymer({
+      is: 'three-js-grid',
+      properties: {
+        size: {
+          type: Number,
+          notify: true,
+          observer: 'newGrid',
+          value: 10
+        },
+        step: {
+          type: Number,
+          notify: true,
+          observer: 'newGrid',
+          value: 10
+        },
+        colorcenter: {
+          type: String,
+          notify: true,
+          value: "#000000",
+          observer: 'newGrid'
+        },
+        colorgrid: {
+          type: String,
+          notify: true,
+          value: "#000000",
+          observer: 'newGrid'
+        }
+      },
+      behaviors: [ThreeJSObjectBehavior],
+      newGrid: function (){
+        //TODO: Debounce this.
+        if(this.objectParent){
+          this.removeFromParent3();
+        }
+        this.object = new THREE.GridHelper(this.size,this.step);
+        this.object.setColors(this.colorcenter, this.colorgrid);
+        this.addToParent3();
+      },
+      attached: function () {
+        this.async(function (){
+          this.newGrid();
+        });
       }
     });
   </script>
