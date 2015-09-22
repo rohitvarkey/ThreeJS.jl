@@ -134,8 +134,37 @@ end
 """
 Creates a geometry.
 This should be a child of a `mesh`.
+Vertices of the geometry are passed in as a vector of `Tuples` of the coordinates
+along with faces of the geometry which are again passed in as a vector of `Tuples`
+of `Int` representing the indices of the vertices to be joined.
+"""
+function geometry(
+    vertices::Vector{Tuple{Float64, Float64, Float64}},
+    faces::Vector{Tuple{Int, Int, Int}}
+    )
+    #TODO: Add Vectors accepting facecolors and vertexcolors as keywords
+    vertexElems = [vertex(coords[1], coords[2], coords[3]) for coords in vertices]
+    faceElems = [face(idx[1]-1, idx[2]-1, idx[3]-1) for idx in faces]
+    geom = Elem(
+        :"three-js-geometry",
+        attributes = @compat Dict(
+            :totalvertices => length(vertices),
+            :totalfaces => length(faces)
+        )
+    ) << [
+            vertexElems;
+            faceElems
+        ]
+    geom
+end
+
+
+"""
+Creates a geometry.
+This should be a child of a `mesh`.
 Vertices of the geometry are specified as `vertex` children of the `geometry`
-element. Faces are specified as `face` children.
+element. Faces are specified as `face` children. These can be added using the
+`vertex` and `face` functions.
 Total number of vertices and total number of faces are arguments to this
 function.
 """

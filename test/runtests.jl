@@ -74,11 +74,10 @@ facts("Testing Render Elem Outputs") do
             Elem(:"three-js-torus", attributes = @compat Dict(:r => 12.0, :tube => 2.0))
         @fact plane(12.0, 2.0) -->
             Elem(:"three-js-plane", attributes = @compat Dict(:w => 12.0, :h => 2.0))
-        #colormap = Colors.colormap("RdBu")
-        #zs = [0.0, 1.0, 2.0, 1.0, 2.0, 3.0, 2.0, 3.0, 4.0, 3.0, 4.0, 5.0]
-        #colors = map(z -> "#"*hex(colormap[ceil(Int,(5-z)/5 * (100-1)+1)]), zs)
-        #Re-enable once Colors fixes colormaps on 0.3
-        @pending parametric(2, 3, 0:2, 0:3, (x, y) -> x + y) -->
+        colormap = Colors.colormap("RdBu")
+        zs = [0.0, 1.0, 2.0, 1.0, 2.0, 3.0, 2.0, 3.0, 4.0, 3.0, 4.0, 5.0]
+        colors = map(z -> "#"*hex(colormap[ceil(Int,(5-z)/5 * (100-1)+1)]), zs)
+        @fact parametric(2, 3, 0:2, 0:3, (x, y) -> x + y) -->
             Elem(
                 :"three-js-parametric",
                 attributes = @compat Dict(:slices => 2, :stacks => 3)
@@ -157,7 +156,7 @@ facts("Testing Render Elem Outputs") do
                         )
                     ),
                 ]
-        @pending meshlines(2, 3, 0:2, 0:3, (x, y) -> x + y) -->
+        @fact meshlines(2, 3, 0:2, 0:3, (x, y) -> x + y) -->
             Elem(
                 :"three-js-meshlines",
                 attributes = @compat Dict(:slices => 2, :stacks => 3)
@@ -276,6 +275,39 @@ facts("Testing Render Elem Outputs") do
                 :"three-js-geometry",
                 attributes = @compat Dict(:totalvertices => 4, :totalfaces => 5)
             )
+        verts = [(i, i, i) for i = 1.0:3.0]
+        faces = [(1 , 2, 3)]
+        @fact geometry(verts, faces) -->
+            Elem(
+                :"three-js-geometry",
+                attributes = @compat Dict(:totalvertices => 3, :totalfaces => 1)
+            ) << 
+            [
+                Elem(
+                    :"three-js-vertex",
+                    attributes = @compat Dict(
+                        :x => 1.0, :y => 1.0, :z => 1.0, :color => "#000000"
+                    )
+                ),
+                Elem(
+                    :"three-js-vertex",
+                    attributes = @compat Dict(
+                        :x => 2.0, :y => 2.0, :z => 2.0, :color => "#000000"
+                    )
+                ),
+                Elem(
+                    :"three-js-vertex",
+                    attributes = @compat Dict(
+                        :x => 3.0, :y => 3.0, :z => 3.0, :color => "#000000"
+                    )
+                ),
+                Elem(
+                    :"three-js-face",
+                    attributes = @compat Dict(
+                        :a => 0, :b => 1, :c =>2, :faceColor => "#FFFFFF"
+                    )
+                )
+            ]
     end
     context("Testing light tags") do
         @fact pointlight(10.0, 11.0, 12.0) -->
