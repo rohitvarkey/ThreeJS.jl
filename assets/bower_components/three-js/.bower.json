@@ -5,14 +5,14 @@
     "polymer": "Polymer/polymer"
   },
   "homepage": "https://github.com/rohitvarkey/three-js",
-  "version": "0.6.4",
-  "_release": "0.6.4",
+  "_release": "94022dafac",
   "_resolution": {
-    "type": "version",
-    "tag": "v0.6.4",
-    "commit": "04689ba7b1b1190587ae559c8d4a1106850e8210"
+    "type": "branch",
+    "branch": "master",
+    "commit": "94022dafac669a4c39a832c55eb59b570a4ca0dc"
   },
   "_source": "git://github.com/rohitvarkey/three-js.git",
-  "_target": "~0.6.1",
-  "_originalSource": "rohitvarkey/three-js"
+  "_target": "master",
+  "_originalSource": "rohitvarkey/three-js",
+  "_direct": true
 }

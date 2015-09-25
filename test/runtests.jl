@@ -444,6 +444,41 @@ facts("Testing Render Elem Outputs") do
             )
         )
     end
+    context("Testing grid") do
+        @fact grid(10.0, 1.0) --> Elem(
+            :"three-js-grid",
+            attributes = Dict(
+                :size => 10.0,
+                :step => 1.0,
+                :x => 0.0,
+                :y => 0.0,
+                :z => 0.0,
+                :rx => 0.0,
+                :ry => 0.0,
+                :rz => 0.0,
+                :colorgrid => "#000000",
+                :colorcenter => "#000000"
+            )
+        )
+        @fact grid(
+            10.0, 2.0, x = 10.0, colorgrid = colorant"red",
+            colorcenter = colorant"green", ry = 10.0
+        ) --> Elem(
+            :"three-js-grid",
+            attributes = Dict(
+                :size => 10.0,
+                :step => 2.0,
+                :x => 10.0,
+                :y => 0.0,
+                :z => 0.0,
+                :rx => 0.0,
+                :ry => 10.0,
+                :rz => 0.0,
+                :colorgrid => "#FF0000",
+                :colorcenter => "#008000"
+            )
+        )
+    end
 end
 
 facts("Testing property helpers") do

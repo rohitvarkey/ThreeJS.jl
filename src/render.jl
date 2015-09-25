@@ -3,7 +3,7 @@ using Colors
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, vertex, line,
        linematerial, geometry, face, dodecahedron, icosahedron, octahedron,
-       tetrahedron, plane
+       tetrahedron, plane, grid
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -455,4 +455,43 @@ These properties should be passed in as a `Dict`.
 """
 function linematerial(props = @compat Dict())
     Elem(:"three-js-line-material", attributes = props)
+end
+
+"""
+Creates a grid element.
+These should be a child of the scene tag created by `initscene`.
+The `size` represents the total size and the `step` represents the distance
+between consecutive lines of the grid.
+
+The grid can be translated and rotated using keyword arguments,
+`x`,`y`,`z` for the (x, y, z) coordinate and `rx`, `ry` and `rz`
+as the rotation about the X, Y and Z axes respectively.
+"""
+function grid(
+        size::Float64,
+        step::Float64;
+        x::Float64 = 0.0,
+        y::Float64 = 0.0,
+        z::Float64 = 0.0,
+        rx::Float64 = 0.0,
+        ry::Float64 = 0.0,
+        rz::Float64 = 0.0,
+        colorcenter::Colors.RGB{U8}=colorant"black",
+        colorgrid::Colors.RGB{U8}=colorant"black"
+    ) 
+    Elem(
+        :"three-js-grid",
+        attributes = @compat Dict(
+            :size => size,
+            :step => step,
+            :x => x,
+            :y => y,
+            :z => z,
+            :rx => rx,
+            :ry => ry,
+            :rz => rz,
+            :colorcenter => "#" * hex(colorcenter),
+            :colorgrid => "#" * hex(colorgrid)
+        )
+    )
 end

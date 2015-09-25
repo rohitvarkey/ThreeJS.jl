@@ -9,7 +9,6 @@
 -->
 <html>
 <head>
-<link rel="import" href="../polymer/polymer.html">
 <script src="threejs/three.js"></script>
 <script src="threejs/TrackballControls.js"></script>
 
@@ -837,7 +836,7 @@
         this.objectParent = Polymer.dom(this).parentNode;
         oldVertex = this.object;
         this.object = new THREE.Vector3(this.x, this.y, this.z);
-        if(this.objectParent)
+        if(this.objectParent && this.objectParent.replaceVertex)
         this.objectParent.replaceVertex(oldVertex, this.object);
       },
       attached: function () {
