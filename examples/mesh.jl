@@ -1,0 +1,47 @@
+#Run this in Escher to see a rotating cube in the browser.
+
+import ThreeJS
+using GeometryTypes
+using FileIO
+
+function ThreeJS.geometry(m::HomogenousMesh;scale=(1,1,1))
+    vs = [(Float64(i[1])*scale[1],
+           Float64(i[2])*scale[2],
+           Float64(i[3])*scale[3]) for i in m.vertices]
+    fs = [(Int(i[1])+1,Int(i[2])+1,Int(i[3])+1) for i in m.faces]
+    ThreeJS.geometry(vs,fs)
+end
+
+
+main(window) =  begin
+    push!(window.assets,("ThreeJS","threejs"))
+    push!(window.assets,"widgets")
+    x = Input(1.0)
+    y = Input(1.0)
+    z = Input(1.0)
+    mesh_geom = load("cat.obj")
+    vbox(
+        "ThreeJS Example",
+        vskip(2em),
+        vbox(
+            "Scale",
+            hbox("x",slider(1.0:5.0) >>> x),
+            hbox("y",slider(1.0:5.0) >>> y),
+            hbox("z",slider(1.0:5.0) >>> z),
+        ),
+        vskip(2em),
+        lift(x,y,z) do x,y,z
+        ThreeJS.outerdiv() << 
+            (ThreeJS.initscene() <<
+                [
+                    ThreeJS.mesh(0.0, 0.0, 0.0) << 
+                    [
+                        ThreeJS.geometry(mesh_geom, scale=(x,y,z)), ThreeJS.material(Dict(:kind=>"lambert",:color=>"red"))
+                    ],
+                    ThreeJS.pointlight(10.0, 10.0, 10.0),
+                    ThreeJS.camera(2.0, 2.0, 2.0)
+                ]
+            )
+        end
+    ) |> pad(2em)
+end
