@@ -10,7 +10,7 @@ include("render.jl")
 include("properties.jl")
 
 "Outer div to keep the three-js tag in."
-function outerdiv(w::String="100%",h::String="600px")
+function outerdiv(w::AbstractString="100%", h::AbstractString="600px")
     Elem(:div, style=@compat Dict(:width=>w, :height=>h))
 end
 

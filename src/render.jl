@@ -417,7 +417,7 @@ function line(
         rx::Float64 = 0.0,
         ry::Float64 = 0.0,
         rz::Float64 = 0.0,
-        kind::String = "strip"
+        kind::AbstractString = "strip"
     )
     Elem(
         :"three-js-line",
