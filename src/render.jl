@@ -143,40 +143,27 @@ function geometry(
     faces::Vector{Tuple{Int, Int, Int}}
     )
     #TODO: Add Vectors accepting facecolors and vertexcolors as keywords
-    vertexElems = [vertex(coords[1], coords[2], coords[3]) for coords in vertices]
-    faceElems = [face(idx[1]-1, idx[2]-1, idx[3]-1) for idx in faces]
+    x = [coords[1] for coords in vertices]
+    y = [coords[2] for coords in vertices]
+    z = [coords[3] for coords in vertices]
+    face = zeros(size(faces,1) * 3)
+    for i=1:size(faces, 1)
+        face[3i - 2] = faces[i][1] - 1
+        face[3i - 1] = faces[i][2] - 1
+        face[3i] = faces[i][3] - 1
+    end
     geom = Elem(
         :"three-js-geometry",
         attributes = @compat Dict(
-            :totalvertices => length(vertices),
-            :totalfaces => length(faces)
+            :x => x,
+            :y => y,
+            :z => z,
+            :faces => face,
         )
-    ) << [
-            vertexElems;
-            faceElems
-        ]
+    )
     geom
 end
 
-
-"""
-Creates a geometry.
-This should be a child of a `mesh`.
-Vertices of the geometry are specified as `vertex` children of the `geometry`
-element. Faces are specified as `face` children. These can be added using the
-`vertex` and `face` functions.
-Total number of vertices and total number of faces are arguments to this
-function.
-"""
-function geometry(totalvertices::Int, totalfaces::Int)
-    Elem(
-        :"three-js-geometry",
-        attributes = @compat Dict(
-            :totalvertices => totalvertices,
-            :totalfaces => totalfaces
-        )
-    )
-end
 
 """
 Creates a face with vertex indices `a`, `b` and `c`.
@@ -228,24 +215,29 @@ function parametric{T<:Colors.Color}(
     f::Function;
     colormap::AbstractVector{T} = Colors.colormap("RdBu")
     )
-    geom = Elem(
-        :"three-js-parametric",
-        attributes = @compat Dict(:slices => slices, :stacks => stacks)
-    )
     xrange = linspace(xrange.start, xrange.stop, slices+1)
     yrange = linspace(yrange.start, yrange.stop, stacks+1)
+    xs = [x for x=xrange, y=yrange]
+    ys = [y for x=xrange, y=yrange]
     zs = [f(x,y) for x=xrange, y=yrange]
     zrange = maximum(zs) - minimum(zs)
     zmax = maximum(zs)
     colormaplength = length(colormap)
-    vertices = [
-                    vertex(
-                        x, f(x,y), y;
-                        color = colormap[ceil(Int,(zmax - f(x,y))/zrange * (colormaplength-1)+1)]
-                    )
-                    for x=xrange, y=yrange
-                ]
-    geom = geom << vertices
+    colors = [
+        "#"*hex(colormap[ceil(Int,(zmax - f(x,y))/zrange * (colormaplength-1)+1)])
+        for x=xrange, y=yrange
+    ]
+    geom = Elem(
+        :"three-js-parametric",
+        attributes = @compat Dict(
+            :slices => slices,
+            :stacks => stacks,
+            :x => xs,
+            :y => zs,
+            :z => ys,
+            :vertexcolors => colors
+        )
+    )
 end
 
 """
