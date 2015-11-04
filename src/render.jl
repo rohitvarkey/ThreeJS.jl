@@ -402,7 +402,7 @@ The line can be translated and rotated using keyword arguments,
 as the rotation about the X, Y and Z axes respectively.
 """
 function line(
-        totalvertices::Int;
+        vertices::Vector{Tuple{Float64, Float64, Float64}};
         x::Float64 = 0.0,
         y::Float64 = 0.0,
         z::Float64 = 0.0,
@@ -411,10 +411,15 @@ function line(
         rz::Float64 = 0.0,
         kind::AbstractString = "strip"
     )
+    xs = [coords[1] for coords in vertices]
+    ys = [coords[2] for coords in vertices]
+    zs = [coords[3] for coords in vertices]
     Elem(
         :"three-js-line",
         attributes = @compat Dict(
-            :totalvertices => totalvertices,
+            :xs => xs,
+            :ys => ys,
+            :zs => zs,
             :x => x,
             :y => y,
             :z => z,
