@@ -75,166 +75,64 @@ facts("Testing Render Elem Outputs") do
         @fact plane(12.0, 2.0) -->
             Elem(:"three-js-plane", attributes = @compat Dict(:w => 12.0, :h => 2.0))
         colormap = Colors.colormap("RdBu")
-        zs = [0.0, 1.0, 2.0, 1.0, 2.0, 3.0, 2.0, 3.0, 4.0, 3.0, 4.0, 5.0]
-        colors = map(z -> "#"*hex(colormap[ceil(Int,(5-z)/5 * (100-1)+1)]), zs)
+        ys = [
+                0.0 1.0 2.0 3.0
+                1.0 2.0 3.0 4.0 
+                2.0 3.0 4.0 5.0 
+             ]
+        hexcolors = map(z -> "#"*hex(colormap[ceil(Int,(5-z)/5 * (100-1)+1)]), ys)
+        colors = Array{Color}(3,4)
+        map!(z -> colormap[ceil(Int,(5-z)/5 * (100-1)+1)], colors, ys)
         @fact parametric(2, 3, 0:2, 0:3, (x, y) -> x + y) -->
             Elem(
                 :"three-js-parametric",
-                attributes = @compat Dict(:slices => 2, :stacks => 3)
-            ) <<
-                [
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 0.0, :z => 0.0, :y => 0.0, :color => colors[1]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 1.0, :z => 0.0, :y => 1.0, :color => colors[2]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 2.0, :z => 0.0, :y => 2.0, :color => colors[3]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 0.0, :z => 1.0, :y => 1.0, :color => colors[4]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 1.0, :z => 1.0, :y => 2.0, :color => colors[5]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 2.0, :z => 1.0, :y => 3.0, :color => colors[6]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 0.0, :z => 2.0, :y => 2.0, :color => colors[7]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 1.0, :z => 2.0, :y => 3.0, :color => colors[8]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 2.0, :z => 2.0, :y => 4.0, :color => colors[9]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 0.0, :z => 3.0, :y => 3.0, :color => colors[10]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 1.0, :z => 3.0, :y => 4.0, :color => colors[11]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 2.0, :z => 3.0, :y => 5.0, :color => colors[12]
-                        )
-                    ),
-                ]
+                attributes = @compat Dict(
+                    :slices => 2,
+                    :stacks => 3,
+                    :x => [
+                        0.0 0.0 0.0 0.0
+                        1.0 1.0 1.0 1.0
+                        2.0 2.0 2.0 2.0
+                    ],
+                    :y => ys,
+                    :z => [
+                        0.0 1.0 2.0 3.0
+                        0.0 1.0 2.0 3.0
+                        0.0 1.0 2.0 3.0
+                    ],
+                    :vertexcolors => hexcolors
+                    )
+            )
         @fact meshlines(2, 3, 0:2, 0:3, (x, y) -> x + y) -->
-            Elem(
-                :"three-js-meshlines",
-                attributes = @compat Dict(:slices => 2, :stacks => 3)
-            ) <<
+            map(x->x << linematerial(Dict(:color=>"white", :colorkind=>"vertex")),
                 [
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 0.0, :z => 0.0, :y => 0.0, :color => colors[1]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 1.0, :z => 0.0, :y => 1.0, :color => colors[2]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 2.0, :z => 0.0, :y => 2.0, :color => colors[3]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 0.0, :z => 1.0, :y => 1.0, :color => colors[4]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 1.0, :z => 1.0, :y => 2.0, :color => colors[5]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 2.0, :z => 1.0, :y => 3.0, :color => colors[6]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 0.0, :z => 2.0, :y => 2.0, :color => colors[7]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 1.0, :z => 2.0, :y => 3.0, :color => colors[8]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 2.0, :z => 2.0, :y => 4.0, :color => colors[9]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 0.0, :z => 3.0, :y => 3.0, :color => colors[10]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 1.0, :z => 3.0, :y => 4.0, :color => colors[11]
-                        )
-                    ),
-                    Elem(
-                        :"three-js-vertex",
-                        attributes = @compat Dict(
-                            :x => 2.0, :z => 3.0, :y => 5.0, :color => colors[12]
-                        )
-                    ),
+                line(
+                    [(0.0, 0.0, 0.0), (1.0, 1.0, 0.0), (2.0, 2.0, 0.0)],
+                    vertexcolors= colors[:, 1]
+                ),
+                line(
+                    [(0.0, 1.0, 1.0), (1.0, 2.0, 1.0), (2.0, 3.0, 1.0)],
+                    vertexcolors= colors[:, 2]
+                ),
+                line(
+                    [(0.0, 2.0, 2.0), (1.0, 3.0, 2.0), (2.0, 4.0, 2.0)],
+                    vertexcolors= colors[:, 3]
+                ),
+                line(
+                    [(0.0, 3.0, 3.0), (1.0, 4.0, 3.0), (2.0, 5.0, 3.0)],
+                    vertexcolors= colors[:, 4]
+                ),
+                line(
+                    [(0.0, 0.0, 0.0), (0.0, 1.0, 1.0), (0.0, 2.0, 2.0), (0.0, 3.0, 3.0)],
+                    vertexcolors= reshape(transpose(colors[1, :]), 4)),
+                line(
+                    [(1.0, 1.0, 0.0), (1.0, 2.0, 1.0), (1.0, 3.0, 2.0), (1.0, 4.0, 3.0)],
+                    vertexcolors= reshape(transpose(colors[2, :]), 4)),
+                line(
+                    [(2.0, 2.0, 0.0), (2.0, 3.0, 1.0), (2.0, 4.0, 2.0), (2.0, 5.0, 3.0)],
+                    vertexcolors= reshape(transpose(colors[3, :]), 4))
                 ]
+            )
         @fact dodecahedron(4.0) --> 
             Elem(:"three-js-dodecahedron", attributes = @compat Dict(:r => 4.0))
         @fact icosahedron(4.0) --> 
@@ -244,70 +142,19 @@ facts("Testing Render Elem Outputs") do
         @fact tetrahedron(4.0) --> 
             Elem(:"three-js-tetrahedron", attributes = @compat Dict(:r => 4.0))
     end
-    context("Testing vertex") do
-        @fact vertex(2.0, 3.0, 4.0) -->
-            Elem(
-                :"three-js-vertex",
-                attributes = @compat Dict(
-                    :x => 2.0, :y => 3.0, :z => 4.0, :color => "#000000"
-                )
-            )
-    end
-    context("Testing face") do
-        @fact face(1, 2, 3) -->
-            Elem(
-                :"three-js-face",
-                attributes = @compat Dict(
-                    :a => 1, :b => 2, :c => 3, :faceColor => "#FFFFFF"
-                )
-            )
-        @fact face(1, 2, 3; color = colorant"red") -->
-            Elem(
-                :"three-js-face",
-                attributes = @compat Dict(
-                    :a => 1, :b => 2, :c => 3, :faceColor => "#FF0000"
-                )
-            )
-    end
     context("Testing geometry") do
-        @fact geometry(4, 5) -->
-            Elem(
-                :"three-js-geometry",
-                attributes = @compat Dict(:totalvertices => 4, :totalfaces => 5)
-            )
         verts = [(i, i, i) for i = 1.0:3.0]
         faces = [(1 , 2, 3)]
         @fact geometry(verts, faces) -->
             Elem(
                 :"three-js-geometry",
-                attributes = @compat Dict(:totalvertices => 3, :totalfaces => 1)
-            ) << 
-            [
-                Elem(
-                    :"three-js-vertex",
-                    attributes = @compat Dict(
-                        :x => 1.0, :y => 1.0, :z => 1.0, :color => "#000000"
-                    )
-                ),
-                Elem(
-                    :"three-js-vertex",
-                    attributes = @compat Dict(
-                        :x => 2.0, :y => 2.0, :z => 2.0, :color => "#000000"
-                    )
-                ),
-                Elem(
-                    :"three-js-vertex",
-                    attributes = @compat Dict(
-                        :x => 3.0, :y => 3.0, :z => 3.0, :color => "#000000"
-                    )
-                ),
-                Elem(
-                    :"three-js-face",
-                    attributes = @compat Dict(
-                        :a => 0, :b => 1, :c =>2, :faceColor => "#FFFFFF"
-                    )
+                attributes = Dict(
+                    :x => [1.0, 2.0, 3.0],
+                    :y => [1.0, 2.0, 3.0],
+                    :z => [1.0, 2.0, 3.0],
+                    :faces => [0, 1, 2]
                 )
-            ]
+            )
     end
     context("Testing light tags") do
         @fact pointlight(10.0, 11.0, 12.0) -->
@@ -392,33 +239,62 @@ facts("Testing Render Elem Outputs") do
             )
     end
     context("Testing line") do
-        @fact line(4, x = 10.0, y = 10.0, z = 10.0, rx = 20.0, ry = 15.0,
-                   rz = 240.0, kind = "pieces") -->
+        verts = [(i, i, i) for i = 1.0:3.0]
+        colors = Color[colorant"red", colorant"blue", colorant"green"]
+        vertswithcolors = [(verts[i][1], verts[i][2], verts[i][3], colors[i]) for i=1:3]
+        @fact line(
+        verts, x = 10.0, y = 10.0, z = 10.0, rx = 20.0, ry = 15.0, rz = 240.0,
+        kind = "pieces", vertexcolors = colors) -->
              Elem(
                 :"three-js-line",
                 attributes = @compat Dict(
-                    :totalvertices => 4,
                     :kind => "pieces",
                     :x => 10.0,
                     :y => 10.0,
                     :z => 10.0,
                     :rx => 20.0,
                     :ry => 15.0,
-                    :rz => 240.0
+                    :rz => 240.0,
+                    :xs => [1.0, 2.0, 3.0],
+                    :ys => [1.0, 2.0, 3.0],
+                    :zs => [1.0, 2.0, 3.0],
+                    :vertexcolors => map(x->"#"*hex(x),colors)
                 )
             )
-        @fact line(4) -->
+        @fact line(
+        vertswithcolors, x = 10.0, y = 10.0, z = 10.0, rx = 20.0, ry = 15.0,
+        rz = 240.0, kind = "pieces") -->
              Elem(
                 :"three-js-line",
                 attributes = @compat Dict(
-                    :totalvertices => 4,
+                    :kind => "pieces",
+                    :x => 10.0,
+                    :y => 10.0,
+                    :z => 10.0,
+                    :rx => 20.0,
+                    :ry => 15.0,
+                    :rz => 240.0,
+                    :xs => [1.0, 2.0, 3.0],
+                    :ys => [1.0, 2.0, 3.0],
+                    :zs => [1.0, 2.0, 3.0],
+                    :vertexcolors => map(x->"#"*hex(x),colors)
+                )
+            )
+        @fact line(verts) -->
+             Elem(
+                :"three-js-line",
+                attributes = @compat Dict(
                     :kind => "strip",
                     :x => 0.0,
                     :y => 0.0,
                     :z => 0.0,
                     :rx => 0.0,
                     :ry => 0.0,
-                    :rz => 0.0
+                    :rz => 0.0,
+                    :xs => [1.0, 2.0, 3.0],
+                    :ys => [1.0, 2.0, 3.0],
+                    :zs => [1.0, 2.0, 3.0],
+                    :vertexcolors => Color[]
                 )
             )
     end
