@@ -228,7 +228,7 @@ main(window) = begin
             mesh(0.0, 0.0, 0.0) <<
                 [
                     ThreeJS.box(1.0, 1.0, 1.0),
-                    material(@compat(Dict(:kind=>"lambert",:color=>"red")))
+                    material(Dict(:kind=>"lambert",:color=>"red"))
                 ],
             pointlight(3.0, 3.0, 3.0),
             camera(0.0, 0.0, 10.0)

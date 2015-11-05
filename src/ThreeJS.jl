@@ -1,8 +1,7 @@
-module ThreeJS 
+module ThreeJS
 
 import Patchwork
 import Patchwork.Elem
-using Compat
 
 export outerdiv, initscene
 
@@ -11,7 +10,7 @@ include("properties.jl")
 
 "Outer div to keep the three-js tag in."
 function outerdiv(w::AbstractString="100%", h::AbstractString="600px")
-    Elem(:div, style=@compat Dict(:width=>w, :height=>h))
+    Elem(:div, style=Dict(:width=>w, :height=>h))
 end
 
 "Initiates a three-js scene"

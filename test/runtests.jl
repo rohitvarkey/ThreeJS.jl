@@ -12,12 +12,12 @@ facts("Testing General Functions") do
         @fact outerdiv() -->
             Elem(
                 :div,
-                style=@compat Dict(:width=>"100%", :height=>"600px")
+                style=Dict(:width=>"100%", :height=>"600px")
             )
         @fact outerdiv("90%","200px") -->
             Elem(
                 :div,
-                style=@compat Dict(:width=>"90%", :height=>"200px")
+                style=Dict(:width=>"90%", :height=>"200px")
             )
     end
     context("Testing initscene") do
@@ -30,7 +30,7 @@ facts("Testing Render Elem Outputs") do
         @fact mesh(10.0, 10.0, 10.0) -->
             Elem(
                 :"three-js-mesh",
-                attributes = @compat Dict(
+                attributes = Dict(
                     :x => 10.0,
                     :y => 10.0,
                     :z => 10.0,
@@ -42,7 +42,7 @@ facts("Testing Render Elem Outputs") do
         @fact mesh(10.0, 10.0, 10.0, rx = 20.0, ry = 15.0, rz = 240.0) -->
              Elem(
                 :"three-js-mesh",
-                attributes = @compat Dict(
+                attributes = Dict(
                     :x => 10.0,
                     :y => 10.0,
                     :z => 10.0,
@@ -56,29 +56,29 @@ facts("Testing Render Elem Outputs") do
         @fact box(10.0, 11.0, 12.0) -->
             Elem(
                 :"three-js-box",
-                attributes = @compat Dict(:w => 10.0, :h => 11.0, :d => 12.0)
+                attributes = Dict(:w => 10.0, :h => 11.0, :d => 12.0)
             )
         @fact sphere(10.0) -->
-            Elem(:"three-js-sphere", attributes = @compat Dict(:r => 10.0))
+            Elem(:"three-js-sphere", attributes = Dict(:r => 10.0))
         @fact pyramid(10.0, 12.0) -->
             Elem(
                 :"three-js-pyramid",
-                attributes = @compat Dict(:base => 10.0, :height => 12.0)
+                attributes = Dict(:base => 10.0, :height => 12.0)
             )
         @fact cylinder(10.0, 11.0, 12.0) -->
             Elem(
                 :"three-js-cylinder",
-                attributes = @compat Dict(:top => 10.0, :bottom => 11.0, :height => 12.0)
+                attributes = Dict(:top => 10.0, :bottom => 11.0, :height => 12.0)
             )
         @fact torus(12.0, 2.0) -->
-            Elem(:"three-js-torus", attributes = @compat Dict(:r => 12.0, :tube => 2.0))
+            Elem(:"three-js-torus", attributes = Dict(:r => 12.0, :tube => 2.0))
         @fact plane(12.0, 2.0) -->
-            Elem(:"three-js-plane", attributes = @compat Dict(:w => 12.0, :h => 2.0))
+            Elem(:"three-js-plane", attributes = Dict(:w => 12.0, :h => 2.0))
         colormap = Colors.colormap("RdBu")
         ys = [
                 0.0 1.0 2.0 3.0
-                1.0 2.0 3.0 4.0 
-                2.0 3.0 4.0 5.0 
+                1.0 2.0 3.0 4.0
+                2.0 3.0 4.0 5.0
              ]
         hexcolors = map(z -> "#"*hex(colormap[ceil(Int,(5-z)/5 * (100-1)+1)]), ys)
         colors = Array{Color}(3,4)
@@ -86,7 +86,7 @@ facts("Testing Render Elem Outputs") do
         @fact parametric(2, 3, 0:2, 0:3, (x, y) -> x + y) -->
             Elem(
                 :"three-js-parametric",
-                attributes = @compat Dict(
+                attributes = Dict(
                     :slices => 2,
                     :stacks => 3,
                     :x => [
@@ -133,14 +133,14 @@ facts("Testing Render Elem Outputs") do
                     vertexcolors= reshape(transpose(colors[3, :]), 4))
                 ]
             )
-        @fact dodecahedron(4.0) --> 
-            Elem(:"three-js-dodecahedron", attributes = @compat Dict(:r => 4.0))
-        @fact icosahedron(4.0) --> 
-            Elem(:"three-js-icosahedron", attributes = @compat Dict(:r => 4.0))
-        @fact octahedron(4.0) --> 
-            Elem(:"three-js-octahedron", attributes = @compat Dict(:r => 4.0))
-        @fact tetrahedron(4.0) --> 
-            Elem(:"three-js-tetrahedron", attributes = @compat Dict(:r => 4.0))
+        @fact dodecahedron(4.0) -->
+            Elem(:"three-js-dodecahedron", attributes = Dict(:r => 4.0))
+        @fact icosahedron(4.0) -->
+            Elem(:"three-js-icosahedron", attributes = Dict(:r => 4.0))
+        @fact octahedron(4.0) -->
+            Elem(:"three-js-octahedron", attributes = Dict(:r => 4.0))
+        @fact tetrahedron(4.0) -->
+            Elem(:"three-js-tetrahedron", attributes = Dict(:r => 4.0))
     end
     context("Testing geometry") do
         verts = [(i, i, i) for i = 1.0:3.0]
@@ -160,7 +160,7 @@ facts("Testing Render Elem Outputs") do
         @fact pointlight(10.0, 11.0, 12.0) -->
             Elem(
                 :"three-js-light",
-                attributes = @compat Dict(
+                attributes = Dict(
                 :x => 10.0, :y => 11.0 , :z => 12.0,
                 :kind => "point",
                 :color => "#FFFFFF",
@@ -173,7 +173,7 @@ facts("Testing Render Elem Outputs") do
             intensity = 2.0, distance = 1000.0, color = colorant"red"
             ) --> Elem(
                 :"three-js-light",
-                attributes = @compat Dict(
+                attributes = Dict(
                     :x => 10.0, :y => 11.0 , :z => 12.0,
                     :kind => "point",
                     :color => "#FF0000",
@@ -184,7 +184,7 @@ facts("Testing Render Elem Outputs") do
         @fact spotlight(10.0, 11.0, 12.0) -->
             Elem(
                 :"three-js-light",
-                attributes = @compat Dict(
+                attributes = Dict(
                     :x => 10.0, :y => 11.0 , :z => 12.0,
                     :kind => "spot",
                     :color => "#FFFFFF",
@@ -201,7 +201,7 @@ facts("Testing Render Elem Outputs") do
             angle = 45.0, exponent = 10.0, shadow = true
             ) --> Elem(
                 :"three-js-light",
-                attributes = @compat Dict(
+                attributes = Dict(
                     :x => 10.0, :y => 11.0 , :z => 12.0,
                     :kind => "spot",
                     :color => "#FF0000",
@@ -215,19 +215,19 @@ facts("Testing Render Elem Outputs") do
         @fact ambientlight() -->
             Elem(
                 :"three-js-light",
-                attributes = @compat Dict(:kind => "ambient", :color => "#FFFFFF")
+                attributes = Dict(:kind => "ambient", :color => "#FFFFFF")
             )
         @fact ambientlight(colorant"red") -->
             Elem(
                 :"three-js-light",
-                attributes = @compat Dict(:kind => "ambient", :color => "#FF0000")
+                attributes = Dict(:kind => "ambient", :color => "#FF0000")
             )
     end
     context("Testing camera tag") do
         @fact camera(10.0, 11.0, 12.0) -->
             Elem(
                 :"three-js-camera",
-                attributes = @compat Dict(
+                attributes = Dict(
                     :x => 10.0,
                     :y => 11.0,
                     :z => 12.0,
@@ -247,7 +247,7 @@ facts("Testing Render Elem Outputs") do
         kind = "pieces", vertexcolors = colors) -->
              Elem(
                 :"three-js-line",
-                attributes = @compat Dict(
+                attributes = Dict(
                     :kind => "pieces",
                     :x => 10.0,
                     :y => 10.0,
@@ -266,7 +266,7 @@ facts("Testing Render Elem Outputs") do
         rz = 240.0, kind = "pieces") -->
              Elem(
                 :"three-js-line",
-                attributes = @compat Dict(
+                attributes = Dict(
                     :kind => "pieces",
                     :x => 10.0,
                     :y => 10.0,
@@ -283,7 +283,7 @@ facts("Testing Render Elem Outputs") do
         @fact line(verts) -->
              Elem(
                 :"three-js-line",
-                attributes = @compat Dict(
+                attributes = Dict(
                     :kind => "strip",
                     :x => 0.0,
                     :y => 0.0,
@@ -299,22 +299,22 @@ facts("Testing Render Elem Outputs") do
             )
     end
     context("Testing line material") do
-        @fact linematerial() --> Elem(:"three-js-line-material", attributes=@compat Dict())
-        @fact linematerial(@compat Dict(:kind=>"dashed", :color=>"red")) -->
+        @fact linematerial() --> Elem(:"three-js-line-material", attributes=Dict())
+        @fact linematerial(Dict(:kind=>"dashed", :color=>"red")) -->
             Elem(
             :"three-js-line-material",
-            attributes = @compat Dict(
+            attributes = Dict(
                 :kind => "dashed",
                 :color => "red"
             )
         )
     end
     context("Testing material") do
-        @fact material() --> Elem(:"three-js-material", attributes = @compat Dict())
-        @fact material(@compat Dict(:kind=>"basic", :color=>"red")) -->
+        @fact material() --> Elem(:"three-js-material", attributes = Dict())
+        @fact material(Dict(:kind=>"basic", :color=>"red")) -->
             Elem(
             :"three-js-material",
-            attributes = @compat Dict(
+            attributes = Dict(
                 :kind => "basic",
                 :color => "red"
             )
