@@ -258,12 +258,8 @@ function meshlines{T<:Colors.Color}(
     stacks::Int,
     xrange::Range,
     yrange::Range,
-    f::Function,
+    f::Function;
     colormap::AbstractVector{T} = Colors.colormap("RdBu")
-    )
-    geom = Elem(
-        :"three-js-meshlines",
-        attributes = @compat Dict( :slices => slices, :stacks => stacks)
     )
     xrange = linspace(xrange.start, xrange.stop, slices+1)
     yrange = linspace(yrange.start, yrange.stop, stacks+1)
@@ -271,14 +267,19 @@ function meshlines{T<:Colors.Color}(
     zrange = maximum(zs) - minimum(zs)
     zmax = maximum(zs)
     colormaplength = length(colormap)
-    vertices = [
-                    vertex(
-                        x, f(x,y), y;
-                        color = colormap[ceil(Int,(zmax - f(x,y))/zrange * (colormaplength-1)+1)]
-                    )
-                    for x=xrange, y=yrange
-                ]
-    geom = geom << vertices
+    findcolor(z::Float64) = colormap[
+        ceil(Int,(zmax - z)/zrange * (colormaplength-1)+1)
+    ]
+    meshmaterial = linematerial(Dict(:color => "white", :colorkind => "vertex"))
+    xlines = [
+        line(Tuple{Float64, Float64, Float64, Color}[(x, f(x,y), y, findcolor(f(x,y))) for x=xrange]) << meshmaterial
+        for y=yrange
+    ]
+    ylines = [
+        line(Tuple{Float64, Float64, Float64, Color}[(x, f(x,y), y, findcolor(f(x,y))) for y=yrange]) << meshmaterial
+        for x=xrange
+    ]
+    [xlines; ylines] #Return all the line elements as an array
 end
 
 """
@@ -409,11 +410,13 @@ function line(
         rx::Float64 = 0.0,
         ry::Float64 = 0.0,
         rz::Float64 = 0.0,
-        kind::AbstractString = "strip"
+        kind::AbstractString = "strip",
+        vertexcolors::Vector{Color} = Color[]
     )
     xs = [coords[1] for coords in vertices]
     ys = [coords[2] for coords in vertices]
     zs = [coords[3] for coords in vertices]
+    colors = map(x -> "#"*hex(x), vertexcolors)
     Elem(
         :"three-js-line",
         attributes = @compat Dict(
@@ -427,7 +430,33 @@ function line(
             :ry => ry,
             :rz => rz,
             :kind => kind,
+            :vertexcolors => colors
         )
+    )
+end
+
+function line(
+        verticeswithcolor::Vector{Tuple{Float64, Float64, Float64, Color}};
+        x::Float64 = 0.0,
+        y::Float64 = 0.0,
+        z::Float64 = 0.0,
+        rx::Float64 = 0.0,
+        ry::Float64 = 0.0,
+        rz::Float64 = 0.0,
+        kind::AbstractString = "strip"
+    )
+    vertexcolors = [vertex[4] for vertex in verticeswithcolor]
+    vertices = [(vertex[1], vertex[2], vertex[3]) for vertex in verticeswithcolor]
+    line(
+        vertices,
+        x = x,
+        y = y,
+        z = z,
+        rx = rx,
+        ry = ry,
+        rz = rz,
+        kind = kind,
+        vertexcolors = vertexcolors
     )
 end
 
