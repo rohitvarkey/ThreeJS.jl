@@ -22,9 +22,9 @@ function mesh(
     )
     Elem(
         :"three-js-mesh",
-        attributes = (@compat Dict(
+        attributes = Dict(
             :x => x, :y => y, :z => z, :rx => rx, :ry => ry, :rz => rz
-        ))
+        )
     )
 end
 
@@ -33,7 +33,7 @@ Creates a Box geometry of width `w`, height `h` and depth `d`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function box(w::Float64,h::Float64,d::Float64)
-   Elem(:"three-js-box", attributes = @compat Dict(:w=>w, :h=>h, :d=>d))
+   Elem(:"three-js-box", attributes = Dict(:w=>w, :h=>h, :d=>d))
 end
 
 """
@@ -41,7 +41,7 @@ Creates a Sphere geometry of radius `r`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function sphere(r::Float64)
-    Elem(:"three-js-sphere", attributes = @compat Dict(:r=>r))
+    Elem(:"three-js-sphere", attributes = Dict(:r=>r))
 end
 
 """
@@ -49,7 +49,7 @@ Creates a square base Pyramid geometry of base `b` and height `h`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function pyramid(b::Float64,h::Float64)
-    Elem(:"three-js-pyramid", attributes = @compat Dict(:base => b, :height => h))
+    Elem(:"three-js-pyramid", attributes = Dict(:base => b, :height => h))
 end
 
 """
@@ -60,7 +60,7 @@ Should be put in a `mesh` along with another material Elem to render.
 function cylinder(top::Float64,bottom::Float64,height::Float64)
     Elem(
         :"three-js-cylinder",
-        attributes = @compat Dict(:top => top, :bottom => bottom, :height => height)
+        attributes = Dict(:top => top, :bottom => bottom, :height => height)
     )
 end
 
@@ -71,7 +71,7 @@ Should be put in a `mesh` along with another material Elem to render.
 function torus(radius::Float64,tube::Float64)
     Elem(
         :"three-js-torus",
-        attributes = @compat Dict(:r => radius, :tube => tube)
+        attributes = Dict(:r => radius, :tube => tube)
     )
 end
 
@@ -82,7 +82,7 @@ Should be put in a `mesh` along with another material Elem to render.
 function dodecahedron(radius::Float64)
     Elem(
         :"three-js-dodecahedron",
-        attributes = @compat Dict(:r => radius)
+        attributes = Dict(:r => radius)
     )
 end
 
@@ -93,7 +93,7 @@ Should be put in a `mesh` along with another material Elem to render.
 function icosahedron(radius::Float64)
     Elem(
         :"three-js-icosahedron",
-        attributes = @compat Dict(:r => radius)
+        attributes = Dict(:r => radius)
     )
 end
 
@@ -104,7 +104,7 @@ Should be put in a `mesh` along with another material Elem to render.
 function octahedron(radius::Float64)
     Elem(
         :"three-js-octahedron",
-        attributes = @compat Dict(:r => radius)
+        attributes = Dict(:r => radius)
     )
 end
 
@@ -115,7 +115,7 @@ Should be put in a `mesh` along with another material Elem to render.
 function tetrahedron(radius::Float64)
     Elem(
         :"three-js-tetrahedron",
-        attributes = @compat Dict(:r => radius)
+        attributes = Dict(:r => radius)
     )
 end
 
@@ -127,7 +127,7 @@ Should be put in a `mesh` along with another material Elem to render.
 function plane(width::Float64, height::Float64)
     Elem(
         :"three-js-plane",
-        attributes = @compat Dict(:w => width, :h => height)
+        attributes = Dict(:w => width, :h => height)
     )
 end
 
@@ -154,7 +154,7 @@ function geometry(
     end
     geom = Elem(
         :"three-js-geometry",
-        attributes = @compat Dict(
+        attributes = Dict(
             :x => x,
             :y => y,
             :z => z,
@@ -198,7 +198,7 @@ function parametric{T<:Colors.Color}(
     ]
     geom = Elem(
         :"three-js-parametric",
-        attributes = @compat Dict(
+        attributes = Dict(
             :slices => slices,
             :stacks => stacks,
             :x => xs,
@@ -254,7 +254,7 @@ end
 """
 Creates a material tag with properties passed in as a dictionary.
 """
-function material(props::Dict=@compat Dict())
+function material(props::Dict=Dict())
     Elem(:"three-js-material", attributes = props)
 end
 
@@ -274,7 +274,7 @@ function camera(
     )
     Elem(
         :"three-js-camera",
-        attributes = @compat Dict(
+        attributes = Dict(
             :x => x, :y => y,:z => z,
             :fov => fov,:aspect => aspect, :near => near, :far => far
         )
@@ -298,7 +298,7 @@ function pointlight(
     colorString = string("#"*hex(color))
     Elem(
         :"three-js-light",
-        attributes = @compat Dict(
+        attributes = Dict(
             :x => x, :y => y, :z => z,
             :kind => "point",
             :color => colorString,
@@ -330,7 +330,7 @@ function spotlight(
     colorString = string("#"*hex(color))
     Elem(
         :"three-js-light",
-        attributes = @compat Dict(
+        attributes = Dict(
             :x => x, :y => y, :z => z,
             :kind => "spot",
             :color => colorString,
@@ -352,7 +352,7 @@ function ambientlight(color::Colors.RGB{U8}=colorant"white")
     colorString = string("#"*hex(color))
     Elem(
         :"three-js-light",
-        attributes = @compat Dict(:kind => "ambient", :color => colorString)
+        attributes = Dict(:kind => "ambient", :color => colorString)
     )
 end
 
@@ -392,7 +392,7 @@ function line(
     colors = map(x -> "#"*hex(x), vertexcolors)
     Elem(
         :"three-js-line",
-        attributes = @compat Dict(
+        attributes = Dict(
             :xs => xs,
             :ys => ys,
             :zs => zs,
@@ -457,7 +457,7 @@ for more details.
 
 These properties should be passed in as a `Dict`.
 """
-function linematerial(props = @compat Dict())
+function linematerial(props = Dict())
     Elem(:"three-js-line-material", attributes = props)
 end
 
@@ -482,10 +482,10 @@ function grid(
         rz::Float64 = 0.0,
         colorcenter::Colors.RGB{U8}=colorant"black",
         colorgrid::Colors.RGB{U8}=colorant"black"
-    ) 
+    )
     Elem(
         :"three-js-grid",
-        attributes = @compat Dict(
+        attributes = Dict(
             :size => size,
             :step => step,
             :x => x,
