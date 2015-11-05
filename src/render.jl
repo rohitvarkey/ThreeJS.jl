@@ -188,7 +188,7 @@ function parametric{T<:Colors.Color}(
     yrange = linspace(yrange.start, yrange.stop, stacks+1)
     xs = [x for x=xrange, y=yrange]
     ys = [y for x=xrange, y=yrange]
-    zs = [f(x,y) for x=xrange, y=yrange]
+    zs = Float64[f(x,y) for x=xrange, y=yrange]
     zrange = maximum(zs) - minimum(zs)
     zmax = maximum(zs)
     colormaplength = length(colormap)
@@ -215,12 +215,12 @@ Takes `x` values between `xrange` divided into `slices+1` equal intervals.
 Takes `y` values between `yrange` divided into `stacks+1` equal intervals.
 Applies a function `f` passed to all such `x` and `y` values and creates
 vertices of coordinates `(x,y,z)` and a joins them horizontally and vertically,
-creating a mesh
+creating a mesh.
+
+Returns an array of `line` elements which should be under the `scene`.
 
 A colormap can also be passed to set the vertice colors to a corresponding color
 using the keyword argument `colormap`.
-NOTE: Such colors will be displayed only with a `material` with `colorkind` set
-to `"vertex"` and `color` to `"white"`.
 """
 function meshlines{T<:Colors.Color}(
     slices::Int,
@@ -240,11 +240,11 @@ function meshlines{T<:Colors.Color}(
         ceil(Int,(zmax - z)/zrange * (colormaplength-1)+1)
     ]
     meshmaterial = linematerial(Dict(:color => "white", :colorkind => "vertex"))
-    xlines = [
+    xlines = Elem[
         line(Tuple{Float64, Float64, Float64, Color}[(x, f(x,y), y, findcolor(f(x,y))) for x=xrange]) << meshmaterial
         for y=yrange
     ]
-    ylines = [
+    ylines = Elem[
         line(Tuple{Float64, Float64, Float64, Color}[(x, f(x,y), y, findcolor(f(x,y))) for y=yrange]) << meshmaterial
         for x=xrange
     ]
@@ -359,17 +359,21 @@ end
 """
 Creates a line tag.
 Line tags should be a child of the scene tag created by `initscene`.
-Vertices of the line to be drawn should be nested inside this
-tag using `vertex`.
+
+Vertices of the line to be drawn should be passed in as a `Vector` of
+`Tuple{Float64, Float64, Float64}`.
 The material to be associated with the line can be set using
-`linematerial` which should also be a child of the line tag.
-Requires the total number of vertices in the line as an argument.
+`linematerial` which should be a child of the line tag.
+
 A keyword argument, `kind` is also provided to set how the lines
 should be drawn. `"strip"` and `"pieces"` are the possible values.
 
 The line can be translated and rotated using keyword arguments,
 `x`,`y`,`z` for the (x, y, z) coordinate and `rx`, `ry` and `rz`
 as the rotation about the X, Y and Z axes respectively.
+
+Colors for the vertices can be set by passing in a `Vector` of
+`Color` as the `vertexcolors` kwarg.
 """
 function line(
         vertices::Vector{Tuple{Float64, Float64, Float64}};
@@ -404,6 +408,11 @@ function line(
     )
 end
 
+"""
+Helper function to make creating `line` easier.
+`Tuples` of vertices with their color also as part of the `Tuple`
+is expected as the argument.
+"""
 function line(
         verticeswithcolor::Vector{Tuple{Float64, Float64, Float64, Color}};
         x::Float64 = 0.0,
