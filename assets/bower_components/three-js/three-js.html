@@ -946,6 +946,10 @@
         strip: "LineStrip"
       },
       newGeo: function () {
+        if(this.object)
+        {
+          this.removeFromParent3();
+        }
         this.geometry = new THREE.Geometry();
         if (this.xs == undefined || this.ys ==undefined || this.zs == undefined)
           return;
@@ -974,11 +978,9 @@
       },
       createLine: function () {
         var kind = THREE[this.kinds[this.kind]];
-        console.log(this.geometry);
-        console.log(this.material);
         if (this.geometry && this.material){
           this.object = new THREE.Line(this.geometry, this.material, kind);
-          Polymer.dom(this).parentNode.addToScene(this.object);
+          this.addToParent3();
         }
         else{
           console.log("Not defined yet")
