@@ -800,55 +800,6 @@
   </script>
 </dom-module>
 
-<dom-module id="three-js-vertex">
-  <script>
-    Polymer({
-      is: 'three-js-vertex',
-      properties: {
-        color: {
-          notify: true,
-          observer: 'replaceInGeom',
-        },
-        x: {
-          type: Number,
-          notify: true,
-          observer: 'replaceInGeom'
-        },
-        y: {
-          type: Number,
-          notify: true,
-          observer: 'replaceInGeom'
-        },
-        z: {
-          type: Number,
-          notify: true,
-          observer: 'replaceInGeom'
-        }
-      },
-      addToGeom: function () {
-        this.objectParent = Polymer.dom(this).parentNode;
-        if(Polymer.dom(this).parentNode){
-          Polymer.dom(this).parentNode.addVertex(this);
-        }
-      },
-      //console.log('[%s]: added to threejs-geometry parent', this.localName + (this.id ? '#' + this.id : ''));
-      replaceInGeom: function (newValue, oldValue) {
-        this.objectParent = Polymer.dom(this).parentNode;
-        oldVertex = this.object;
-        this.object = new THREE.Vector3(this.x, this.y, this.z);
-        if(this.objectParent && this.objectParent.replaceVertex)
-        this.objectParent.replaceVertex(oldVertex, this.object);
-      },
-      attached: function () {
-        this.async(function() {
-          this.object = new THREE.Vector3(this.x, this.y, this.z);
-          this.object.color = new THREE.Color(this.color);
-          this.addToGeom();
-        }, 500);
-      }
-    });
-  </script>
-</dom-module>
 
 <dom-module id="three-js-parametric">
   <script>
@@ -864,6 +815,22 @@
           type: Number,
           notify: true,
           value: 0
+        },
+        x: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        y: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        z: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        vertexcolors: {
+          type: Object,
+          observer: 'newGeo',
         }
       },
       newGeo: function () {
@@ -907,128 +874,36 @@
             ]);
           }
         }
-      },
-      addVertex: function (vertex) {
-        this.object.vertices.push(vertex.object);
-        this.object.colors.push(vertex.object.color);
-        this.count++;
-        if (this.count == this.length) {
-          this.addColor();
-          this.object.computeFaceNormals();
-          this.object.computeVertexNormals();
-          if(Polymer.dom(this).parentNode)
-            Polymer.dom(this).parentNode.addGeom(this.object);
-        }
-      },
-      addColor: function (vertex) {
-        var verts = this.object.vertices;
-        var faces = this.object.faces;
-        if (faces.length == 0 || verts.length ==0){
+        if (this.x == undefined || this.y ==undefined || this.z == undefined)
           return;
+        var x = this.x.split(',');
+        var y = this.y.split(',');
+        var z = this.z.split(',');
+        for (i=0;i<x.length;i++)
+        {
+          this.object.vertices.push(new THREE.Vector3(x[i],y[i],z[i]));
         }
-        var sliceCount = this.slices + 1;
-        var count = 0;
-        for (i = 0; i < this.stacks; i++) {
-          for (j = 0; j < this.slices; j++) {
-            a = i * sliceCount + j;
-            b = i * sliceCount + j + 1;
-            c = (i + 1) * sliceCount + j + 1;
-            d = (i + 1) * sliceCount + j;
-            faces[count].vertexColors = [ verts[a].color, verts[b].color, verts[d].color];
-            faces[count + 1].vertexColors = [ verts[b].color, verts[c].color, verts[d].color];
-            count +=2;
+        if (this.vertexcolors)
+        {
+          var vertexcolors = this.vertexcolors.split(',');
+          for (i=0; i<faces.length; i++)
+          {
+            var a = this.object.faces[i].a
+            var b = this.object.faces[i].b
+            var c = this.object.faces[i].c
+            this.object.faces[i].vertexColors.push(
+              new THREE.Color(vertexcolors[a]),
+              new THREE.Color(vertexcolors[b]),
+              new THREE.Color(vertexcolors[c])
+            )
           }
         }
-      },
-      replaceVertex: function (oldVertex, newVertex) {
-        if (this.object == undefined || this.count<this.length)
-          return;
-        var index = this.object.vertices.indexOf(oldVertex);
-        this.object.vertices[index] = newVertex;
-        this.addColor(); //TODO: Replace this
         this.object.computeFaceNormals();
-        this.object.computeVertexNormals();
-        this.object.verticesNeedUpdate = true;
-        if(Polymer.dom(this).parentNode)
-          Polymer.dom(this).parentNode.addGeom(this.object);
+        this.object.computeBoundingSphere();
+        this.addToParent();
       },
-      attached: function () {
-        this.async(function (){
-          this.newGeo();
-        });
-      }
-    });
-  </script>
-</dom-module>
-
-<dom-module id="three-js-meshlines">
-  <script>
-    Polymer({
-      is: 'three-js-meshlines',
-      properties: {
-        slices: {
-          type: Number,
-          notify: true
-        },
-        stacks: {
-          type :Number,
-          notify: true
-        }
-      },
-      newGeo: function () {
-        this.object = new THREE.Geometry();
-        this.count = 0;
-        //Keep track of number of vertices added.
-        var slices = Number(this.slices);
-        var stacks = Number(this.stacks);
-        this.length = (slices + 1) * (stacks + 1);
-      },
-      //Total number of vertices.
-      meshLines: function () {
-        var i, j, p;
-        var slices = Number(this.slices);
-        var stacks = Number(this.stacks);
-        var sliceCount = slices + 1;
-        var a, b, c, d;
-        var material = new THREE.LineBasicMaterial({ color: "#ffffff", vertexColors: THREE.VertexColors});
-        var verts = this.object.vertices;
-        this.lines = [];
-        for (i = 0; i < stacks; i++) {
-          this.lines.push(new THREE.Geometry());
-          for (j = 0; j < slices; j++) {
-            a = verts[i * sliceCount + j];
-            this.lines[i].vertices.push(a);
-            this.lines[i].colors.push(a.color);
-          }
-          this.newLine = new THREE.Line(this.lines[i], material);
-          if(Polymer.dom(this).parentNode.parentNode)
-            Polymer.dom(this).parentNode.parentNode.scene.add(this.newLine);
-        }
-        for (i = stacks; i < slices + stacks; i++) {
-          this.lines.push(new THREE.Geometry());
-          for (j = 0; j < stacks; j++) {
-            a = verts[j * (stacks + 1) + i - stacks];
-            this.lines[i].vertices.push(a);
-            this.lines[i].colors.push(a.color);
-          }
-          this.newLine = new THREE.Line(this.lines[i], material);
-          if(Polymer.dom(this).parentNode)
-            Polymer.dom(this).parentNode.parentNode.scene.add(this.newLine);
-        }
-      },
-      addVertex: function (vertex) {
-        this.object.vertices.push(vertex.object);
-        this.count++;
-        if (this.count == this.length) {
-          this.meshLines();
-        }
-      },
-      replaceVertex: function (oldVertex, newVertex) {
-        if (this.object == undefined || this.count<this.length)
-          return;
-        var index = this.object.vertices.indexOf(oldVertex);
-        this.object.vertices[index] = newVertex;
-        this.meshLines();
+      addToParent: function () {
+        Polymer.dom(this).parentNode.addGeom(this.object);
       },
       attached: function () {
         this.async(function (){
@@ -1045,8 +920,21 @@
       is: 'three-js-line',
       behaviors: [ThreeJSObjectBehavior],
       properties: {
-        totalvertices: {
-          type: Number,
+        xs: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        ys: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        zs: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        vertexcolors: {
+          type: Object,
+          observer: 'newGeo',
         },
         kind: {
           type: String,
@@ -1058,36 +946,45 @@
         strip: "LineStrip"
       },
       newGeo: function () {
-        this.geometry = new THREE.Geometry();
-        this.count = 0;
-      },
-      addVertex: function (vertex) {
-        this.geometry.vertices.push(vertex.object);
-        this.geometry.colors.push(vertex.object.color);
-        this.count++;
-        if (this.count == this.totalvertices) {
-          this.createLine();
+        if(this.object)
+        {
+          this.removeFromParent3();
         }
-      },
-      replaceVertex: function (oldVertex, newVertex) {
-        if (this.geometry == undefined || this.count<this.totalvertices)
+        this.geometry = new THREE.Geometry();
+        if (this.xs == undefined || this.ys ==undefined || this.zs == undefined)
           return;
-        var index = this.geometry.vertices.indexOf(oldVertex);
-        this.geometry.vertices[index] = newVertex;
-        this.createLine();
+        var x = this.xs.split(',');
+        var y = this.ys.split(',');
+        var z = this.zs.split(',');
+        for (i=0;i<x.length;i++)
+        {
+          this.geometry.vertices.push(new THREE.Vector3(x[i],y[i],z[i]));
+        }
+        if (this.vertexcolors)
+        {
+          var vertexcolors = this.vertexcolors.split(',');
+          for (i=0; i<vertexcolors.length; i++)
+          {
+            this.geometry.colors.push(
+              new THREE.Color(vertexcolors[i])
+            );
+          }
+        }
+        this.createLine()
       },
       addMaterial: function (material) {
         this.material = material;
+        this.createLine();
       },
       createLine: function () {
         var kind = THREE[this.kinds[this.kind]];
         if (this.geometry && this.material){
           this.object = new THREE.Line(this.geometry, this.material, kind);
+          this.addToParent3();
         }
         else{
           console.log("Not defined yet")
         }
-        Polymer.dom(this).parentNode.addToScene(this.object);
       },
       attached: function () {
         this.async(function (){
@@ -1181,120 +1078,78 @@
     Polymer({
       is: 'three-js-geometry',
       properties: {
-          totalvertices: {
-            type: Number
+          x: {
+            type: Object,
+            observer: 'newGeo',
           },
-          totalfaces: {
-            type: Number
-          }
+          y: {
+            type: Object,
+            observer: 'newGeo',
+          },
+          z: {
+            type: Object,
+            observer: 'newGeo',
+          },
+          faces: {
+            type: Object,
+            observer: 'newGeo',
+          },
+          colors: {
+            type: Object,
+            observer: 'newGeo',
+          },
+          vertexcolors: {
+            type: Object,
+            observer: 'newGeo',
+          },
       },
       newGeo: function () {
+        if (this.x == undefined || this.y ==undefined || this.z == undefined || this.faces==undefined)
+          return;
+        var x = this.x.split(',');
+        var y = this.y.split(',');
+        var z = this.z.split(',');
+        var faces = this.faces.split(',');
         this.object = new THREE.Geometry();
-        this.vertices = 0;
-        this.faces = 0;
-      },
-      addToParent: function () {
-        for (i=0; i<this.totalfaces;i++){
-          var face = this.object.faces[i];
-          face.vertexColors = []
-          //Populating face vertex colors
-          face.vertexColors.push(this.object.vertices[face.a].color);
-          face.vertexColors.push(this.object.vertices[face.b].color);
-          face.vertexColors.push(this.object.vertices[face.c].color);
+        for (i=0;i<x.length;i++)
+        {
+          this.object.vertices.push(new THREE.Vector3(x[i],y[i],z[i]));
+        }
+        for (i=0; i<faces.length;i+=3){
+          var face = new THREE.Face3(faces[i], faces[i+1], faces[i+2]);
+          this.object.faces.push(face);
+        }
+        if (this.colors)
+        {
+          var colors = this.colors.split(',');
+          for (i=0; i<colors.length; i++)
+          {
+            this.object.faces[i].color = new THREE.Color(colors[i]);
+          }
+        }
+        if (this.vertexcolors)
+        {
+          var vertexcolors = this.vertexcolors.split(',');
+          for (i=0; i<vertexcolors.length; i++)
+          {
+            this.object.faces[i].vertexColors.push(
+              new THREE.Color(vertexcolors[i]),
+              new THREE.Color(vertexcolors[i+1]),
+              new THREE.Color(vertexcolors[i+2])
+            )
+          }
         }
         this.object.computeFaceNormals();
         this.object.computeBoundingSphere();
+        this.addToParent();
+      },
+      addToParent: function () {
         Polymer.dom(this).parentNode.addGeom(this.object);
-      },
-      addVertex: function (vertex) {
-        this.object.vertices.push(vertex.object);
-        this.vertices++;
-        if (this.vertices == this.totalvertices && this.faces == this.totalfaces) {
-          //All set to add to parent.
-          this.addToParent();
-        }
-      },
-      addFace: function (face) {
-        this.object.faces.push(face.object);
-        this.faces++;
-        if (this.vertices == this.totalvertices && this.faces == this.totalfaces) {
-          this.addToParent();
-        }
-      },
-      replaceVertex: function (oldVertex, newVertex) {
-        if (this.object == undefined || this.vertices<this.totalvertices)
-          return;
-        var index = this.object.vertices.indexOf(oldVertex);
-        this.object.vertices[index] = newVertex;
-        this.addToParent();
-      },
-      replaceFace: function (oldFace, newFace) {
-        if (this.object == undefined || this.faces<this.totalfaces)
-          return;
-        var index = this.object.faces.indexOf(oldVertex);
-        this.object.vertices[index] = newFace;
-        this.addToParent();
       },
       attached: function () {
         this.async(function (){
           this.newGeo();
         });
-      }
-    });
-  </script>
-</dom-module>
-
-<dom-module id="three-js-face">
-  <script>
-    Polymer({
-      is: 'three-js-face',
-      properties: {
-        a: {
-          type: Number,
-          notify: true,
-          observer: 'replaceInGeom'
-        },
-        b: {
-          type: Number,
-          notify: true,
-          observer: 'replaceInGeom'
-        },
-        c: {
-          type: Number,
-          notify: true,
-          observer: 'replaceInGeom'
-        },
-        faceColor: {
-          type: String,
-          value: "#000000"
-        },
-        /*
-        vertexColors: {
-          type: Object,
-          value: ["0x000000", "0x000000", "0x000000"]
-        }*/
-      },
-      addToGeom: function () {
-        this.objectParent = Polymer.dom(this).parentNode;
-        if(Polymer.dom(this).parentNode)
-          Polymer.dom(this).parentNode.addFace(this);
-      },
-      //console.log('[%s]: added to threejs-geometry parent', this.localName + (this.id ? '#' + this.id : ''));
-      replaceInGeom: function (newValue, oldValue) {
-        this.objectParent = Polymer.dom(this).parentNode;
-        oldVertex = this.object;
-        this.object = new THREE.Face3(this.a, this.b, this.c);
-        this.object.color = this.color
-        if(this.objectParent)
-        this.objectParent.replaceFace(oldVertex, this.object);
-      },
-      attached: function () {
-        this.async(function() {
-          this.object = new THREE.Face3(this.a, this.b, this.c);
-          this.object.color = this.faceColor;
-          this.object.vertexColors = this.vertexColors;
-          this.addToGeom();
-        }, 500);
       }
     });
   </script>
