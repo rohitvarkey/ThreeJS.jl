@@ -1,8 +1,8 @@
 import Compat
 using Colors
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
-       material, camera, pointlight, spotlight, ambientlight, vertex, line,
-       linematerial, geometry, face, dodecahedron, icosahedron, octahedron,
+       material, camera, pointlight, spotlight, ambientlight, line,
+       linematerial, geometry, dodecahedron, icosahedron, octahedron,
        tetrahedron, plane, grid
 
 """
@@ -162,37 +162,6 @@ function geometry(
         )
     )
     geom
-end
-
-
-"""
-Creates a face with vertex indices `a`, `b` and `c`.
-
-A keyword argument `color` is accepted setting the color of the face.
-NOTE: Face colors come into effect only when the related material has
-`FaceColors` as its `colorkind` property.
-"""
-function face(a::Int, b::Int, c::Int; color::RGB{U8} = colorant"white")
-    colorString = string("#"*hex(color))
-    Elem(
-        :"three-js-face",
-        attributes = @compat Dict(
-            :a => a, :b => b, :c => c, :faceColor => colorString
-        )
-    )
-end
-
-"""
-Creates a vertex at position `(x,y,z)`.
-A keyword argument of `color` can also be passed to set the vertex color to that
-color.
-"""
-function vertex(x::Float64,y::Float64,z::Float64; color::Colors.Color=colorant"black")
-    colorString = string("#"*hex(color))
-    Elem(
-        :"three-js-vertex",
-        attributes = @compat Dict(:x => x, :y => y, :z => z, :color => colorString)
-    )
 end
 
 """
