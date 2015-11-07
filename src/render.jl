@@ -1,5 +1,5 @@
 import Compat
-using Colors
+using Colors, GeometryTypes
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, line,
        linematerial, geometry, dodecahedron, icosahedron, octahedron,
@@ -162,6 +162,18 @@ function geometry(
         )
     )
     geom
+end
+
+"""
+Create a geometry from an AbstractMesh (via GeometryTypes).
+The scale parameter will scale the mesh vertices in the corresponding axis.
+"""
+function ThreeJS.geometry{VT,N,T,O}(m::AbstractMesh{VT,Face{N,T,O}};scale=(1,1,1))
+    vs = [(Float64(i[1])*scale[1],
+           Float64(i[2])*scale[2],
+           Float64(i[3])*scale[3]) for i in m.vertices]
+    fs = [(Int(i[1])-O,Int(i[2])-O,Int(i[3])-O) for i in m.faces]
+    ThreeJS.geometry(vs,fs)
 end
 
 """
