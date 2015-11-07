@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Manual - ThreeJS.jl Docs</title>
+  
+
+  <link rel="shortcut icon" href="../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Manual";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script>
+  <script src="../js/theme.js"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> ThreeJS.jl Docs</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Manual</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#how-to-create-a-scene">How to create a scene?</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#creating-meshes">Creating meshes</a></li>
+                
+                    <li><a class="toctree-l4" href="#geometries">Geometries</a></li>
+                
+                    <li><a class="toctree-l4" href="#custom-geometries">Custom Geometries</a></li>
+                
+                    <li><a class="toctree-l4" href="#materials">Materials</a></li>
+                
+                    <li><a class="toctree-l4" href="#putting-them-together">Putting them together</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#lines">Lines</a></li>
+                
+                    <li><a class="toctree-l4" href="#line-materials">Line Materials</a></li>
+                
+                    <li><a class="toctree-l4" href="#drawing-lines">Drawing lines</a></li>
+                
+                    <li><a class="toctree-l4" href="#mesh-grids">Mesh grids</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#cameras">Cameras</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#lights">Lights</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#controls">Controls</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#interactivity">Interactivity</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#animations">Animations</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#example">Example</a></li>
+                
+            
+            </ul>
+        
+    </li>
+<li>
+          
+            <li>
+    <ul class="subnav">
+    <li><span>Api</span></li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../api/ThreeJS/">ThreeJS</a>
+        
+    </li>
+
+        
+            
+    <li class="toctree-l1 ">
+        <a class="" href="../api/">Home</a>
+        
+    </li>
+
+        
+    </ul>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">ThreeJS.jl Docs</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Manual</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h3 id="how-to-create-a-scene">How to create a scene?</h3>
+<p>For rendering Three-JS elements, all tags should be nested in a <code>three-js</code> tag.
+This can be done by using the <code>initscene</code> function. An outer div to put this in
+is also required and can be created by using the <code>outerdiv</code> function.</p>
+<p>The code snippet below should get a scene initialized.</p>
+<pre><code class="julia">using ThreeJS
+outerdiv() &lt;&lt; initscene()
+</code></pre>
+
+<p>By default, a scene of <code>1000px x 562px</code> is created. Support to change this will
+be added soon.</p>
+<h3 id="creating-meshes">Creating meshes</h3>
+<p>In Three-JS, meshes are objects that can be drawn in the scene. These require a
+<code>geometry</code> and a <code>material</code> to be created. Meshes decide the properties as to the
+position of where the object is drawn.</p>
+<p>A mesh can be created using the <code>mesh</code> function taking the coordinates <code>(x,y,z)</code>
+as its arguments.</p>
+<p>A <code>geometry</code> and a <code>material</code> element should be nested inside this <code>mesh</code>.</p>
+<h4 id="geometries">Geometries</h4>
+<p>Geometries hold all details necessary to describe a 3D model. These can be
+thought of as the shapes we want to display.</p>
+<p>ThreeJS.jl provides support to render the following geometry primitives:</p>
+<ul>
+<li>Boxes - <code>box(width, height, depth)</code></li>
+<li>Spheres - <code>sphere(radius)</code></li>
+<li>Pyramids - <code>pyramid(base, height)</code></li>
+<li>Cylinders - <code>cylinder(topradius, bottomradius, height)</code></li>
+<li>Tori - <code>torus(radius, tuberadius)</code></li>
+<li>Parametric Surfaces - <code>parametric(slices, stacks, xrange, yrange, function)</code></li>
+<li>Dodecahedron - <code>dodecahedron(radius)</code></li>
+<li>Icosahedron - <code>icosahedron(radius)</code></li>
+<li>Octahedron - <code>octahedron(radius)</code></li>
+<li>Tetrahedron - <code>tetrahedron(radius)</code></li>
+<li>Planes - <code>plane(width, height)</code></li>
+</ul>
+<p>These functions will return the appropriate <code>geometry</code> tags that are to be nested
+inside a <code>mesh</code> along with a <code>material</code> to render.</p>
+<h4 id="custom-geometries">Custom Geometries</h4>
+<p>The <code>geometry</code> function is able to render custom geometries, which are specified
+by the vertices and the faces.</p>
+<h4 id="materials">Materials</h4>
+<p>Materials are what decides how the model responds to light, color and such
+properties of the material.</p>
+<p>A <code>material</code> tag is created by using the <code>material</code> function. Properties are
+to be passed as a <code>Dict</code> to this function.</p>
+<p>Available properties are:</p>
+<ul>
+<li><code>color</code> - Can be any CSS color value.</li>
+<li><code>kind</code> - Can be <a href="http://threejs.org/docs/#Reference/Materials/MeshLambertMaterial"><code>lambert</code></a>,
+<a href="http://threejs.org/docs/#Reference/Materials/MeshBasicMaterial"><code>basic</code></a>,
+<a href="http://threejs.org/docs/#Reference/Materials/MeshPhongMaterial"><code>phong</code></a>, or
+<a href="http://threejs.org/docs/#Reference/Materials/MeshNormalMaterial"><code>normal</code></a></li>
+<li><code>wireframe</code> - <code>true</code> or <code>false</code></li>
+<li><code>visible</code> - <code>true</code> or <code>false</code></li>
+</ul>
+<p>Some helper functions to get these key value pairs is given in <code>src/properties.jl</code>.</p>
+<h4 id="putting-them-together">Putting them together</h4>
+<pre><code class="julia">mesh(0.0, 0.0, 0.0) &lt;&lt;
+    [box(1.0,1.0,1.0), material(Dict(:kind=&gt;&quot;basic&quot;,:color=&gt;&quot;red&quot;)]
+</code></pre>
+
+<p>will create a cube of size 1.0 of red color and with the basic material.</p>
+<h3 id="lines">Lines</h3>
+<p>Lines can be drawn by specifying the vertices of the line in the order to be
+joined. Lines can either be of <code>"strip"</code> or <code>"pieces"</code> kinds, which decide how
+the vertices should be joined. <code>"strip"</code> lines join all vertices, while "pieces"
+only joins the first and second, third and fourth and so on. Colors for the
+vertices of the lines can also be specified.</p>
+<p>Lines are also meshes and has the properties of a mesh too, like position and
+rotation. Like meshes, they are a child of the <code>scene</code>.</p>
+<h4 id="line-materials">Line Materials</h4>
+<p>Lines also require a material to decide properties of a line.
+The <code>linematerial</code> function can be used to do this and specify some properties
+for the line. The <code>linematerial</code> should be a child of the <code>line</code> element.</p>
+<h4 id="drawing-lines">Drawing lines</h4>
+<p>The <code>line</code> function can be used to draw lines.</p>
+<pre><code class="julia">line([(0.0, 0.0, 0.0), (1.0, 1.0, 1.0)]) &lt;&lt;
+        linematerial(Dict(:color=&gt;&quot;red&quot;))
+</code></pre>
+
+<h4 id="mesh-grids">Mesh grids</h4>
+<p>Drawing mesh grids can be achieved by using the <code>meshlines</code> function. It creates
+a set of lines to form the grid and assigns colors to the vertices based on the
+z values.</p>
+<p>If you are looking for a 2D grid, use the <code>grid</code> function. It creates a grid on
+the XY plane which can then be rotated as required.</p>
+<h3 id="cameras">Cameras</h3>
+<p>No 3D scene can be properly displayed without a camera to view from. ThreeJS.jl
+provides support for a Perspective Camera view using the <code>camera</code> function.</p>
+<p>This sets the position of the camera, along with properties like <code>near</code> plane,
+<code>far</code> plane, <code>fov</code> for field of view (in degrees), and <code>aspect</code> ratio.</p>
+<p>The <code>camera</code> tag should be a child of the <code>scene</code>.</p>
+<h3 id="lights">Lights</h3>
+<p>ThreeJS.jl provides support for 3 kinds of lighting.</p>
+<ul>
+<li><a href="http://threejs.org/docs/#Reference/Lights/AmbientLight">Ambient</a> - <code>ambientlight(color)</code></li>
+<li><a href="http://threejs.org/docs/#Reference/Lights/PointLight">Point</a> -
+<code>pointlight(x, y, z; color, intensity, distance)</code></li>
+<li><a href="http://threejs.org/docs/#Reference/Lights/SpotLight">Spot</a> -
+<code>spotlight(x, y, z; color, intensity, distance, angle, exponent, shadow)</code></li>
+</ul>
+<p>These tags should also be a child of the <code>scene</code>.</p>
+<h3 id="controls">Controls</h3>
+<p>By default, ThreeJS adds <a href="http://threejs.org/examples/misc_controls_trackball.html">TrackballControls</a>
+to every scene drawn. This lets you interact with the scene by using the
+trackpad or mouse to rotate, pan and zoom.</p>
+<h3 id="interactivity">Interactivity</h3>
+<p>You can use the <a href="https://shashi.github.io/Escher.jl/reactive.html">reactive functionality</a>
+provided by Escher to create Signals of the 3D graphic elements produced.
+These can let you create graphics that can be interacted with using UI elements
+like sliders. Try launching <code>escher --serve</code> (if you have Escher installed)
+in the <code>examples/</code> directory and heading to <code>localhost:5555/box.jl</code> on the
+browser. You can see a box whose width, depth, height and rotation about
+each axes can be set and the box will update accordingly!</p>
+<p>Currently, this functionality does not work in IJulia notebooks. Hopefully,
+this will be fixed soon and you can use <code>Interact</code>(https://github.com/JuliaLang/Interact.jl)
+to do the same in IJulia notebooks.</p>
+<h3 id="animations">Animations</h3>
+<p>You can also do animations by using Reactive signals. See
+<code>examples/rotatingcube.jl</code> as an example. It is implemented in Escher,
+so running an Escher server from that directory and heading to
+<code>localhost:5555/rotatingcube.jl</code> should give you a cube which is
+rotating!</p>
+<p>NOTE: Adding new objects to a scene will force a redraw of the scene, resetting
+the camera.</p>
+<h3 id="example">Example</h3>
+<pre><code class="julia">using ThreeJS
+outerdiv() &lt;&lt; (initscene() &lt;&lt;
+    [
+        mesh(0.0, 0.0, 0.0) &lt;&lt;
+        [
+            box(1.0,1.0,1.0), material(Dict(:kind=&gt;&quot;lambert&quot;,:color=&gt;&quot;red&quot;))
+        ],
+        pointlight(3.0, 3.0, 3.0),
+        camera(0.0, 0.0, 10.0)
+    ])
+</code></pre>
+
+<p>Running the above in an IJulia notebook should draw a red cube,
+which is illuminated by a light from a corner.</p>
+<p>For Escher, after the script above is run, the following code should give the
+same result.</p>
+<pre><code class="julia">using ThreeJS
+using Compat
+
+main(window) = begin
+    push!(window.assets,(&quot;ThreeJS&quot;,&quot;threejs&quot;))
+    vbox(
+        title(2,&quot;ThreeJS&quot;),
+        outerdiv() &lt;&lt;
+        (
+        initscene() &lt;&lt;
+        [
+            mesh(0.0, 0.0, 0.0) &lt;&lt;
+                [
+                    ThreeJS.box(1.0, 1.0, 1.0),
+                    material(Dict(:kind=&gt;&quot;lambert&quot;,:color=&gt;&quot;red&quot;))
+                ],
+            pointlight(3.0, 3.0, 3.0),
+            camera(0.0, 0.0, 10.0)
+        ]
+        )
+    )
+end
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../api/ThreeJS/" class="btn btn-neutral float-right" title="ThreeJS"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../api/ThreeJS/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+
+</body>
+</html>
