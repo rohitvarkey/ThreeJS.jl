@@ -17,8 +17,7 @@ render 3D output.
 ### Where can these be used?
 
 This can be used in [IJulia](https://github.com/JuliaLang/IJulia.jl/)
-notebooks to embed 3D Graphics. [Escher](https://github.com/shashi/Escher.jl)
-also supports ThreeJS, but you'll need the `master` version of Escher.
+and [Escher](https://github.com/shashi/Escher.jl) to embed 3D graphics.
 
 ### Dependencies
 
@@ -26,7 +25,7 @@ WebGL lets you interact with the GPU in a browser. As long as you have a modern
 browser, and it supports WebGL (Check this [link](https://get.webgl.org/)
 to see if it does!), the output of this package will just work.
 
-### Set up
+### Installation
 
 ```julia
 Pkg.add("ThreeJS")
@@ -42,14 +41,7 @@ reload the page, after deleting the cell where you did `using ThreeJS`.
 
 #### Escher
 
-You will need the `master` of Escher to run `ThreeJS` which can be obtained by
-running the following in a Julia REPL.
-
-```julia
-Pkg.checkout("Escher")
-```
-
-Now, adding `push!(window.assets,("ThreeJS","threejs"))` in your Escher code,
+Adding `push!(window.assets,("ThreeJS","threejs"))` in your Escher code,
 will get the static files set up and you can do 3D Graphics in Escher!
 
 #### General web servers
@@ -102,13 +94,19 @@ ThreeJS.jl provides support to render the following geometry primitives:
 - Cylinders - `cylinder(topradius, bottomradius, height)`
 - Tori - `torus(radius, tuberadius)`
 - Parametric Surfaces - `parametric(slices, stacks, xrange, yrange, function)`
+- Dodecahedron - `dodecahedron(radius)`
+- Icosahedron - `icosahedron(radius)`
+- Octahedron - `octahedron(radius)`
+- Tetrahedron - `tetrahedron(radius)`
+- Planes - `plane(width, height)`
 
 These functions will return the appropriate `geometry` tags that are to be nested
 inside a `mesh` along with a `material` to render.
 
-<!--
-TODO: Add docs for meshlines
--->
+#### Custom Geometries
+
+The `geometry` function is able to render custom geometries, which are specified
+by the vertices and the faces.
 
 #### Materials
 
@@ -138,6 +136,41 @@ mesh(0.0, 0.0, 0.0) <<
 ```
 
 will create a cube of size 1.0 of red color and with the basic material.
+
+### Lines
+
+Lines can be drawn by specifying the vertices of the line in the order to be
+joined. Lines can either be of `"strip"` or `"pieces"` kinds, which decide how
+the vertices should be joined. `"strip"` lines join all vertices, while "pieces"
+only joins the first and second, third and fourth and so on. Colors for the
+vertices of the lines can also be specified.
+
+Lines are also meshes and has the properties of a mesh too, like position and
+rotation. Like meshes, they are a child of the `scene`.
+
+#### Line Materials
+
+Lines also require a material to decide properties of a line.
+The `linematerial` function can be used to do this and specify some properties
+for the line. The `linematerial` should be a child of the `line` element.
+
+#### Drawing lines
+
+The `line` function can be used to draw lines.
+
+```julia
+line([(0.0, 0.0, 0.0), (1.0, 1.0, 1.0)]) <<
+        linematerial(Dict(:color=>"red"))
+```
+
+#### Mesh grids
+
+Drawing mesh grids can be achieved by using the `meshlines` function. It creates
+a set of lines to form the grid and assigns colors to the vertices based on the
+z values.
+
+If you are looking for a 2D grid, use the `grid` function. It creates a grid on
+the XY plane which can then be rotated as required.
 
 ### Cameras
 
