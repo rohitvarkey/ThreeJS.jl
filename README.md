@@ -37,6 +37,10 @@ to see if it does!), the output of this package will just work.
 Pkg.add("ThreeJS")
 ```
 
+### Documentation
+
+API documentation can be found [here](https://rohitvarkey.github.io/ThreeJS.jl).
+
 #### IJulia
 
 For use in IJulia notebooks, `using ThreeJS` will set up everything including
