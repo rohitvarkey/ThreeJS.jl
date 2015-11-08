@@ -14,6 +14,12 @@ Outputs [Patchwork](https://github.com/shashi/Patchwork.jl) Elems of
 used to help packages like [Compose3D](https://github.com/rohitvarkey/Compose3D.jl)
 render 3D output.
 
+|[![](https://camo.githubusercontent.com/171887ec9b737effd8e5a3639c6675aac8702d9b/68747470733a2f2f676973742e6769746875622e636f6d2f726f6869747661726b65792f31643635393235383530313938626332383466352f7261772f623764633431663262336638363963313033646362636237393633326639323339373736376230312f726f746174696e675f637562652e676966)](https://github.com/rohitvarkey/ThreeJS.jl/blob/df78531c88dd2619be73fef74b4b5268cfd89c4d/examples/rotatingcube.jl)|[![](https://gist.github.com/rohitvarkey/1d65925850198bc284f5/raw/5a05d50fe48ada9463de2631e6287b41a4e78899/3dpath.png?raw=true)](https://github.com/rohitvarkey/ThreeJS.jl/blob/df78531c88dd2619be73fef74b4b5268cfd89c4d/examples/3dpath.jl)|
+|---|---|
+|[![](https://gist.github.com/rohitvarkey/1d65925850198bc284f5/raw/5a05d50fe48ada9463de2631e6287b41a4e78899/scale_cat.gif?raw=true)](https://github.com/rohitvarkey/ThreeJS.jl/blob/df78531c88dd2619be73fef74b4b5268cfd89c4d/examples/mesh.jl)|[![](https://gist.github.com/rohitvarkey/1d65925850198bc284f5/raw/5a05d50fe48ada9463de2631e6287b41a4e78899/surfmesh.gif?raw=true)](https://github.com/rohitvarkey/ThreeJS.jl/blob/df78531c88dd2619be73fef74b4b5268cfd89c4d/examples/surfmesh.jl)|
+
+Click on any of the above examples to see the code used to draw them.
+
 ### Where can these be used?
 
 This can be used in [IJulia](https://github.com/JuliaLang/IJulia.jl/)
