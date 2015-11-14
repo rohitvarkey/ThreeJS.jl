@@ -1073,6 +1073,125 @@
   </script>
 </dom-module>
 
+<dom-module id="three-js-points">
+  <script>
+    Polymer({
+      is: 'three-js-points',
+      behaviors: [ThreeJSObjectBehavior],
+      properties: {
+        xs: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        ys: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        zs: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        vertexcolors: {
+          type: Object,
+          observer: 'newGeo',
+        },
+      },
+      newGeo: function () {
+        if(this.object)
+        {
+          this.removeFromParent3();
+        }
+        this.geometry = new THREE.Geometry();
+        if (this.xs == undefined || this.ys ==undefined || this.zs == undefined)
+          return;
+        var x = this.xs.split(',');
+        var y = this.ys.split(',');
+        var z = this.zs.split(',');
+        for (i=0;i<x.length;i++)
+        {
+          this.geometry.vertices.push(new THREE.Vector3(x[i],y[i],z[i]));
+        }
+        if (this.vertexcolors)
+        {
+          var vertexcolors = this.vertexcolors.split(',');
+          for (i=0; i<vertexcolors.length; i++)
+          {
+            this.geometry.colors.push(
+              new THREE.Color(vertexcolors[i])
+            );
+          }
+        }
+        this.createPoints()
+      },
+      addMaterial: function (material) {
+        this.material = material;
+        this.createPoints();
+      },
+      createPoints: function () {
+        if (this.geometry && this.material){
+          this.object = new THREE.PointCloud(this.geometry, this.material);
+          this.addToParent3();
+        }
+        else{
+          console.log("Not defined yet")
+        }
+      },
+      attached: function () {
+        this.async(function (){
+          this.newGeo();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-point-material">
+  <script>
+    Polymer({
+      is: 'three-js-point-material',
+      properties: {
+        color: {
+          type: String,
+          value: "#ff0000"
+        },
+        size: {
+          type: Number,
+          value: 1
+        },
+        attenuation: {
+          type: Boolean,
+          value: true
+        },
+        colorkind: {
+          type: String,
+          value: 'no'
+        }
+      },
+      colorKinds: {
+        no: "NoColors",
+        face: "FaceColors",
+        vertex: "VertexColors"
+      },
+      newMaterial: function () {
+        var colorkind = this.colorKinds[this.colorkind] || this.colorKinds.no;
+        this.object = new THREE.PointCloudMaterial({
+          color: this.color,
+          size: this.size,
+          sizeAttenuation: this.attenuation,
+          //Setting vertex colors
+          vertexColors: THREE[colorkind]
+        });
+        Polymer.dom(this).parentNode.addMaterial(this.object);
+      },
+      attached: function () {
+        this.async(function (){
+          this.newMaterial();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
 <dom-module id="three-js-geometry">
   <script>
     Polymer({
