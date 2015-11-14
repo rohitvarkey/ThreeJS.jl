@@ -474,6 +474,96 @@ function linematerial(props = Dict())
 end
 
 """
+Creates a point cloud tag.
+Line tags should be a child of the scene tag created by `initscene`.
+
+Vertices of the points to be drawn should be passed in as a `Vector` of
+`Tuple{Float64, Float64, Float64}`.
+The material to be associated with the line can be set using
+`pointmaterial` which should be a child of the line tag.
+
+The point system can be translated and rotated using keyword arguments,
+`x`,`y`,`z` for the (x, y, z) coordinate and `rx`, `ry` and `rz`
+as the rotation about the X, Y and Z axes respectively.
+
+Colors for the vertices can be set by passing in a `Vector` of
+`Color` as the `vertexcolors` kwarg.
+"""
+function pointcloud(
+        vertices::Vector{Tuple{Float64, Float64, Float64}};
+        x::Float64 = 0.0,
+        y::Float64 = 0.0,
+        z::Float64 = 0.0,
+        rx::Float64 = 0.0,
+        ry::Float64 = 0.0,
+        rz::Float64 = 0.0,
+        vertexcolors::Vector{Color} = Color[]
+    )
+    xs = [coords[1] for coords in vertices]
+    ys = [coords[2] for coords in vertices]
+    zs = [coords[3] for coords in vertices]
+    colors = map(x -> "#"*hex(x), vertexcolors)
+    Elem(
+        :"three-js-points",
+        attributes = Dict(
+            :xs => xs,
+            :ys => ys,
+            :zs => zs,
+            :x => x,
+            :y => y,
+            :z => z,
+            :rx => rx,
+            :ry => ry,
+            :rz => rz,
+            :vertexcolors => colors
+        )
+    )
+end
+
+"""
+Helper function to make creating `pointcloud`s easier.
+`Tuples` of vertices with their color also as part of the `Tuple`
+is expected as the argument.
+"""
+function pointcloud(
+        verticeswithcolor::Vector{Tuple{Float64, Float64, Float64, Color}};
+        x::Float64 = 0.0,
+        y::Float64 = 0.0,
+        z::Float64 = 0.0,
+        rx::Float64 = 0.0,
+        ry::Float64 = 0.0,
+        rz::Float64 = 0.0,
+    )
+    vertexcolors = [vertex[4] for vertex in verticeswithcolor]
+    vertices = [(vertex[1], vertex[2], vertex[3]) for vertex in verticeswithcolor]
+    pointcloud(
+        vertices,
+        x = x,
+        y = y,
+        z = z,
+        rx = rx,
+        ry = ry,
+        rz = rz,
+        vertexcolors = vertexcolors
+    )
+end
+
+"""
+Creates a point material tag.
+These tags should be the child of a point tag.
+Possible properties that can be set are:
+    - `color` - Any CSS color value.
+    - `size` - Set's size of the points
+    - `attenuation` -  `Bool`. Decides if points should become smaller with
+    distance or not.
+    - `colorKind` - Possible values `"no"`, `"face"`,`"vertex"`
+These properties should be passed in as a `Dict`.
+"""
+function pointmaterial(props = Dict())
+    Elem(:"three-js-point-material", attributes = props)
+end
+
+"""
 Creates a grid element.
 These should be a child of the scene tag created by `initscene`.
 The `size` represents the total size and the `step` represents the distance
