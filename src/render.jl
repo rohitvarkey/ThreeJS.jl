@@ -3,7 +3,7 @@ using Colors, GeometryTypes
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, line,
        linematerial, geometry, dodecahedron, icosahedron, octahedron,
-       tetrahedron, plane, grid, pointcloud
+       tetrahedron, plane, grid, pointcloud, pointmaterial
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -556,7 +556,7 @@ Possible properties that can be set are:
     - `size` - Set's size of the points
     - `attenuation` -  `Bool`. Decides if points should become smaller with
     distance or not.
-    - `colorKind` - Possible values `"no"`, `"face"`,`"vertex"`
+    - `colorkind` - Possible values `"no"`, `"face"`,`"vertex"`
 These properties should be passed in as a `Dict`.
 """
 function pointmaterial(props = Dict())

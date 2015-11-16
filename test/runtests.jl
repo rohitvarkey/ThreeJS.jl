@@ -367,6 +367,22 @@ facts("Testing Render Elem Outputs") do
                 )
             )
     end
+    context("Testing point material") do
+        @fact pointmaterial() --> Elem(:"three-js-point-material", attributes=Dict())
+        @fact pointmaterial(
+            Dict(:color => "red", :size=> 10,
+            :attenuation => false, :colorkind => "vertex")
+        ) -->
+            Elem(
+            :"three-js-point-material",
+            attributes = Dict(
+                :colorkind => "vertex",
+                :color => "red",
+                :size => 10,
+                :attenuation => false
+            )
+        )
+    end
     context("Testing material") do
         @fact material() --> Elem(:"three-js-material", attributes = Dict())
         @fact material(Dict(:kind=>"basic", :color=>"red")) -->
