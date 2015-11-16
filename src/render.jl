@@ -3,7 +3,7 @@ using Colors, GeometryTypes
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, line,
        linematerial, geometry, dodecahedron, icosahedron, octahedron,
-       tetrahedron, plane, grid
+       tetrahedron, plane, grid, pointcloud
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).

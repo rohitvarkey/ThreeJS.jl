@@ -141,6 +141,7 @@ facts("Testing Render Elem Outputs") do
             Elem(:"three-js-octahedron", attributes = Dict(:r => 4.0))
         @fact tetrahedron(4.0) -->
             Elem(:"three-js-tetrahedron", attributes = Dict(:r => 4.0))
+        verts = [(i, i, i) for i = 1.0:3.0]
     end
     context("Testing geometry") do
         verts = [(i, i, i) for i = 1.0:3.0]
@@ -308,6 +309,63 @@ facts("Testing Render Elem Outputs") do
                 :color => "red"
             )
         )
+    end
+    context("Testing pointclouds") do
+        verts = [(i, i, i) for i = 1.0:3.0]
+        colors = Color[colorant"red", colorant"blue", colorant"green"]
+        vertswithcolors = [(verts[i][1], verts[i][2], verts[i][3], colors[i]) for i=1:3]
+        @fact pointcloud(
+        verts, x = 10.0, y = 10.0, z = 10.0, rx = 20.0, ry = 15.0, rz = 240.0,
+        vertexcolors = colors) -->
+             Elem(
+                :"three-js-points",
+                attributes = Dict(
+                    :x => 10.0,
+                    :y => 10.0,
+                    :z => 10.0,
+                    :rx => 20.0,
+                    :ry => 15.0,
+                    :rz => 240.0,
+                    :xs => [1.0, 2.0, 3.0],
+                    :ys => [1.0, 2.0, 3.0],
+                    :zs => [1.0, 2.0, 3.0],
+                    :vertexcolors => map(x->"#"*hex(x),colors)
+                )
+            )
+        @fact pointcloud(
+        vertswithcolors, x = 10.0, y = 10.0, z = 10.0, rx = 20.0, ry = 15.0,
+        rz = 240.0) -->
+             Elem(
+                :"three-js-points",
+                attributes = Dict(
+                    :x => 10.0,
+                    :y => 10.0,
+                    :z => 10.0,
+                    :rx => 20.0,
+                    :ry => 15.0,
+                    :rz => 240.0,
+                    :xs => [1.0, 2.0, 3.0],
+                    :ys => [1.0, 2.0, 3.0],
+                    :zs => [1.0, 2.0, 3.0],
+                    :vertexcolors => map(x->"#"*hex(x),colors)
+                )
+            )
+        @fact pointcloud(verts) -->
+             Elem(
+                :"three-js-points",
+                attributes = Dict(
+                    :x => 0.0,
+                    :y => 0.0,
+                    :z => 0.0,
+                    :rx => 0.0,
+                    :ry => 0.0,
+                    :rz => 0.0,
+                    :xs => [1.0, 2.0, 3.0],
+                    :ys => [1.0, 2.0, 3.0],
+                    :zs => [1.0, 2.0, 3.0],
+                    :vertexcolors => Color[]
+                )
+            )
     end
     context("Testing material") do
         @fact material() --> Elem(:"three-js-material", attributes = Dict())
