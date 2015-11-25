@@ -43,7 +43,8 @@
             },
             bgcolor: {
               type: String,
-              value: "#ffffff"
+              value: "#ffffff",
+              observer: "bgcolorchanged"
             }
         },
         ready: function () {
@@ -60,6 +61,10 @@
           this.scene = new THREE.Scene();
           console.log('[%s]: ready', this.localName, this.renderer);
           this.render(); //comment to disable rendering.
+        },
+        bgcolorchanged: function() {
+          if(this.renderer)
+            this.renderer.setClearColor(this.bgcolor);
         },
         render: function () {
           var self = this;
