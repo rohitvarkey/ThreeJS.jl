@@ -2,6 +2,7 @@ module ThreeJS
 
 import Patchwork
 import Patchwork.Elem
+using Colors
 
 export outerdiv, initscene
 
@@ -14,8 +15,8 @@ function outerdiv(w::AbstractString="100%", h::AbstractString="600px")
 end
 
 "Initiates a three-js scene"
-function initscene()
-        Elem(:"three-js")
+function initscene(;bgcolor::Color=colorant"white")
+    Elem(:"three-js", attributes = Dict(:bgcolor => "#"*hex(bgcolor)))
 end
 
 if isdefined(Main, :IJulia)

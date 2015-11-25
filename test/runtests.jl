@@ -21,7 +21,14 @@ facts("Testing General Functions") do
             )
     end
     context("Testing initscene") do
-        @fact initscene() --> Elem(:"three-js")
+        @fact initscene() --> Elem(
+            :"three-js",
+            attributes = Dict(:bgcolor => "#FFFFFF")
+        )
+        @fact initscene(bgcolor=colorant"black") --> Elem(
+            :"three-js",
+            attributes = Dict(:bgcolor => "#000000")
+        )
     end
 end
 
