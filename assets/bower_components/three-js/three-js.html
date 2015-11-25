@@ -40,6 +40,10 @@
             h: {
                 type: String,
                 value: "562"
+            },
+            bgcolor: {
+              type: String,
+              value: "#ffffff"
             }
         },
         ready: function () {
@@ -52,7 +56,7 @@
           renderer.setSize(this.w, this.h);
           //renderer.shadowMapEnabled = true;
           //renderer.shadowMapType = THREE.PCFShadowMap;
-          renderer.setClearColor(0, 0);
+          renderer.setClearColor(this.bgcolor);
           this.scene = new THREE.Scene();
           console.log('[%s]: ready', this.localName, this.renderer);
           this.render(); //comment to disable rendering.
