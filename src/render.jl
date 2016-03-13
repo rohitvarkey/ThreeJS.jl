@@ -3,7 +3,7 @@ using Colors, GeometryTypes
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, line,
        linematerial, geometry, dodecahedron, icosahedron, octahedron,
-       tetrahedron, plane, grid, pointcloud, pointmaterial
+       tetrahedron, plane, grid, pointcloud, pointmaterial, text
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -601,3 +601,14 @@ function grid(
         )
     )
 end
+
+"""
+Create a Text Sprite with `content` at position `(x,y,z)`. 
+"""
+function text(x::Float64, y::Float64, z::Float64, content::AbstractString)
+   Elem(
+        :"three-js-text",
+        attributes = Dict(:x=>x, :y=>y, :z=>z, :content=>content)
+   )
+end
+
