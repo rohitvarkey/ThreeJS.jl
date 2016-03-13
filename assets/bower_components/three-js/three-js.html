@@ -1331,3 +1331,50 @@
     });
   </script>
 </dom-module>
+
+<dom-module id="three-js-text">
+  <script>
+    Polymer({
+      is: 'three-js-text',
+      properties: {
+        content: {
+          type: String,
+          value: "sss",
+          notify: true,
+          observer: 'newSprite'
+        }
+      },
+      behaviors: [ThreeJSObjectBehavior],
+      attached: function () {
+        this.async(function() {
+          this.newSprite();
+        });
+      },
+      newSprite: function () {
+          var canvas = document.createElement('canvas');
+          var size = 256; // CHANGED
+          canvas.width = size;
+          canvas.height = size;
+          var context = canvas.getContext('2d');
+          context.fillStyle = this.color;
+          context.textAlign = 'center';
+          context.font = '24px Arial';
+          context.fillText(this.content, size / 2, size / 2);
+
+          var amap = new THREE.Texture(canvas);
+          amap.needsUpdate = true;
+
+          var mat = new THREE.SpriteMaterial({
+              map: amap,
+              transparent: false,
+              useScreenCoordinates: false,
+              color: 0xffffff
+          });
+
+          this.object = new THREE.Sprite(mat);
+          console.log(this.object);
+          this.addToParent3();
+      }
+    });
+  </script>
+</dom-module>
