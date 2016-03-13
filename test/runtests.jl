@@ -436,6 +436,12 @@ facts("Testing Render Elem Outputs") do
             )
         )
     end
+    context("Testing Text") do
+        @fact text(0.0, 0.0, 0.0, "Hello!") --> Elem(
+            :"three-js-text",
+            attributes = Dict(:x => 0.0, :y => 0.0, :z => 0.0, :content => "Hello!")
+        )
+    end
 end
 
 facts("Testing property helpers") do
