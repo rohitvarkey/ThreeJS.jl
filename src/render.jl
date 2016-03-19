@@ -489,7 +489,7 @@ as the rotation about the X, Y and Z axes respectively.
 Colors for the vertices can be set by passing in a `Vector` of
 `Color` as the `vertexcolors` kwarg.
 """
-function pointcloud(
+function pointcloud{T <: Color}(
         vertices::Vector{Tuple{Float64, Float64, Float64}};
         x::Float64 = 0.0,
         y::Float64 = 0.0,
@@ -497,7 +497,7 @@ function pointcloud(
         rx::Float64 = 0.0,
         ry::Float64 = 0.0,
         rz::Float64 = 0.0,
-        vertexcolors::Vector{Color} = Color[]
+        vertexcolors::Vector{T} = Color[]
     )
     xs = [coords[1] for coords in vertices]
     ys = [coords[2] for coords in vertices]
@@ -525,8 +525,8 @@ Helper function to make creating `pointcloud`s easier.
 `Tuples` of vertices with their color also as part of the `Tuple`
 is expected as the argument.
 """
-function pointcloud(
-        verticeswithcolor::Vector{Tuple{Float64, Float64, Float64, Color}};
+function pointcloud{T<: Color}(
+        verticeswithcolor::Vector{Tuple{Float64, Float64, Float64, T}};
         x::Float64 = 0.0,
         y::Float64 = 0.0,
         z::Float64 = 0.0,
