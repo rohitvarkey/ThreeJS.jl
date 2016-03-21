@@ -8,7 +8,7 @@ main(window) =  begin
     rx = 0.0
     ry = 0.0
     rz = 0.0
-    lift(eventloop) do _
+    map(eventloop) do _
         rx += 0.5
         ry += 0.5
         rz += 0.5

@@ -8,7 +8,6 @@ main(window) =  begin
     y = 0.1ts .* map(sin,ts)
     z = 1.0:100.0;
     vertices = Tuple{Float64, Float64, Float64}[(x[i]*25,z[i],y[i]*25) for i in 1:size(x,1)]
-    @show vertices
     ThreeJS.outerdiv() <<
             (ThreeJS.initscene() <<
                 [

@@ -6,9 +6,9 @@ using FileIO
 main(window) =  begin
     push!(window.assets,("ThreeJS","threejs"))
     push!(window.assets,"widgets")
-    x = Input(1.0)
-    y = Input(1.0)
-    z = Input(1.0)
+    x = Signal(1.0)
+    y = Signal(1.0)
+    z = Signal(1.0)
     mesh_geom = load("cat.obj")
     vbox(
         "ThreeJS Example",
@@ -20,7 +20,7 @@ main(window) =  begin
             hbox("z",slider(1.0:5.0) >>> z),
         ),
         vskip(2em),
-        lift(x,y,z) do x,y,z
+        map(x,y,z) do x,y,z
         ThreeJS.outerdiv() << 
             (ThreeJS.initscene() <<
                 [

@@ -34,17 +34,16 @@ main(window) =  begin
     push!(window.assets,"widgets")
     push!(window.assets, "codemirror")
     push!(window.assets, "layout2")
-    inp = Input(Dict())
+    inp = Signal(Dict())
     s = sampler() # A thing that lets you watch widgets/behaviors upon updates to other behaviors
-    print
     default = "(x,y) -> sin(x) * cos(y)"
-    editor = watch!(s, codemirror(default, name=:code))
-    code_cell = trigger!(s, keypress("ctrl+enter shift+enter", editor))
+    editor = watch!(s, :code, codemirror(default))
+    code_cell = trigger!(s, :submit, keypress("ctrl+enter shift+enter", editor))
     t, plots = wire(
                     tabs(["Surf";"Mesh";]),
                     pages(
                     [
-                        lift(inp) do f
+                        map(inp) do f
                             fn = get(f,:code,default)
                             try
                                 surf(eval(parse(fn)))
@@ -52,7 +51,7 @@ main(window) =  begin
                                 Elem(:div, "Something went wrong. Please check your syntax and try again. Contact rohitvarkey@gmail.com for more assistance.")
                             end
                         end;
-                        lift(inp) do f
+                        map(inp) do f
                             fn = get(f,:code,default)
                             try
                                 mesh(eval(parse(fn)))
@@ -62,21 +61,17 @@ main(window) =  begin
                         end;
                     ]
                     ),
-                    :tab_channel,
+                    :tabschannel,
                     :selected
                 )
-
-    plugsampler(s,
-        vbox(
-                md"""Enter an anonymous function with 2 variables.
-                    `ctrl+enter` or `shift+enter` to redraw the plot.
-                    Use the mouse the drag, zoom and pan.
-                    The function is plotted with x and y between -10 and 10 and
-                    with 100 steps and 50 steps in both axes for the surf and the
-                    mesh respectively. Try resizing the browser if you cant see a codebox""",
-                code_cell,
-                vskip(2em),
-                t, plots
-            ) |> pad(2em)
-   ) >>> inp
+    vbox(
+            md"""Enter an anonymous function with 2 variables.
+                `ctrl+enter` or `shift+enter` to redraw the plot.
+                Use the mouse the drag, zoom and pan.
+                The function is plotted with x and y between -10 and 10 and
+                with 100 steps and 50 steps in both axes for the surf and the
+                mesh respectively. Try resizing the browser if you cant see a codebox""",
+            intent(s, code_cell) >>> inp,
+            t, plots
+        ) |> pad(2em)
 end

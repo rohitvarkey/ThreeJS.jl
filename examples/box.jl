@@ -3,12 +3,12 @@ import ThreeJS
 main(window) =  begin
     push!(window.assets,("ThreeJS","threejs"))
     push!(window.assets,"widgets")
-    w = Input(1.0)
-    h = Input(1.0)
-    d = Input(1.0)
-    rx = Input(0.0)
-    ry = Input(0.0)
-    rz = Input(0.0)
+    w = Signal(1.0)
+    h = Signal(1.0)
+    d = Signal(1.0)
+    rx = Signal(0.0)
+    ry = Signal(0.0)
+    rz = Signal(0.0)
     vbox(
         "ThreeJS Example",
         vskip(2em),
@@ -28,7 +28,7 @@ main(window) =  begin
             )
         ),
         vskip(2em),
-        lift(w, h, d, rx, ry, rz) do w, h, d, rx, ry, rz  
+        map(w, h, d, rx, ry, rz) do w, h, d, rx, ry, rz
         ThreeJS.outerdiv() << 
             (ThreeJS.initscene() <<
                 [
