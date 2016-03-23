@@ -29,7 +29,7 @@ function normal()
 end
 
 function visible(visible::Bool=true)
-    :visible, visible
+    :hidden, !visible
 end
 
 function edges(edgeColor::Color)

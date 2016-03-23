@@ -134,7 +134,7 @@ Available properties are:
 [`phong`](http://threejs.org/docs/#Reference/Materials/MeshPhongMaterial), or
 [`normal`](http://threejs.org/docs/#Reference/Materials/MeshNormalMaterial)
 - `wireframe` - `true` or `false`
-- `visible` - `true` or `false`
+- `hidden` - `true` or `false`
 
 Some helper functions to get these key value pairs is given in `src/properties.jl`.
 

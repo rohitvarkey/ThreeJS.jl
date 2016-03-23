@@ -267,7 +267,7 @@ end
 Creates a material tag with properties passed in as a dictionary.
 """
 function material(props::Dict=Dict())
-    Elem(:"three-js-material", attributes = props)
+    Elem(:"three-js-material", attributes = filter((k,v)->v!=false, props))
 end
 
 """
@@ -470,7 +470,7 @@ for more details.
 These properties should be passed in as a `Dict`.
 """
 function linematerial(props = Dict())
-    Elem(:"three-js-line-material", attributes = props)
+    Elem(:"three-js-line-material", attributes = filter((k,v)-> v!=false, props))
 end
 
 """
@@ -560,7 +560,7 @@ Possible properties that can be set are:
 These properties should be passed in as a `Dict`.
 """
 function pointmaterial(props = Dict())
-    Elem(:"three-js-point-material", attributes = props)
+    Elem(:"three-js-point-material", attributes = filter((k,v)->v!=false, props))
 end
 
 """

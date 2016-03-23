@@ -386,13 +386,12 @@ facts("Testing Render Elem Outputs") do
                 :colorkind => "vertex",
                 :color => "red",
                 :size => 10,
-                :attenuation => false
             )
         )
     end
     context("Testing material") do
         @fact material() --> Elem(:"three-js-material", attributes = Dict())
-        @fact material(Dict(:kind=>"basic", :color=>"red")) -->
+        @fact material(Dict(:kind=>"basic", :color=>"red", :wireframe=>false)) -->
             Elem(
             :"three-js-material",
             attributes = Dict(
