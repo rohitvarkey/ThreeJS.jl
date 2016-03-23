@@ -458,8 +458,8 @@ facts("Testing property helpers") do
         @fact wireframe(false) --> (:wireframe, false)
     end
     context("Testing visibility") do
-        @fact visible() --> (:visible, true)
-        @fact visible(false) --> (:visible, false)
+        @fact visible() --> (:hidden, false)
+        @fact visible(false) --> (:hidden, true)
     end
 end
 
