@@ -135,6 +135,8 @@ Available properties are:
 [`normal`](http://threejs.org/docs/#Reference/Materials/MeshNormalMaterial)
 - `wireframe` - `true` or `false`
 - `hidden` - `true` or `false`
+- `transparent` - `true` or `false`. Set to `true` to get proper rendering for transparent objects.
+- `opacity` - Number between 0.0 and 1.0 (fully opaque).
 
 Some helper functions to get these key value pairs is given in `src/properties.jl`.
 
