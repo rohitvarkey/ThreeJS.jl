@@ -268,20 +268,33 @@
           value: '',
           notify: true
         },
-        visible: {
+        hidden: {
           type: Boolean,
-          value: true,
-          notify: true
+          value: false,
+          notify: true,
+          observer: 'init'
         },
         wireframe: {
           type: Boolean,
           value: false,
-          notify: true
+          notify: true,
+          observer: 'init'
         },
         colorkind: {
           type: String,
           value: "no",
           notify: true
+        },
+        opacity: {
+            type: Number,
+            value: 0.00,
+            notify: true,
+            observer: 'init'
+        },
+        transparent: {
+            type: Boolean,
+            value: false,
+            notify: true
         }
       },
       colorKinds: {
@@ -323,12 +336,13 @@
             ambient: this.ambient,
             shading: THREE[shading],
             wireframe: this.wireframe,
-            visible: this.visible,
             vertexColors: THREE[colorKind],
+            opacity: this.opacity,
+            transparent: this.transparent
           });
           break;
         }
-        this.object.visible = this.visible;
+        this.object.visible = !(this.hidden);
       },
       attached: function (){
         this.async(function (){
@@ -1167,9 +1181,9 @@
           type: Number,
           value: 1
         },
-        attenuation: {
+        nonattenuation: {
           type: Boolean,
-          value: true
+          value: false
         },
         colorkind: {
           type: String,
@@ -1186,7 +1200,7 @@
         this.object = new THREE.PointCloudMaterial({
           color: this.color,
           size: this.size,
-          sizeAttenuation: this.attenuation,
+          sizeAttenuation: !(this.nonattenuation),
           //Setting vertex colors
           vertexColors: THREE[colorkind]
         });
