@@ -247,9 +247,11 @@ facts("Testing Render Elem Outputs") do
             )
     end
     context("Testing line") do
-        verts = [(i, i, i) for i = 1.0:3.0]
+        verts = [Tuple{Float64, Float64, Float64}((i, i, i)) for i = 1.0:3.0]
         colors = Color[colorant"red", colorant"blue", colorant"green"]
-        vertswithcolors = [(verts[i][1], verts[i][2], verts[i][3], colors[i]) for i=1:3]
+        vertswithcolors = [Tuple{Float64, Float64, Float64, Color}(
+            (verts[i][1], verts[i][2], verts[i][3], colors[i])
+        ) for i=1:3]
         @fact line(
         verts, x = 10.0, y = 10.0, z = 10.0, rx = 20.0, ry = 15.0, rz = 240.0,
         kind = "pieces", vertexcolors = colors) -->
@@ -318,9 +320,13 @@ facts("Testing Render Elem Outputs") do
         )
     end
     context("Testing pointclouds") do
-        verts = [(i, i, i) for i = 1.0:3.0]
+        verts = [Tuple{Float64, Float64, Float64}((i, i, i)) for i = 1.0:3.0]
         colors = Color[colorant"red", colorant"blue", colorant"green"]
-        vertswithcolors = [(verts[i][1], verts[i][2], verts[i][3], colors[i]) for i=1:3]
+        vertswithcolors = [
+            Tuple{Float64, Float64, Float64, Color}(
+                (verts[i][1], verts[i][2], verts[i][3], colors[i])
+            ) for i=1:3
+        ]
         @fact pointcloud(
         verts, x = 10.0, y = 10.0, z = 10.0, rx = 20.0, ry = 15.0, rz = 240.0,
         vertexcolors = colors) -->
