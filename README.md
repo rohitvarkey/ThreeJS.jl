@@ -131,8 +131,10 @@ Available properties are:
 - `color` - Can be any CSS color value.
 - `kind` - Can be [`lambert`](http://threejs.org/docs/#Reference/Materials/MeshLambertMaterial),
 [`basic`](http://threejs.org/docs/#Reference/Materials/MeshBasicMaterial),
-[`phong`](http://threejs.org/docs/#Reference/Materials/MeshPhongMaterial), or
-[`normal`](http://threejs.org/docs/#Reference/Materials/MeshNormalMaterial)
+[`phong`](http://threejs.org/docs/#Reference/Materials/MeshPhongMaterial),
+[`normal`](http://threejs.org/docs/#Reference/Materials/MeshNormalMaterial), or
+`texture`(for texture mapping)
+- `texture` - URL of image to be mapped as texture. Will be applied only if `kind` is set to `texture`.
 - `wireframe` - `true` or `false`
 - `hidden` - `true` or `false`
 - `transparent` - `true` or `false`. Set to `true` to get proper rendering for transparent objects.
