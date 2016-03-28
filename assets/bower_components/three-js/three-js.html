@@ -1177,17 +1177,32 @@
           type: String,
           value: "#ff0000"
         },
+        texture: {
+          type: String,
+        },
         size: {
           type: Number,
           value: 1
         },
-        nonattenuation: {
+        noattenuation: {
           type: Boolean,
           value: false
         },
         colorkind: {
           type: String,
           value: 'no'
+        },
+        transparent: {
+            type: Boolean,
+            value: false
+        },
+        opacity: {
+            type: Number,
+            value: 1.00
+        },
+        alphatest: {
+            type: Number,
+            value: 0.00
         }
       },
       colorKinds: {
@@ -1197,12 +1212,23 @@
       },
       newMaterial: function () {
         var colorkind = this.colorKinds[this.colorkind] || this.colorKinds.no;
+        var map = null;
+        if (this.texture)
+        {
+            map = THREE.ImageUtils.loadTexture(this.texture);
+        }
+
         this.object = new THREE.PointCloudMaterial({
           color: this.color,
           size: this.size,
-          sizeAttenuation: !(this.nonattenuation),
+          sizeAttenuation: !(this.noattenuation),
           //Setting vertex colors
-          vertexColors: THREE[colorkind]
+          vertexColors: THREE[colorkind],
+          //URL of texture
+          map: map,
+          opacity: this.opacity,
+          transparent: this.transparent,
+          alphaTest: this.alphatest
         });
         Polymer.dom(this).parentNode.addMaterial(this.object);
       },

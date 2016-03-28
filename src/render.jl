@@ -554,10 +554,12 @@ These tags should be the child of a point tag.
 Possible properties that can be set are:
     - `color` - Any CSS color value.
     - `size` - Set's size of the points
-    - `attenuation` -  `Bool`. Decides if points should become smaller with
+    - `noattenuation` -  `Bool`. Decides if points should become smaller with
     distance or not.
+    - `texture` - Image to be used as texture.
     - `colorkind` - Possible values `"no"`, `"face"`,`"vertex"`
 These properties should be passed in as a `Dict`.
+    - `alphatest` - Used to discard some fragments when below this value.
 """
 function pointmaterial(props = Dict())
     Elem(:"three-js-point-material", attributes = filter((k,v)->v!=false, props))
