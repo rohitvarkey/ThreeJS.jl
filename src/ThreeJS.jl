@@ -20,7 +20,7 @@ function initscene(;bgcolor::Color=colorant"white")
 end
 
 if isdefined(Main, :IJulia)
-    assetpath = Pkg.dir("ThreeJS","assets","bower_components")
+    assetpath = joinpath(dirname(@__FILE__),"..","assets","bower_components")
     polymermicro = readall(joinpath(assetpath,"polymer","polymer-micro.html"))
     polymermini = readall(joinpath(assetpath,"polymer","polymer-mini.html"))
     polymer = readall(joinpath(assetpath,"polymer","polymer.html"))
