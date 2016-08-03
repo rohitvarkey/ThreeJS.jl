@@ -931,8 +931,8 @@
       attached: function () {
         this.async(function (){
           this.newGeo();
-        });
       }
+        });
     });
   </script>
 </dom-module>
@@ -1229,6 +1229,115 @@
           opacity: this.opacity,
           transparent: this.transparent,
           alphaTest: this.alphatest
+        });
+        Polymer.dom(this).parentNode.addMaterial(this.object);
+      },
+      attached: function () {
+        this.async(function (){
+          this.newMaterial();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-data-texture">
+  <script>
+    Polymer({
+      is: 'three-js-data-texture',
+      properties: {
+        data: {
+          type: String
+        },
+      },
+
+ b64decode: function (base64) {
+  // lightly adapted from Niklas
+
+  /*
+   * base64-arraybuffer
+   * https://github.com/niklasvh/base64-arraybuffer
+   *
+   * Copyright (c) 2012 Niklas von Hertzen
+   * Licensed under the MIT license.
+   */
+  var chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  var bufferLength = base64.length * 0.75,
+    len = base64.length,
+    i, p = 0,
+    encoded1, encoded2, encoded3, encoded4;
+
+  if (base64[base64.length - 1] === "=") {
+    bufferLength--;
+    if (base64[base64.length - 2] === "=") {
+      bufferLength--;
+    }
+  }
+
+  var bytes = new Uint8Array(bufferLength);
+
+  for (i = 0; i < len; i += 4) {
+    encoded1 = chars.indexOf(base64[i]);
+    encoded2 = chars.indexOf(base64[i + 1]);
+    encoded3 = chars.indexOf(base64[i + 2]);
+    encoded4 = chars.indexOf(base64[i + 3]);
+
+    bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
+    bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
+    bytes[p++] = ((encoded3 & 3) << 6) | (encoded4 & 63);
+  }
+
+  return bytes;
+},
+      newDataTexture: function () {
+        console.log("DataTexture");
+        this.object = new THREE.DataTexture(this.b64decode(this.data), 512, 512);
+        Polymer.dom(this).parentNode.addMaterial(this.object);
+      },
+      attached: function () {
+        this.async(function (){
+          this.newDataTexture();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+
+<dom-module id="three-js-shader-material">
+  <script>
+    Polymer({
+      is: 'three-js-shader-material',
+      properties: {
+        uniforms: {
+          type: Object,
+          value: {value: 4}
+        },
+        attributes: {
+          type: Object,
+          value: {}
+        },
+        defines: {
+          type: Object,
+          value: {}
+        },
+        vertexshader: {
+          type: String,
+        },
+        fragmentshader: {
+          type: String,
+        },
+      },
+      newMaterial: function () {
+        console.log("newMaterial");
+        console.dir(this.uniforms);
+        this.object = new THREE.ShaderMaterial({
+          uniforms: this.uniforms,
+          attributes: this.attributes,
+          defines: this.defines,
+          vertexShader: this.vertexshader,
+          fragmentShader: this.fragmentshader,
         });
         Polymer.dom(this).parentNode.addMaterial(this.object);
       },

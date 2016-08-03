@@ -2,8 +2,9 @@ import Compat
 using Colors, GeometryTypes
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, line,
-       linematerial, geometry, dodecahedron, icosahedron, octahedron,
-       tetrahedron, plane, grid, pointcloud, pointmaterial, text
+       linematerial, shadermaterial, geometry, dodecahedron, icosahedron,
+       octahedron, tetrahedron, plane, grid, pointcloud, pointmaterial, text,
+       datatexture
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -474,6 +475,22 @@ function linematerial(props = Dict())
 end
 
 """
+...
+"""
+function shadermaterial(props = Dict())
+    Elem(:"three-js-shader-material", attributes = filter((k,v)->v!=false, props))
+end
+
+"""
+...
+"""
+function datatexture(props = Dict())
+#    props[:data] = base64encode(props[:data])
+#    println(props)
+    Elem(:"three-js-data-texture", attributes = filter((k,v)->v!=false, props))
+end
+
+"""
 Creates a point cloud tag.
 Line tags should be a child of the scene tag created by `initscene`.
 
@@ -605,7 +622,7 @@ function grid(
 end
 
 """
-Create a Text Sprite with `content` at position `(x,y,z)`. 
+Create a Text Sprite with `content` at position `(x,y,z)`.
 """
 function text(x::Float64, y::Float64, z::Float64, content::AbstractString)
    Elem(
@@ -613,4 +630,3 @@ function text(x::Float64, y::Float64, z::Float64, content::AbstractString)
         attributes = Dict(:x=>x, :y=>y, :z=>z, :content=>content)
    )
 end
-
