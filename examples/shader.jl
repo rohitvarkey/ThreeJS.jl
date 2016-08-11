@@ -1,25 +1,10 @@
 import ThreeJS
 
-vshader = "
-        varying vec2 v_uv;
-
-			void main()	{
-                v_uv = uv;
-				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-			}
-"
-
-fshader = "
-varying vec2 v_uv;
-void main() {
-gl_FragColor = vec4(v_uv, 0.0, 1.0);
-	}
-"
-
 #data = rand(UInt8, 512, 512);
 #b = base64encode(data)
 #                 ThreeJS.datatexture(Dict(:data=>b)),
-
+#                ThreeJS.nesteddict(Dict(:nested=>Dict(:k=>5))),
+#                ThreeJS.nesteddict(Dict(:nested=>Dict(:k=>5))),
 
 main(window) =  begin
     push!(window.assets,("ThreeJS","threejs"))
@@ -30,7 +15,9 @@ main(window) =  begin
             ThreeJS.mesh(0.0, 0.0, 0.0) <<
             [
                 ThreeJS.plane(8.0, 8.0),
-                ThreeJS.shadermaterial(Dict(:uniforms=>Dict(:val=>"Hello"), :vertexshader=>vshader,:fragmentshader=>fshader))
+                ThreeJS.shadermaterial(Dict(:uniforms=>Dict(:alpha=>Dict(:type=>"f", :value=>0.5)),
+                    :vertexshader=>open(readall, "assets/shader.vert", "r"),
+                    :fragmentshader=>open(readall, "assets/shader.frag", "r")))
             ],
             ThreeJS.pointlight(10.0, 10.0, 10.0),
             ThreeJS.camera(0.0, 0.0, 20.0)

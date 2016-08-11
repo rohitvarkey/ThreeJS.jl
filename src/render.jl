@@ -4,7 +4,7 @@ export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, line,
        linematerial, shadermaterial, geometry, dodecahedron, icosahedron,
        octahedron, tetrahedron, plane, grid, pointcloud, pointmaterial, text,
-       datatexture
+       datatexture, nesteddict
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -478,7 +478,11 @@ end
 ...
 """
 function shadermaterial(props = Dict())
-    Elem(:"three-js-shader-material", attributes = filter((k,v)->v!=false, props))
+    Elem(:"three-js-shader-material"; filter((k,v)->v!=false, props)...)
+end
+
+function nesteddict(props = Dict())
+    Elem(:"test-nested-dict", attributes = filter((k,v)->v!=false, props))
 end
 
 """

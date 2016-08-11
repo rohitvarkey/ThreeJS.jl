@@ -1305,6 +1305,29 @@
 </dom-module>
 
 
+<dom-module id="test-nested-dict">
+  <script>
+    Polymer({
+      is: 'test-nested-dict',
+      properties: {
+        nested: {
+          type: Object,
+          value: {k: "Hello, world!"}
+        },
+      },
+      newNested: function () {
+        console.log("newNested");
+        console.dir(this.nested);
+      },
+      attached: function () {
+        this.async(function (){
+          this.newNested();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
 <dom-module id="three-js-shader-material">
   <script>
     Polymer({
@@ -1312,7 +1335,7 @@
       properties: {
         uniforms: {
           type: Object,
-          value: {value: 4}
+          value: {}
         },
         attributes: {
           type: Object,
@@ -1332,6 +1355,7 @@
       newMaterial: function () {
         console.log("newMaterial");
         console.dir(this.uniforms);
+        console.log(this.uniforms);
         this.object = new THREE.ShaderMaterial({
           uniforms: this.uniforms,
           attributes: this.attributes,
