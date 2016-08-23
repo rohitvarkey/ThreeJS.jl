@@ -1335,13 +1335,14 @@
       properties: {
         uniforms: {
           type: Object,
-          value: {}
-        },
-        attributes: {
-          type: Object,
-          value: {}
+          value: function() {return {}; },
+          notify: true,
         },
         defines: {
+            type: Object,
+            value: {},
+        },
+        attributes: {
           type: Object,
           value: {}
         },
@@ -1352,18 +1353,76 @@
           type: String,
         },
       },
+      observers: [
+        'uniformsChanged(uniforms.*)'
+      ],
+      uniformsChanged: function(changeRec) {
+        console.log("uniformsChanged");
+      },
       newMaterial: function () {
         console.log("newMaterial");
+//        console.dir(this);
+//        console.dir(this.defines);
         console.dir(this.uniforms);
-        console.log(this.uniforms);
+//        console.log(this.uniforms);
         this.object = new THREE.ShaderMaterial({
-          uniforms: this.uniforms,
+          uniforms: {alpha: {type: "f", value: this.uniforms.alpha.value / 10.0}},
           attributes: this.attributes,
-          defines: this.defines,
           vertexShader: this.vertexshader,
           fragmentShader: this.fragmentshader,
         });
         Polymer.dom(this).parentNode.addMaterial(this.object);
+      },
+      addDefines: function (object){
+//        this.defines = object;
+      },
+      addUniforms: function (object){
+        this.uniforms2 = object;
+//        this.init();
+      },
+      attached: function () {
+        console.log("material attached");
+        this.async(function (){
+          this.newMaterial();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-defines">
+  <script>
+    Polymer({
+      is: 'three-js-defines',
+      newDefines: function () {
+        console.log("newDefines");
+//        console.dir(this);
+
+//        var fwd = [];
+//       for (var key in this.names) {
+//            fwd.push()
+//        }
+
+        Polymer.dom(this).parentNode.addDefines(this.object);
+      },
+      ready: function () {
+        console.log("defines ready");
+        this.async(function (){
+          this.newDefines();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-uniforms">
+  <script>
+    Polymer({
+      is: 'three-js-uniforms',
+      newMaterial: function () {
+        console.log("uniforms");
+        console.dir(this);
+        Polymer.dom(this).parentNode.addUniforms(this.object);
       },
       attached: function () {
         this.async(function (){
