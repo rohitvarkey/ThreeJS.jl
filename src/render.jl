@@ -477,8 +477,8 @@ end
 """
 ...
 """
-function shadermaterial(props = Dict())
-    Elem(:"three-js-shader-material"; filter((k,v)->v!=false, props)...)
+function shadermaterial(; kwds...)
+    Elem(:"three-js-shader-material"; kwds...)
 end
 
 function uniforms(; kwds...)
