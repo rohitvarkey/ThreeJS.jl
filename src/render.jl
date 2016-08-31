@@ -481,18 +481,6 @@ function shadermaterial(; kwds...)
     Elem(:"three-js-shader-material"; kwds...)
 end
 
-function uniforms(; kwds...)
-    Elem(:"three-js-uniforms"; kwds...)
-end
-
-function defines(props = Dict())
-    Elem(:"three-js-defines"; object = props)
-end
-
-function nesteddict(props = Dict())
-    Elem(:"test-nested-dict", attributes = filter((k,v)->v!=false, props))
-end
-
 """
 ...
 """
