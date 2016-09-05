@@ -26,10 +26,9 @@ main(window) =  begin
     push!(window.assets,"widgets")
     push!(window.assets,"nested-props")
 
-    iterations = Signal(1)
-    connected_sl = subscribe(iterations, slider(1:10))
+    t = map(_->time(), fps(30))
 
-    map(iterations) do n
+    map(t) do x
     vbox(
     ThreeJS.outerdiv() <<
     (ThreeJS.initscene() <<
@@ -38,7 +37,7 @@ main(window) =  begin
             [
                 ThreeJS.plane(8.0, 8.0),
                 ThreeJS.shadermaterial(
-                    uniforms=PropHook("escher-property-hook", Dict(:alpha=>Dict(:type=>"f", :value=>1-n/10))),
+                    uniforms=PropHook("escher-property-hook", Dict(:alpha=>Dict(:type=>"f", :value=>abs(sin(x))))),
                     vertexshader=vert,
                     fragmentshader=frag,)
             ],
@@ -46,7 +45,6 @@ main(window) =  begin
             ThreeJS.camera(0.0, 0.0, 20.0)
         ]
     ),
-    connected_sl
     )
     end
 end
