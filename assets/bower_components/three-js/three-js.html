@@ -1361,13 +1361,10 @@
       },
       newMaterial: function () {
         console.log("newMaterial");
-//        console.dir(this);
-//        console.dir(this.defines);
-        console.dir(this.uniforms);
+        console.dir("UNIFORMS", this.uniforms);
         console.dir(this.defines);
-//        console.log(this.uniforms);
         this.object = new THREE.ShaderMaterial({
-          uniforms: {alpha: {type: "f", value: this.uniforms.alpha.value / 10.0}},
+          uniforms: this.uniforms,
           attributes: this.attributes,
           vertexShader: this.vertexshader,
           fragmentShader: this.fragmentshader,
@@ -1375,19 +1372,19 @@
         Polymer.dom(this).parentNode.addMaterial(this.object);
       },
       addDefines: function (object){
-//        this.defines = object;
       },
       addUniforms: function (object){
         this.uniforms2 = object;
-//        this.init();
       },
       attached: function () {
-        console.log("material attached");
-        this.async(function (){
-          this.newMaterial();
-        });
+        this.newMaterial()
       }
     });
+
+  PropertyHook.setupHook("three-js-shader-material", "uniforms",
+    PropertyHook.patchBefore(function (val, node,prop,prev) {
+    })
+    )
   </script>
 </dom-module>
 
