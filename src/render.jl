@@ -4,7 +4,7 @@ export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, line,
        linematerial, shadermaterial, geometry, dodecahedron, icosahedron,
        octahedron, tetrahedron, plane, grid, pointcloud, pointmaterial, text,
-       datatexture, nesteddict, uniforms
+       datatexture
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).

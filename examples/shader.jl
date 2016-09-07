@@ -26,10 +26,9 @@ main(window) =  begin
     push!(window.assets,"widgets")
     push!(window.assets,"nested-props")
 
-    t = map(_->time(), fps(30))
+    t = map(_->time(), fps(10))
 
     map(t) do x
-    vbox(
     ThreeJS.outerdiv() <<
     (ThreeJS.initscene() <<
         [
@@ -44,7 +43,6 @@ main(window) =  begin
             ThreeJS.pointlight(10.0, 10.0, 10.0),
             ThreeJS.camera(0.0, 0.0, 20.0)
         ]
-    ),
     )
     end
 end
