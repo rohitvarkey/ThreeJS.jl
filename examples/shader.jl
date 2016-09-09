@@ -1,24 +1,23 @@
 import ThreeJS
 
-t = every(1.0)
-
 using Reactive
 
-
 vert = """
-        varying vec2 v_uv;
+        varying vec2 rg;
 
         void main() {
-          v_uv = uv;
+          rg = uv;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
         """
 
 frag = """
-        varying vec2 v_uv;
-        uniform float alpha;
+        varying vec2 rg;
+        uniform float b;
+        uniform float a;
 
-        void main() { gl_FragColor = vec4(v_uv, 0.0, alpha); }
+        void main() {
+            gl_FragColor = vec4(rg, b, a); }
         """
 
 main(window) =  begin
@@ -26,22 +25,22 @@ main(window) =  begin
     push!(window.assets,"widgets")
     push!(window.assets,"nested-props")
 
-    t = map(_->time(), fps(10))
+    ti = map(_->time(), fps(30))
 
-    map(t) do x
+    map(ti) do t
     ThreeJS.outerdiv() <<
     (ThreeJS.initscene() <<
         [
             ThreeJS.mesh(0.0, 0.0, 0.0) <<
             [
-                ThreeJS.plane(8.0, 8.0),
+                ThreeJS.plane(1.0, 1.0),
                 ThreeJS.shadermaterial(
-                    uniforms=PropHook("escher-property-hook", Dict(:alpha=>Dict(:type=>"f", :value=>abs(sin(x))))),
+                    uniforms=PropHook("escher-property-hook",
+                        Dict(:b=>Dict(:type=>"f", :value=>sin(t)^2), :a=>Dict(:type=>"f", :value=>cos(t)^2))),
                     vertexshader=vert,
                     fragmentshader=frag,)
             ],
-            ThreeJS.pointlight(10.0, 10.0, 10.0),
-            ThreeJS.camera(0.0, 0.0, 20.0)
+            ThreeJS.camera(0.0, 0.0, 2.0)
         ]
     )
     end

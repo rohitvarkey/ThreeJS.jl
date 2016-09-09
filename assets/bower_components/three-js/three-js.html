@@ -1317,10 +1317,6 @@
           type: Object,
           value: {},
         },
-        attributes: {
-          type: Object,
-          value: {}
-        },
         vertexshader: {
           type: String,
         },
@@ -1332,9 +1328,9 @@
         console.log("newMaterial");
 //        console.dir("UNIFORMS", this.uniforms);
 //        console.dir(this.defines);
+        console.dir(this.uniforms);
         this.object = new THREE.ShaderMaterial({
           uniforms: this.uniforms,
-          attributes: this.attributes,
           vertexShader: this.vertexshader,
           fragmentShader: this.fragmentshader,
         });
@@ -1347,6 +1343,11 @@
 
   PropertyHook.setupHook("three-js-shader-material", "uniforms",
     PropertyHook.patchBefore(function (val, node,prop,prev) {
+//        console.log("patchBefore");
+//        console.dir(val);
+//        console.dir(node);
+//        console.dir(prop);
+//        console.dir(prev);
     })
     )
   </script>
