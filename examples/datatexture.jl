@@ -2,20 +2,10 @@ import ThreeJS
 import FileIO: load
 import Reactive: every
 
-import Images
-
 ascent = load("assets/ascent.png")
+a = reinterpret(UInt8, ascent.data)
 
-a = Images.separate(ascent)
-a = a.data
-b = reinterpret(UInt8, a)
-
-println(typeof(b))
-#println(b)
-#a = img.data
-#b = reinterpret(Array{UInt8, 2}, a)
-
-images = cycle((b, b[257:512, 257:512], b[355:463, 292:375]))
+images = cycle((a, a[257:512, 257:512], a[292:375, 355:463]))
 
 main(window) =  begin
     push!(window.assets,("ThreeJS","threejs"))
