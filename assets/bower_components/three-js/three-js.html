@@ -1364,9 +1364,6 @@
           type: Object,
         },
       },
-      addTexture: function (object){
-        console.log("addTexture");
-      },
       newMaterial: function () {
         this.object = new THREE.ShaderMaterial({
           vertexShader: this.vert,
@@ -1383,16 +1380,8 @@
       }
     });
 
-    // val is the dictionary of values
-    // prop is the name of the property, i.e. "unforms"
   PropertyHook.setupHook("three-js-shader-material", "uniforms",
     PropertyHook.patchBefore(function (val, node,prop,prev) {
-//        val.a = 1.0;
-//        console.log("patchBefore");
-//        console.dir(val);
-//        console.dir(node);
-//        console.dir(prop);
-//        console.dir(prev);
     })
     )
   </script>

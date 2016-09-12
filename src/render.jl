@@ -475,7 +475,13 @@ function linematerial(props = Dict())
 end
 
 """
-...
+Creates a shader material tag.
+These tags should be the child of a mesh tag.
+
+The WebGL programs should be passed to `vert` and `frag`. The `defines` and `uniforms`
+are dictionaries that map to declarations in the programs. Refer to the ThreeJS docs
+for [`ShaderMaterial`](http://threejs.org/docs/api/materials/ShaderMaterial.html)
+for more details.
 """
 function shadermaterial(vert::ASCIIString, frag::ASCIIString; defines = Dict(), uniforms = Dict(), kwds...)
     Elem(:"three-js-shader-material"; :vert => vert, :frag => frag,
@@ -485,7 +491,11 @@ function shadermaterial(vert::ASCIIString, frag::ASCIIString; defines = Dict(), 
 end
 
 """
-...
+Creates a data texture tag.
+These tags should be the child of a shader material.
+
+The name should be a `sampler2D` in the WebGL programs. The data should be a base64-encoded
+string.
 """
 function datatexture(name::ASCIIString, data::ASCIIString, width::Int, height::Int; kwds...)
     Elem(:"three-js-data-texture"; name = name,
@@ -498,6 +508,9 @@ function datatexture(name::ASCIIString, data::ASCIIString, width::Int, height::I
     )
 end
 
+"""
+Convenience function that serializes an array as a base64 string.
+"""
 function datatexture(name::ASCIIString, data::Array{UInt8, 2}; kwds...)
     datatexture(name, base64encode(data), size(data, 1), size(data, 2);
         :format => "LuminanceFormat", :type => "UnsignedByteType", kwds...)
