@@ -3,7 +3,6 @@ import Reactive: every
 
 main(window) =  begin
     push!(window.assets,("ThreeJS","threejs"))
-    push!(window.assets,"widgets")
     push!(window.assets,"nested-props")
 
     map(every(1 / 30)) do t
