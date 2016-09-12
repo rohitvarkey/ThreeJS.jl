@@ -477,22 +477,30 @@ end
 """
 ...
 """
-function shadermaterial(; kwds...)
-    Elem(:"three-js-shader-material"; kwds...)
+function shadermaterial(vert::ASCIIString, frag::ASCIIString; defines = Dict(), uniforms = Dict(), kwds...)
+    Elem(:"three-js-shader-material"; :vert => vert, :frag => frag,
+        :defines => Patchwork.PropHook("escher-property-hook", defines),
+        :uniforms => Patchwork.PropHook("escher-property-hook", uniforms),
+        kwds...)
 end
-
-# attributes = filter((k,v)->v!=false, props)
 
 """
 ...
 """
-# data = data, width = width, height = height, format = format, type_ = type_
-function datatexture(name, data::ASCIIString, width, height, format, type_)
-    Elem(:"three-js-data-texture"; name = name, attributes = Dict(:data => data, :width => width, :height => height, :format => format, :type => type_))
+function datatexture(name::ASCIIString, data::ASCIIString, width::Int, height::Int; kwds...)
+    Elem(:"three-js-data-texture"; name = name,
+        attributes = Dict(
+            :data => data,
+            :width => width,
+            :height => height,
+            Dict(kwds)...
+        )
+    )
 end
 
-function datatexture(name, data::Array{UInt8, 2})
-    datatexture(name, base64encode(data), size(data, 1), size(data, 2), "LuminanceFormat", "UnsignedByteType")
+function datatexture(name::ASCIIString, data::Array{UInt8, 2}; kwds...)
+    datatexture(name, base64encode(data), size(data, 1), size(data, 2);
+        :format => "LuminanceFormat", :type => "UnsignedByteType", kwds...)
 end
 
 """

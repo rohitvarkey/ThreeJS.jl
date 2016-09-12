@@ -1267,10 +1267,22 @@
         type: {
           type: String
         },
+        magfilter: {
+          type: String
+        },
+        minfilter: {
+          type: String
+        }
       },
       newDataTexture: function () {
         this.object = new THREE.DataTexture(this.b64decode(this.data), this.width, this.height,
             THREE[this.format], THREE[this.type]);
+        if (this.magfilter) {
+          this.object.magFilter = THREE[this.magfilter];
+        }
+        if (this.minfilter) {
+          this.object.minFilter = THREE[this.minfilter];
+        }
         this.object.unpackAlignment = 1;
         this.object.needsUpdate = true;
         this.addToParent();
@@ -1339,44 +1351,33 @@
     Polymer({
       is: 'three-js-shader-material',
       properties: {
-        vertexshader: {
+        vert: {
           type: String,
         },
-        fragmentshader: {
+        frag: {
           type: String,
         },
         defines: {
           type: Object,
-          value: {},
         },
         uniforms: {
           type: Object,
-          value: {}
         },
-      },
-      test: function (){
-        console.log("test");
       },
       addTexture: function (object){
         console.log("addTexture");
       },
       newMaterial: function () {
-        console.log("newMaterial");
-//        console.dir("UNIFORMS", this.uniforms);
-//        console.dir(this.defines);
-//        console.dir(this.uniforms);
-//        console.dir(this);
-        this.test();
         this.object = new THREE.ShaderMaterial({
+          vertexShader: this.vert,
+          fragmentShader: this.frag,
+          defines: this.defines,
           uniforms: this.uniforms,
-          vertexShader: this.vertexshader,
-          fragmentShader: this.fragmentshader,
         });
         Polymer.dom(this).parentNode.addMaterial(this.object);
       },
       attached: function () {
         this.async(function (){
-            console.log("newMaterial attached");
             this.newMaterial();
         });
       }

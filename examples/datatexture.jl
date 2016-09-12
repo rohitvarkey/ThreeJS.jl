@@ -2,15 +2,6 @@ import ThreeJS
 
 using Reactive
 
-vert = """
-        varying vec2 rg;
-
-        void main() {
-          rg = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-        """
-
 frag = """
         varying vec2 rg;
         uniform sampler2D data;
@@ -75,9 +66,8 @@ main(window) =  begin
             ThreeJS.mesh(0.0, 0.0, 0.0) <<
             [
                 ThreeJS.plane(1.0, 1.0),
-                ThreeJS.shadermaterial(vertexshader=vert, fragmentshader=frag,
-                    uniforms=PropHook("escher-property-hook",
-                        Dict(:size=>Dict(:type=>"2f", :value=>[1.0, 1.0])))) << ThreeJS.datatexture("data", getnext(t))
+                ThreeJS.shadermaterial(vert, frag; :uniforms => Dict(:size => Dict(:type => "2f", :value => [1.0, 1.0]))) <<
+                    ThreeJS.datatexture("data", getnext(t); :minfilter => "LinearFilter")
             ],
             ThreeJS.camera(0.0, 0.0, 2.0)
         ]
