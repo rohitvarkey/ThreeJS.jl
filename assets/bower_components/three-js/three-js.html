@@ -1247,10 +1247,50 @@
       is: 'three-js-data-texture',
       properties: {
         data: {
+          type: String,
+          notify: true,
+          observer: 'texChanged',
+        },
+        width: {
+          type: Number,
+          notify: true,
+          observer: 'texChanged',
+        },
+        height: {
+          type: Number,
+          notify: true,
+          observer: 'texChanged',
+        },
+        format: {
+          type: String
+        },
+        type_: {
           type: String
         },
       },
-
+      newDataTexture: function () {
+        this.object = new THREE.DataTexture(this.b64decode(this.data), this.width, this.height,
+            THREE[this.format], THREE[this.type_]);
+        this.object.unpackAlignment = 1;
+        this.object.magFilter = THREE.LinearFilter;
+        this.object.minFilter = THREE.LinearFilter;
+        this.object.needsUpdate = true;
+        this.addToParent();
+      },
+      addToParent: function () {
+        Polymer.dom(this).parentNode.uniforms[this.name] = {type: "t", value: this.object};
+        Polymer.dom(this).parentNode.object.uniforms[this.name] = {type: "t", value: this.object};
+      },
+      texChanged: function() {
+        this.newDataTexture();
+        Polymer.dom(this).parentNode.object.needsUpdate = true;
+      },
+      attached: function () {
+        console.log("dataTexture attached");
+        this.async(function (){
+          this.newDataTexture();
+        });
+      },
  b64decode: function (base64) {
   // lightly adapted from Niklas
 
@@ -1290,16 +1330,6 @@
 
   return bytes;
 },
-      newDataTexture: function () {
-        console.log("DataTexture");
-        this.object = new THREE.DataTexture(this.b64decode(this.data), 512, 512);
-        Polymer.dom(this).parentNode.addMaterial(this.object);
-      },
-      attached: function () {
-        this.async(function (){
-          this.newDataTexture();
-        });
-      }
     });
   </script>
 </dom-module>
@@ -1309,26 +1339,34 @@
     Polymer({
       is: 'three-js-shader-material',
       properties: {
-        uniforms: {
-          type: Object,
-          value: {}
-        },
-        defines: {
-          type: Object,
-          value: {},
-        },
         vertexshader: {
           type: String,
         },
         fragmentshader: {
           type: String,
         },
+        defines: {
+          type: Object,
+          value: {},
+        },
+        uniforms: {
+          type: Object,
+          value: {}
+        },
+      },
+      test: function (){
+        console.log("test");
+      },
+      addTexture: function (object){
+        console.log("addTexture");
       },
       newMaterial: function () {
         console.log("newMaterial");
 //        console.dir("UNIFORMS", this.uniforms);
 //        console.dir(this.defines);
-        console.dir(this.uniforms);
+//        console.dir(this.uniforms);
+//        console.dir(this);
+        this.test();
         this.object = new THREE.ShaderMaterial({
           uniforms: this.uniforms,
           vertexShader: this.vertexshader,
@@ -1337,12 +1375,18 @@
         Polymer.dom(this).parentNode.addMaterial(this.object);
       },
       attached: function () {
-        this.newMaterial()
+        this.async(function (){
+            console.log("newMaterial attached");
+            this.newMaterial();
+        });
       }
     });
 
+    // val is the dictionary of values
+    // prop is the name of the property, i.e. "unforms"
   PropertyHook.setupHook("three-js-shader-material", "uniforms",
     PropertyHook.patchBefore(function (val, node,prop,prev) {
+//        val.a = 1.0;
 //        console.log("patchBefore");
 //        console.dir(val);
 //        console.dir(node);

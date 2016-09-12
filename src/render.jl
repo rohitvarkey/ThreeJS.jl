@@ -481,13 +481,23 @@ function shadermaterial(; kwds...)
     Elem(:"three-js-shader-material"; kwds...)
 end
 
+# attributes = filter((k,v)->v!=false, props)
+
 """
 ...
 """
-function datatexture(props = Dict())
-#    props[:data] = base64encode(props[:data])
-#    println(props)
-    Elem(:"three-js-data-texture", attributes = filter((k,v)->v!=false, props))
+function datatexture(name, data::ASCIIString, width, height, format, type_)
+    Elem(:"three-js-data-texture"; name = name, attributes = Dict(:data => data, :width => width, :height => height, :format => format, :type_ => type_))
+end
+
+function datatexture(name, data::Array{UInt8, 2})
+    println("datatexture")
+
+    if (eltype(data) == UInt8)
+        _type = "UnsignedByteType"
+    end
+
+    datatexture(name, base64encode(data), size(data, 1), size(data, 2), "LuminanceFormat", _type)
 end
 
 """
