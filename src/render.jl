@@ -486,18 +486,13 @@ end
 """
 ...
 """
+# data = data, width = width, height = height, format = format, type_ = type_
 function datatexture(name, data::ASCIIString, width, height, format, type_)
-    Elem(:"three-js-data-texture"; name = name, attributes = Dict(:data => data, :width => width, :height => height, :format => format, :type_ => type_))
+    Elem(:"three-js-data-texture"; name = name, attributes = Dict(:data => data, :width => width, :height => height, :format => format, :type => type_))
 end
 
 function datatexture(name, data::Array{UInt8, 2})
-    println("datatexture")
-
-    if (eltype(data) == UInt8)
-        _type = "UnsignedByteType"
-    end
-
-    datatexture(name, base64encode(data), size(data, 1), size(data, 2), "LuminanceFormat", _type)
+    datatexture(name, base64encode(data), size(data, 1), size(data, 2), "LuminanceFormat", "UnsignedByteType")
 end
 
 """

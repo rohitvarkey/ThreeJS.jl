@@ -39,11 +39,10 @@ b = reinterpret(UInt8, a)
 
 println(typeof(a))
 
-
 next = 1
-count = 2
 
-images = (b, b[1:256, 1:357])
+images = (b, b[257:512, 257:512], b[355:463, 292:375])
+count = length(images)
 
 function getnext(t)
     global next

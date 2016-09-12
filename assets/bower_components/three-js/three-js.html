@@ -1249,47 +1249,47 @@
         data: {
           type: String,
           notify: true,
-          observer: 'texChanged',
+          observer: 'imageChanged',
         },
         width: {
           type: Number,
           notify: true,
-          observer: 'texChanged',
+          observer: 'imageChanged',
         },
         height: {
           type: Number,
           notify: true,
-          observer: 'texChanged',
+          observer: 'imageChanged',
         },
         format: {
           type: String
         },
-        type_: {
+        type: {
           type: String
         },
       },
       newDataTexture: function () {
         this.object = new THREE.DataTexture(this.b64decode(this.data), this.width, this.height,
-            THREE[this.format], THREE[this.type_]);
+            THREE[this.format], THREE[this.type]);
         this.object.unpackAlignment = 1;
-        this.object.magFilter = THREE.LinearFilter;
-        this.object.minFilter = THREE.LinearFilter;
         this.object.needsUpdate = true;
         this.addToParent();
       },
       addToParent: function () {
         Polymer.dom(this).parentNode.uniforms[this.name] = {type: "t", value: this.object};
-        Polymer.dom(this).parentNode.object.uniforms[this.name] = {type: "t", value: this.object};
-      },
-      texChanged: function() {
-        this.newDataTexture();
-        Polymer.dom(this).parentNode.object.needsUpdate = true;
       },
       attached: function () {
-        console.log("dataTexture attached");
         this.async(function (){
           this.newDataTexture();
         });
+      },
+      imageChanged: function() {
+        if (this.object) {
+          this.object.image.data = this.b64decode(this.data);
+          this.object.image.width = this.width;
+          this.object.image.height = this.height;
+          this.object.needsUpdate = true;
+        }
       },
  b64decode: function (base64) {
   // lightly adapted from Niklas
