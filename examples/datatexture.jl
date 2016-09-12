@@ -43,26 +43,25 @@ function getnext()
     retval
 end
 
+# periodic_leading = sampleon(every10secs, leading)
+
 main(window) =  begin
     push!(window.assets,("ThreeJS","threejs"))
-    push!(window.assets,"widgets")
     push!(window.assets,"nested-props")
 
-    map(every(1)) do t
-        a = getnext()
-
+    map(map(t -> getnext(), every(1))) do a
         ThreeJS.outerdiv() <<
         (ThreeJS.initscene() <<
-        [
-            ThreeJS.mesh(0.0, 0.0, 0.0) <<
             [
-                ThreeJS.plane(1.0, 1.0),
-                ThreeJS.shadermaterial(open(readall, "assets/datatexture.vert", "r"), open(readall, "assets/datatexture.frag", "r");
-                    :uniforms => Dict(:size => Dict(:type => "2f", :value => [1.0, 1.0]))) <<
-                        ThreeJS.datatexture("data", a; :minfilter => "LinearFilter")
-            ],
-            ThreeJS.camera(0.0, 0.0, 2.0)
-        ]
-    )
+                ThreeJS.mesh(0.0, 0.0, 0.0) <<
+                [
+                    ThreeJS.plane(1.0, 1.0),
+                    ThreeJS.shadermaterial(open(readall, "assets/datatexture.vert", "r"), open(readall, "assets/datatexture.frag", "r");
+                        :uniforms => Dict(:size => Dict(:type => "2f", :value => [1.0, 1.0]))) <<
+                            ThreeJS.datatexture("data", a; :minfilter => "LinearFilter")
+                ],
+                ThreeJS.camera(0.0, 0.0, 2.0)
+            ]
+        )
     end
 end
