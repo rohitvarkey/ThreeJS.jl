@@ -55,12 +55,11 @@ main(window) =  begin
             [
                 ThreeJS.mesh(0.0, 0.0, 0.0) <<
                 [
-                    ThreeJS.plane(1.0, 1.0),
-                    ThreeJS.shadermaterial(open(readall, "assets/datatexture.vert", "r"), open(readall, "assets/datatexture.frag", "r");
-                        :uniforms => Dict(:size => Dict(:type => "2f", :value => [1.0, 1.0]))) <<
-                            ThreeJS.datatexture("data", a; :minfilter => "LinearFilter")
+                    ThreeJS.plane(convert(Float64, size(a, 1)), convert(Float64, size(a, 2))),
+                    ThreeJS.shadermaterial(open(readall, "assets/datatexture.vert", "r"), open(readall, "assets/datatexture.frag", "r")) <<
+                        ThreeJS.datatexture("data", a; :minfilter => "LinearFilter")
                 ],
-                ThreeJS.camera(0.0, 0.0, 2.0)
+                ThreeJS.camera(0.0, 0.0, 768.0)
             ]
         )
     end
