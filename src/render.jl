@@ -125,7 +125,7 @@ Creates a plane in the XY plane with specified width and height centered
 around the origin.
 Should be put in a `mesh` along with another material Elem to render.
 """
-function plane(width::Float64, height::Float64)
+function plane(width::Real, height::Real)
     Elem(
         :"three-js-plane",
         attributes = Dict(:w => width, :h => height)
