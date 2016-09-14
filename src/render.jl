@@ -605,7 +605,7 @@ function grid(
 end
 
 """
-Create a Text Sprite with `content` at position `(x,y,z)`. 
+Create a Text Sprite with `content` at position `(x,y,z)`.
 """
 function text(x::Float64, y::Float64, z::Float64, content::AbstractString)
    Elem(
@@ -614,3 +614,14 @@ function text(x::Float64, y::Float64, z::Float64, content::AbstractString)
    )
 end
 
+if (Pkg.installed("Escher") != nothing)
+    import Reactive: Signal
+    import Escher
+
+    """
+    Create a raycaster that triggers on the JavaScript event `event`.
+    """
+    function raycaster(signal::Signal, event::AbstractString = "")
+        Elem(:"three-js-raycaster"; :signal => Escher.makeid((signal, Escher.ToType{Dict{UTF8String, Float64}}())), :event => event)
+    end
+end

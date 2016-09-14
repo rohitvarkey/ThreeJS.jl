@@ -1418,3 +1418,49 @@
     });
   </script>
 </dom-module>
+
+<dom-module id="three-js-raycaster">
+  <script>
+    Polymer({
+      is: 'three-js-raycaster',
+      properties: {
+        signal: {
+          type: Number
+        },
+        event: {
+          type: String
+        }
+      },
+      newRaycaster: function () {
+        this.object = new THREE.Raycaster();
+
+        var renderer = this.fire('three-js-get-renderer').detail.renderer;
+        var scene = Polymer.dom(this).parentNode.objectParent.scene;
+        var camera = Polymer.dom(this).parentNode.objectParent.camera;
+
+        if (this.event) {
+            var that = this;
+            renderer.domElement.addEventListener(this.event, function (event) {
+                var boundingBox = renderer.domElement.getBoundingClientRect();
+
+                var x = 2 * ((event.clientX - boundingBox.left) / renderer.domElement.clientWidth) - 1;
+                var y = 2 * ((boundingBox.top - event.clientY) / renderer.domElement.clientHeight) + 1;
+                that.object.setFromCamera(new THREE.Vector2(x, y), camera);
+
+                var intersects = that.object.intersectObjects(scene.children);
+                if (intersects.length > 0) {
+                    Escher.send({command: 'signal-update', data: {signalId: that.signal, value: intersects[0].point}});
+                } else {
+                    Escher.send({command: 'signal-update', data: {signalId: that.signal, value: {}}});
+                }
+            }, false);
+        }
+      },
+      attached: function () {
+        this.async(function (){
+            this.newRaycaster();
+        });
+      }
+    });
+  </script>
+</dom-module>
