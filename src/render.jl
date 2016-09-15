@@ -614,14 +614,30 @@ function text(x::Float64, y::Float64, z::Float64, content::AbstractString)
    )
 end
 
-if (Pkg.installed("Escher") != nothing)
-    import Reactive: Signal
-    import Escher
+import Reactive: Signal
 
-    """
-    Create a raycaster that triggers on the JavaScript event `event`.
-    """
-    function raycaster(signal::Signal, event::AbstractString = "")
-        Elem(:"three-js-raycaster"; :signal => Escher.makeid((signal, Escher.ToType{Dict{UTF8String, Float64}}())), :event => event)
-    end
-end
+import Escher
+import Escher: Tile, Behavior, Intent
+
+immutable Raycaster <: Behavior end
+
+Escher.render(r::Raycaster, state) = Escher.render(Elem(:"three-js-raycaster"; :event => "click"), state)
+
+immutable RaycasterIntent <: Intent end
+
+Escher.interpret(::RaycasterIntent, msg::Dict) = "Hello, world!" # Dummy value just to get things workings
+
+Escher.default_intent(x::Raycaster) = RaycasterIntent()
+
+
+#if (Pkg.installed("Escher") != nothing)
+#    import Reactive: Signal
+#    import Escher
+#
+#    """
+#    Create a raycaster that triggers on the JavaScript event `event`.
+#    """
+#    function raycaster(signal::Signal, event::AbstractString = "")
+#        Elem(:"three-js-raycaster"; :signal => Escher.makeid((signal, Escher.ToType{Dict{UTF8String, Float64}}())), :event => event)
+#    end
+#end
