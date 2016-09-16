@@ -14,12 +14,11 @@ main(window) =  begin
     rz = 0.0
     colors = cycle(("red", "green", "blue"))
 
-    rc = ThreeJS.Raycaster()
-    subscribed_rc = subscribe(pointpick, rc)
+    raycastable_camera = subscribe(pointpick, ThreeJS.raycastable(ThreeJS.camera(0.0, 0.0, 20.0), "click"))
 
     color, i = next(colors, start(colors))
-    map(eventloop) do _
-        color = "red"
+    map(eventloop, map(point -> (isempty(point) ? (color, i) : next(colors, i)), pointpick)) do _, pair
+        color, i = pair
 
         rx += 0.5
         ry += 0.5
@@ -33,7 +32,7 @@ main(window) =  begin
                         ],
                         ThreeJS.pointlight(10.0, 10.0, 10.0),
                         ThreeJS.pointlight(-10.0, -10.0, -10.0),
-                        ThreeJS.camera(0.0, 0.0, 20.0) << subscribed_rc
+                        Escher.render(raycastable_camera, Dict())
                     ]
                 )
         end

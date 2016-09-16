@@ -1,9 +1,9 @@
 import Compat
-using Colors, GeometryTypes
+using Colors, GeometryTypes, Requires
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, line,
        linematerial, geometry, dodecahedron, icosahedron, octahedron,
-       tetrahedron, plane, grid, pointcloud, pointmaterial, text
+       tetrahedron, plane, grid, pointcloud, pointmaterial, text, raycastable
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -614,30 +614,21 @@ function text(x::Float64, y::Float64, z::Float64, content::AbstractString)
    )
 end
 
-import Reactive: Signal
+@require Escher begin
+    import Escher: Behavior
 
-import Escher
-import Escher: Tile, Behavior, Intent
+    immutable Raycaster <: Behavior
+        camera
+        event
+    end
 
-immutable Raycaster <: Behavior end
+    Escher.render(r::Raycaster, state) = Escher.render(r.camera, state) << Elem(:"three-js-raycaster"; :event => r.event)
+    Escher.default_intent(x::Raycaster) = Escher.ToType{Dict{UTF8String, Float64}}()
 
-Escher.render(r::Raycaster, state) = Escher.render(Elem(:"three-js-raycaster"; :event => "click"), state)
-
-immutable RaycasterIntent <: Intent end
-
-Escher.interpret(::RaycasterIntent, msg::Dict) = "Hello, world!" # Dummy value just to get things workings
-
-Escher.default_intent(x::Raycaster) = RaycasterIntent()
-
-
-#if (Pkg.installed("Escher") != nothing)
-#    import Reactive: Signal
-#    import Escher
-#
-#    """
-#    Create a raycaster that triggers on the JavaScript event `event`.
-#    """
-#    function raycaster(signal::Signal, event::AbstractString = "")
-#        Elem(:"three-js-raycaster"; :signal => Escher.makeid((signal, Escher.ToType{Dict{UTF8String, Float64}}())), :event => event)
-#    end
-#end
+    """
+    Create a raycaster that triggers on the JavaScript event `event`.
+    """
+    function raycastable(camera::Elem, event::AbstractString = "")
+        Raycaster(camera, event)
+    end
+end

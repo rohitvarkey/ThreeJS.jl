@@ -1446,14 +1446,12 @@
                 that.object.setFromCamera(new THREE.Vector2(x, y), camera);
 
                 var elem = that.findElem();
-                that.update(elem, {}); // No data for testing
-
-//                var intersects = that.object.intersectObjects(scene.children);
-//                if (intersects.length > 0) {
-//                    Escher.send({command: 'signal-update', data: {signalId: that.signal, value: intersects[0].point}});
-//                } else {
-//                    Escher.send({command: 'signal-update', data: {signalId: that.signal, value: {}}});
-//                }
+                var intersects = that.object.intersectObjects(scene.children);
+                if (intersects.length > 0) {
+                    that.update(elem, intersects[0].point);
+                } else {
+                    that.update(elem, {});
+                }
             }, false);
         }
       },
