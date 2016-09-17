@@ -1241,6 +1241,155 @@
   </script>
 </dom-module>
 
+<dom-module id="three-js-data-texture">
+  <script>
+    Polymer({
+      is: 'three-js-data-texture',
+      properties: {
+        data: {
+          type: String,
+          notify: true,
+          observer: 'imageChanged',
+        },
+        width: {
+          type: Number,
+          notify: true,
+          observer: 'imageChanged',
+        },
+        height: {
+          type: Number,
+          notify: true,
+          observer: 'imageChanged',
+        },
+        format: {
+          type: String
+        },
+        type: {
+          type: String
+        },
+        magfilter: {
+          type: String
+        },
+        minfilter: {
+          type: String
+        }
+      },
+      newDataTexture: function () {
+        this.object = new THREE.DataTexture(this.b64decode(this.data), this.width, this.height,
+          THREE[this.format], THREE[this.type]);
+        if (this.magfilter) {
+          this.object.magFilter = THREE[this.magfilter];
+        }
+        if (this.minfilter) {
+          this.object.minFilter = THREE[this.minfilter];
+        }
+        this.object.unpackAlignment = 1;
+        this.object.needsUpdate = true;
+        this.addToParent();
+      },
+      addToParent: function () {
+        Polymer.dom(this).parentNode.uniforms[this.name] = {type: "t", value: this.object};
+      },
+      attached: function () {
+        this.async(function (){
+          this.newDataTexture();
+        });
+      },
+      imageChanged: function() {
+        if (this.object) {
+          this.object.image.data = this.b64decode(this.data);
+          this.object.image.width = this.width;
+          this.object.image.height = this.height;
+          this.object.needsUpdate = true;
+        }
+      },
+      b64decode: function (base64) {
+        // lightly adapted from Niklas
+
+        /*
+        * base64-arraybuffer
+        * https://github.com/niklasvh/base64-arraybuffer
+        *
+        * Copyright (c) 2012 Niklas von Hertzen
+        * Licensed under the MIT license.
+        */
+        var chars =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        var bufferLength = base64.length * 0.75,
+          len = base64.length,
+          i, p = 0,
+          encoded1, encoded2, encoded3, encoded4;
+
+        if (base64[base64.length - 1] === "=") {
+          bufferLength--;
+          if (base64[base64.length - 2] === "=") {
+            bufferLength--;
+          }
+        }
+
+        var bytes = new Uint8Array(bufferLength);
+
+        for (i = 0; i < len; i += 4) {
+          encoded1 = chars.indexOf(base64[i]);
+          encoded2 = chars.indexOf(base64[i + 1]);
+          encoded3 = chars.indexOf(base64[i + 2]);
+          encoded4 = chars.indexOf(base64[i + 3]);
+
+          bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
+          bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
+          bytes[p++] = ((encoded3 & 3) << 6) | (encoded4 & 63);
+        }
+
+        return bytes;
+      },
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-shader-material">
+  <script>
+    Polymer({
+      is: 'three-js-shader-material',
+      properties: {
+        vert: {
+          type: String,
+        },
+        frag: {
+          type: String,
+        },
+        defines: {
+          type: Object,
+        },
+        uniforms: {
+          type: Object,
+        },
+      },
+      newMaterial: function () {
+        this.object = new THREE.ShaderMaterial({
+          vertexShader: this.vert,
+          fragmentShader: this.frag,
+          defines: this.defines,
+          uniforms: this.uniforms,
+        });
+        Polymer.dom(this).parentNode.addMaterial(this.object);
+      },
+      attached: function () {
+        this.async(function (){
+            this.newMaterial();
+        });
+      }
+    });
+
+    try {
+      PropertyHook.setupHook("three-js-shader-material", "uniforms",
+        PropertyHook.patchBefore(function (val, node,prop,prev) {})
+      )
+    } catch (e) {
+      console.warn("three-js-shader-material is only usable with Escher.jl");
+    }
+  </script>
+</dom-module>
+
 <dom-module id="three-js-geometry">
   <script>
     Polymer({
@@ -1416,5 +1565,54 @@
           this.addToParent3();
       }
     });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-raycaster">
+  <script>
+    try {
+    Polymer({
+      is: 'three-js-raycaster',
+      behaviors: [EscherMixins.ReactiveSignal],
+      properties: {
+        event: {
+          type: String
+        }
+      },
+      newRaycaster: function () {
+        this.object = new THREE.Raycaster();
+
+        var renderer = this.fire('three-js-get-renderer').detail.renderer;
+        var scene = Polymer.dom(this).parentNode.objectParent.scene;
+        var camera = Polymer.dom(this).parentNode.objectParent.camera;
+
+        if (this.event) {
+            var that = this;
+            renderer.domElement.addEventListener(this.event, function (event) {
+                var boundingBox = renderer.domElement.getBoundingClientRect();
+
+                var x = 2 * ((event.clientX - boundingBox.left) / renderer.domElement.clientWidth) - 1;
+                var y = 2 * ((boundingBox.top - event.clientY) / renderer.domElement.clientHeight) + 1;
+                that.object.setFromCamera(new THREE.Vector2(x, y), camera);
+
+                var elem = that.findElem();
+                var intersects = that.object.intersectObjects(scene.children);
+                if (intersects.length > 0) {
+                    that.update(elem, intersects[0].point);
+                } else {
+                    that.update(elem, {});
+                }
+            }, false);
+        }
+      },
+      attached: function () {
+        this.async(function (){
+            this.newRaycaster();
+        });
+      }
+    });
+    } catch (e) {
+      console.warn("three-js-shader-material is only usable with Escher.jl");
+    }
   </script>
 </dom-module>
