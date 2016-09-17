@@ -1,9 +1,9 @@
 import Compat
-using Colors, GeometryTypes
+using Colors, GeometryTypes, Requires
 export mesh, box, sphere, pyramid, cylinder, torus, parametric, meshlines,
        material, camera, pointlight, spotlight, ambientlight, line,
        linematerial, geometry, dodecahedron, icosahedron, octahedron,
-       tetrahedron, plane, grid, pointcloud, pointmaterial, text
+       tetrahedron, plane, grid, pointcloud, pointmaterial, text, raycastable
 
 """
 Creates a Three-js mesh at position (`x`,`y`,`z`).
@@ -655,4 +655,23 @@ function text(x::Float64, y::Float64, z::Float64, content::AbstractString)
         :"three-js-text",
         attributes = Dict(:x=>x, :y=>y, :z=>z, :content=>content)
    )
+end
+
+@require Escher begin
+    import Escher: Behavior
+
+    immutable Raycaster <: Behavior
+        camera
+        event
+    end
+
+    Escher.render(r::Raycaster, state) = Escher.render(r.camera, state) << Elem(:"three-js-raycaster"; :event => r.event)
+    Escher.default_intent(x::Raycaster) = Escher.ToType{Dict{UTF8String, Float64}}()
+
+    """
+    Create a raycaster that triggers on the JavaScript event `event`.
+    """
+    function raycastable(camera::Elem, event::AbstractString = "")
+        Raycaster(camera, event)
+    end
 end
