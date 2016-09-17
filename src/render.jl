@@ -124,7 +124,7 @@ Creates a plane in the XY plane with specified width and height centered
 around the origin.
 Should be put in a `mesh` along with another material Elem to render.
 """
-function plane(width::Float64, height::Float64)
+function plane(width::Real, height::Real)
     Elem(
         :"three-js-plane",
         attributes = Dict(:w => width, :h => height)
@@ -474,6 +474,49 @@ function linematerial(props = Dict())
 end
 
 """
+Creates a shader material tag.
+These tags should be the child of a mesh tag.
+
+The WebGL programs should be passed to `vert` and `frag`. The `defines` and `uniforms`
+are dictionaries that map to declarations in the programs. Refer to the ThreeJS docs
+for [`ShaderMaterial`](http://threejs.org/docs/api/materials/ShaderMaterial.html)
+for more details.
+"""
+function shadermaterial(vert::AbstractString, frag::AbstractString; defines = Dict(), uniforms = Dict(), kwds...)
+    Elem(:"three-js-shader-material"; :vert => vert, :frag => frag,
+        :defines => Patchwork.PropHook("escher-property-hook", defines),
+        :uniforms => Patchwork.PropHook("escher-property-hook", uniforms),
+        kwds...)
+end
+
+"""
+Creates a data texture tag.
+These tags should be the child of a shader material.
+
+The name should be a `sampler2D` in the WebGL programs. The data should be a base64-encoded
+string.
+"""
+function datatexture(name::AbstractString, data::AbstractString, width::Int, height::Int; kwds...)
+    Elem(:"three-js-data-texture"; name = name,
+        attributes = Dict(
+            :data => data,
+            :width => width,
+            :height => height,
+            Dict(kwds)...
+        )
+    )
+end
+
+"""
+Convenience function that serializes an array as a base64 string.
+"""
+function datatexture(name::ASCIIString, data::Array{UInt8, 2}; kwds...)
+    datatexture(name, base64encode(data), size(data, 1), size(data, 2);
+        :format => "LuminanceFormat", :type => "UnsignedByteType", kwds...)
+end
+
+
+"""
 Creates a point cloud tag.
 Line tags should be a child of the scene tag created by `initscene`.
 
@@ -605,7 +648,7 @@ function grid(
 end
 
 """
-Create a Text Sprite with `content` at position `(x,y,z)`. 
+Create a Text Sprite with `content` at position `(x,y,z)`.
 """
 function text(x::Float64, y::Float64, z::Float64, content::AbstractString)
    Elem(
@@ -613,4 +656,3 @@ function text(x::Float64, y::Float64, z::Float64, content::AbstractString)
         attributes = Dict(:x=>x, :y=>y, :z=>z, :content=>content)
    )
 end
-
