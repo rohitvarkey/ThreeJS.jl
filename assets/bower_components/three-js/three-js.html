@@ -33,14 +33,6 @@
         Polymer({
           is: 'three-js',
           properties: {
-            w: {
-                type: String,
-                value: "1000"
-            },
-            h: {
-                type: String,
-                value: "562"
-            },
             bgcolor: {
               type: String,
               value: "#ffffff",
@@ -54,7 +46,12 @@
           });
           Polymer.dom(this.root).appendChild(renderer.domElement);
           this.renderer = renderer;
-          renderer.setSize(this.w, this.h);
+          var parent = Polymer.dom(this).parentNode;
+          if (typeof parent.clientWidth === "undefined" || typeof parent.clientHeight === "undefined") {
+            renderer.setSize(1000, 562);
+          } else {
+            renderer.setSize(parent.clientWidth, parent.clientHeight);
+          }
           //renderer.shadowMapEnabled = true;
           //renderer.shadowMapType = THREE.PCFShadowMap;
           renderer.setClearColor(this.bgcolor);
