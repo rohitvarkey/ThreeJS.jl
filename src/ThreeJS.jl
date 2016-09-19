@@ -11,7 +11,7 @@ include("properties.jl")
 
 "Outer div to keep the three-js tag in."
 function outerdiv(w::AbstractString="100%", h::AbstractString="600px")
-    Elem(:div, id="three-js-div", style=Dict(:width=>w, :height=>h))
+    Elem(:div, style=Dict(:width=>w, :height=>h))
 end
 
 "Initiates a three-js scene"
