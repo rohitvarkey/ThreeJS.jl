@@ -47,7 +47,11 @@
           Polymer.dom(this.root).appendChild(renderer.domElement);
           this.renderer = renderer;
           var parent = Polymer.dom(this).parentNode;
-          renderer.setSize(parent.clientWidth, parent.clientHeight);
+          if (typeof parent.clientWidth === "undefined" || typeof parent.clientHeight === "undefined") {
+            renderer.setSize(1000, 562);
+          } else {
+            renderer.setSize(parent.clientWidth, parent.clientHeight);
+          }
           //renderer.shadowMapEnabled = true;
           //renderer.shadowMapType = THREE.PCFShadowMap;
           renderer.setClearColor(this.bgcolor);
