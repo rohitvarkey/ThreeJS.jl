@@ -33,7 +33,7 @@ Creates a Box geometry of width `w`, height `h` and depth `d`.
 Should be put in a `mesh` along with another material Elem to render.
 """
 function box(w::Float64,h::Float64,d::Float64)
-   Elem(:"three-js-box", attributes = Dict(:w=>w, :h=>h, :d=>d))
+   Elem(:"three-js-box", attributes = Dict(:width=>w, :height=>h, :depth=>d))
 end
 
 """
