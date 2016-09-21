@@ -63,7 +63,7 @@ facts("Testing Render Elem Outputs") do
         @fact box(10.0, 11.0, 12.0) -->
             Elem(
                 :"three-js-box",
-                attributes = Dict(:w => 10.0, :h => 11.0, :d => 12.0)
+                attributes = Dict(:width => 10.0, :height => 11.0, :depth => 12.0)
             )
         @fact sphere(10.0) -->
             Elem(:"three-js-sphere", attributes = Dict(:r => 10.0))
