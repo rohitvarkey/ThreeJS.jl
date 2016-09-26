@@ -475,47 +475,32 @@
     Polymer({
       is: 'three-js-box',
       properties: {
-        d: {
+        width: {
           type: Number,
           value: 100,
-          notify: true,
-          observer: 'newGeo'
         },
-        extent: {
-          type: Number,
-          value: 0,
-          notify: true,
-          observer: 'extentChanged'
-        },
-        h: {
+        height: {
           type: Number,
           value: 100,
-          notify: true,
-          observer: 'newGeo'
         },
-        w: {
+        depth: {
           type: Number,
           value: 100,
-          notify: true,
-          observer: 'newGeo'
         }
       },
+      observers: [
+        'parametersChanged(width, height, depth)'
+      ],
       attached: function () {
-        this.extentChanged();
         this.async(function() {
-          this.newGeo();
+          this.parametersChanged();
         });
       },
-      extentChanged: function () {
-        if (this.extent) {
-          this.w = this.h = this.d = this.extent;
-        }
-      },
-      newGeo: function () {
-        //console.log("New Geo called");
-        this.object = new THREE.BoxGeometry(this.w, this.h, this.d);
-        if(Polymer.dom(this).parentNode)
+      parametersChanged: function(width, height, depth) {
+        this.object = new THREE.BoxGeometry(width, height, depth);
+        if (Polymer.dom(this).parentNode) {
           Polymer.dom(this).parentNode.addGeom(this.object);
+        }
       }
     });
   </script>

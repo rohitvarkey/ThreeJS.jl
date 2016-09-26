@@ -1,4 +1,4 @@
-import ThreeJS 
+import ThreeJS
 
 main(window) =  begin
     push!(window.assets,("ThreeJS","threejs"))
@@ -31,10 +31,10 @@ main(window) =  begin
         ),
         vskip(2em),
         map(w, h, d, rx, ry, rz, o) do w, h, d, rx, ry, rz, o
-        ThreeJS.outerdiv() << 
+        ThreeJS.outerdiv() <<
             (ThreeJS.initscene() <<
                 [
-                    ThreeJS.mesh(0.0, 0.0, 0.0, rx = rx, ry = ry, rz = rz) << 
+                    ThreeJS.mesh(0.0, 0.0, 0.0, rx = rx, ry = ry, rz = rz) <<
                     [
                         ThreeJS.box(w, h, d), ThreeJS.material(Dict(:kind=>"lambert",:color=>"red", :transparent=>true, :opacity=>o))
                     ],

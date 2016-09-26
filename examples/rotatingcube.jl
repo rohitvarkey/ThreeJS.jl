@@ -1,6 +1,6 @@
 #Run this in Escher to see a rotating cube in the browser.
 
-import ThreeJS 
+import ThreeJS
 
 main(window) =  begin
     push!(window.assets,("ThreeJS","threejs"))
@@ -12,10 +12,10 @@ main(window) =  begin
         rx += 0.5
         ry += 0.5
         rz += 0.5
-        ThreeJS.outerdiv() << 
+        ThreeJS.outerdiv() <<
                 (ThreeJS.initscene() <<
                     [
-                        ThreeJS.mesh(0.0, 0.0, 0.0; rx=rx, ry=ry, rz=rz) << 
+                        ThreeJS.mesh(0.0, 0.0, 0.0; rx=rx, ry=ry, rz=rz) <<
                         [
                             ThreeJS.box(5.0, 5.0, 5.0), ThreeJS.material(Dict(:kind=>"phong",:color=>"red"))
                         ],
