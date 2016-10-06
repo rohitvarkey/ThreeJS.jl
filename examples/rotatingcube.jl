@@ -19,9 +19,9 @@ main(window) =  begin
                         [
                             ThreeJS.box(5.0, 5.0, 5.0), ThreeJS.material(Dict(:kind=>"phong",:color=>"red"))
                         ],
-                        ThreeJS.pointlight(10.0, 10.0, 10.0),
-                        ThreeJS.pointlight(-10.0, -10.0, -10.0),
-                        ThreeJS.camera(0.0, 0.0, 20.0)
+                        ThreeJS.pointlight(150.0, 150.0, 150.0),
+                        ThreeJS.pointlight(-150.0, -150.0, -150.0),
+                        ThreeJS.camera(0.0, 0.0, 250.0)
                     ]
                 )
         end
