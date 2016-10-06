@@ -1,6 +1,6 @@
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
-assets/three-js
+assets/bower_components/three-js
 site/
 *.swp
