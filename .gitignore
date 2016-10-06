@@ -1,6 +1,5 @@
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
-assets/bower_components
 site/
 *.swp
