@@ -37,6 +37,15 @@ to see if it does!), the output of this package will just work.
 Pkg.add("ThreeJS")
 ```
 
+### Development
+
+Running `Pkg.build("ThreeJS")` fetches and installs the [three-js](https://github.com/rohitvarkey/three-js)
+webcomponents. This will be done automatically if you install ThreeJS.jl using `Pkg.add("ThreeJS")`.
+
+However, if you clone ThreeJS.jl (with `Pkg.clone` or otherwise), then these webcomponents
+must be installed manually into `assets/bower_components`. This is done to allow simultaneous
+development of both repositories.
+
 ### Documentation
 
 API documentation can be found [here](https://rohitvarkey.github.io/ThreeJS.jl).
