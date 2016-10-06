@@ -1,5 +1,6 @@
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
+assets/three-js
 site/
 *.swp
