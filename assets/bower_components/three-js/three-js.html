@@ -1,0 +1,1615 @@
+<!--
+    @license
+    Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+    This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+    The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+    The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+    Code distributed by Google as part of the polymer project is also
+    subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+<head>
+<script src="threejs/three.js"></script>
+<script src="threejs/TrackballControls.js"></script>
+
+<dom-module id="three-js">
+    <template>
+      <style>
+            :host {
+              display: block;
+              position: relative;
+            }
+            canvas {
+              position: absolute;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              left: 0;
+            }
+      </style>
+      <content></content>
+    </template>
+    <script>
+        Polymer({
+          is: 'three-js',
+          properties: {
+            bgcolor: {
+              type: String,
+              value: "#ffffff",
+              observer: "bgcolorchanged"
+            }
+        },
+        ready: function () {
+          var renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            alpha: true
+          });
+          Polymer.dom(this.root).appendChild(renderer.domElement);
+          this.renderer = renderer;
+          var parent = Polymer.dom(this).parentNode;
+          if (typeof parent.clientWidth === "undefined" || typeof parent.clientHeight === "undefined") {
+            renderer.setSize(1000, 562);
+          } else {
+            renderer.setSize(parent.clientWidth, parent.clientHeight);
+          }
+          //renderer.shadowMapEnabled = true;
+          //renderer.shadowMapType = THREE.PCFShadowMap;
+          renderer.setClearColor(this.bgcolor);
+          this.scene = new THREE.Scene();
+          console.log('[%s]: ready', this.localName, this.renderer);
+          this.render(); //comment to disable rendering.
+        },
+        bgcolorchanged: function() {
+          if(this.renderer)
+            this.renderer.setClearColor(this.bgcolor);
+        },
+        render: function () {
+          var self = this;
+          window.requestAnimationFrame(function () {
+            self.render();
+          });
+          if (this.camera) {
+            //console.log(this.scene);
+            this.controls.update();
+            this.controls.handleResize(); //FIXME
+            this.renderer.render(this.scene, this.camera);
+          } else
+            console.log('no camera');
+        },
+        addToScene: function (object) {
+          if (object.type == "PerspectiveCamera"){
+            this.camera = object;
+            this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement);
+          }
+          this.scene.add(object);
+        },
+        removeFromScene: function (object) {
+          this.scene.remove(object);
+        },
+        getRenderer: function (event) {
+          event.detail.renderer = this.renderer;
+        },
+        listeners: {
+          'three-js-get-renderer': 'getRenderer',
+        }
+    });
+    </script>
+</dom-module>
+
+<script>
+  ThreeJSObjectBehavior = {
+    properties: {
+      castShadow: {
+        type: Boolean,
+        value: false,
+        notify: true
+      },
+      object: { observer: 'objectChanged' },
+      receiveShadow: {
+        type: Boolean,
+        value: false,
+        notify: true
+      },
+      rx: {
+        type: Number,
+        value: 0,
+        notify: true,
+        observer: 'updatePosition'
+      },
+      ry: {
+        type: Number,
+        value: 0,
+        notify: true,
+        observer: 'updatePosition'
+      },
+      rz: {
+        type: Number,
+        value: 0,
+        notify: true,
+        observer: 'updatePosition'
+      },
+      x: {
+        type: Number,
+        value: 0,
+        notify: true,
+        observer: 'updatePosition'
+      },
+      y: {
+        type: Number,
+        value: 0,
+        notify: true,
+        observer: 'updatePosition'
+      },
+      z: {
+        type: Number,
+        value: 0,
+        notify: true,
+        observer: 'updatePosition'
+      }
+    },
+    setPosition: function (x, y, z) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    },
+    objectChanged: function () {
+      this.updatePosition();
+    },
+    updatePosition: function () {
+      if (this.object) {
+        this.object.position.set(Number(this.x), Number(this.y), Number(this.z));
+        this.object.rotation.set(this.rx * Math.PI / 180, this.ry * Math.PI / 180, this.rz * Math.PI / 180);
+        this.object.castShadow = this.castShadow;
+        this.object.receiveShadow = this.receiveShadow;
+      }
+    },
+    addToParent3: function () {
+      parentNode = Polymer.dom(this).parentNode;
+      if (parentNode && parentNode.addToScene && !this.objectParent) {
+        this.objectParent = parentNode;
+        parentNode.addToScene(this.object);
+      }
+    },
+    removeFromParent3: function () {
+      if (this.objectParent) {
+        this.objectParent.removeFromScene(this.object);
+        this.objectParent = null;
+      }
+    },
+    detached: function () {
+      this.removeFromParent3();
+    }
+  }
+</script>
+
+<dom-module id="three-js-mesh">
+  <script>
+    Polymer({
+      is: 'three-js-mesh',
+      behaviors: [ThreeJSObjectBehavior],
+      init: function (){
+        //TODO: Debounce this.
+        if (this.geometry && this.material){
+          if(this.objectParent){
+            this.removeFromParent3();
+          }
+          this.object = new THREE.Mesh(this.geometry,this.material);
+          this.addToParent3();
+        }
+      },
+      addGeom: function (object){
+        this.geometry = object;
+        this.init();
+      },
+      addMaterial: function (object){
+        this.material = object;
+        this.init();
+      },
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-material">
+  <script>
+    Polymer({
+      is: 'three-js-material',
+      kinds: {
+        basic: 'MeshBasicMaterial',
+        lambert: 'MeshLambertMaterial',
+        phong: 'MeshPhongMaterial',
+        normal: 'MeshNormalMaterial',
+        texture: 'texture'
+      },
+      sides: {
+        front: 'FrontSide',
+        back: 'BackSide',
+        double: 'DoubleSide'
+      },
+      shadings: {
+        flat: 'FlatShading'
+      },
+      properties: {
+        ambient: {
+          type: Number,
+          value: 0,
+          notify: true
+        },
+        color: {
+          type: String,
+          value: "#00ff00",
+          notify: true,
+          observer: 'init'
+        },
+        edgeColor: {
+          type: Number,
+          value: 0,
+          notify: true
+        },
+        edges: { notify: true },
+        kind: { notify: true },
+        object: { observer: 'objectChanged' },
+        shading: { notify: true },
+        shine: {
+          type: Number,
+          value: 30,
+          notify: true
+        },
+        side: { notify: true },
+        specular: {
+          type: Number,
+          value: 0,
+          notify: true
+        },
+        texture: {
+          type: String,
+          value: '',
+          notify: true
+        },
+        hidden: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          observer: 'init'
+        },
+        wireframe: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          observer: 'init'
+        },
+        colorkind: {
+          type: String,
+          value: "no",
+          notify: true
+        },
+        opacity: {
+            type: Number,
+            value: 1.00,
+            notify: true,
+            observer: 'init'
+        },
+        transparent: {
+            type: Boolean,
+            value: false,
+            notify: true
+        }
+      },
+      colorKinds: {
+        no: "NoColors",
+        face: "FaceColors",
+        vertex: "VertexColors"
+      },
+      detached: function () {
+        this.removeFromParent3();
+        //this.removeEdgesFromParent3();
+      },
+      //this.super();
+      init: function () {
+        var kind = this.kinds[this.kind] || this.kinds.lambert;
+        var colorKind = this.colorKinds[this.colorkind] || this.colorKinds.no;
+        var side = this.sides[this.side] || this.sides.double;
+        var shading = this.shadings[this.shading] || this.shadings.flat;
+        switch (kind) {
+        case 'texture':
+          var texture = THREE.ImageUtils.loadTexture(this.texture);
+          var renderer = this.fire('three-js-get-renderer').detail.renderer;
+          if (renderer) {
+            texture.anisotropy = renderer.getMaxAnisotropy();
+          } else {
+            console.log('no renderer');
+          }
+          this.object = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE[side],
+            wireframe: this.wireframe
+          });
+          break;
+        default:
+          this.object = new THREE[kind]({
+            color: this.color,
+            side: THREE[side],
+            specular: this.specular,
+            shininess: this.shine,
+            ambient: this.ambient,
+            shading: THREE[shading],
+            wireframe: this.wireframe,
+            vertexColors: THREE[colorKind],
+            opacity: this.opacity,
+            transparent: this.transparent
+          });
+          break;
+        }
+        this.object.visible = !(this.hidden);
+      },
+      attached: function (){
+        this.async(function (){
+          this.init();
+          Polymer.dom(this).parentNode.addMaterial(this.object);
+        });
+      },
+      /*
+      createEdges: function (mesh) {
+        if (mesh) {
+          this.edgesObject = new THREE.EdgesHelper(mesh, this.edgeColor);
+          this.addEdgeToParent3();
+        }
+      },
+      addEdgeToParent3: function () {
+        if (this.parentNode.parentNode.add3 && !this.edgeParent) {
+          this.edgeParent = this.parentNode.parentNode;
+          this.edgeParent.scene.add(this.edgesObject);
+        }
+      },
+      removeEdgesFromParent3: function () {
+        if (this.edgeParent) {
+          this.edgeParent.scene.remove(this.edgesObject);
+          this.edgeParent = null;
+        }
+      },*/
+      //console.log('[%s]: REMOVED from threejs-object parent', this.localName + (this.id ? '#' + this.id : ''));
+      objectChanged: function () {
+        if (Polymer.dom(this).parentNode!=null)
+          Polymer.dom(this).parentNode.addMaterial(this.object);
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-camera">
+  <script>
+    Polymer({
+      is: 'three-js-camera',
+      behaviors: [ThreeJSObjectBehavior],
+      properties: {
+        aspect: { value: 16/9, notify: true },
+        fov: {
+          type: Number,
+          value: 45,
+          notify: true
+        },
+        lookAt: {
+          type: String,
+          value: '',
+          notify: true,
+        },
+        object: { value: null }
+      },
+      attached: function () {
+        this.async(function (){
+          this.object = new THREE.PerspectiveCamera(this.fov, this.aspect, 0.1, 10000);
+          this.object.lookAt(new THREE.Vector3(0, 0, 0));
+          this.addToParent3();
+        });
+      },
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-light">
+  <script>
+    Polymer({
+      is: 'three-js-light',
+      kinds: {
+        point: 'PointLight',
+        spot: 'SpotLight',
+        ambient: 'AmbientLight'
+      },
+      properties: {
+        angle: {
+          type: Number,
+          value: 60,
+          notify: true
+        },
+        color: {
+          type: String,
+          value: "#ffffff",
+          notify: true
+        },
+        distance: {
+          type: Number,
+          value: 0,
+          notify: true
+        },
+        exponent: {
+          type: Number,
+          value: 8,
+          notify: true
+        },
+        intensity: {
+          type: Number,
+          value: 1,
+          notify: true
+        },
+        kind: { notify: true },
+        shadow: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
+      },
+      behaviors: [ThreeJSObjectBehavior],
+      attached: function () {
+        var kind = this.kinds[this.kind] || this.kinds.point;
+        //console.log(kind);
+        this.object = new THREE[kind](this.color, this.intensity, this.distance, this.angle * Math.PI / 180, this.exponent);
+        if (this.shadow) {
+          this.object.castShadow = true;
+          this.object.shadowMapWidth = 1024;
+          this.object.shadowMapHeight = 1024;
+          this.object.shadowCameraNear = 500;
+          this.object.shadowCameraFar = 4000;
+          this.object.shadowCameraFov = 30;
+          this.object.shadowBias = 0.0001;
+          this.object.shadowDarkness = 0.5;
+        }
+        this.async(function () {
+          this.addToParent3();
+        });
+      },
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-box">
+  <script>
+    Polymer({
+      is: 'three-js-box',
+      properties: {
+        d: {
+          type: Number,
+          value: 100,
+          notify: true,
+          observer: 'newGeo'
+        },
+        extent: {
+          type: Number,
+          value: 0,
+          notify: true,
+          observer: 'extentChanged'
+        },
+        h: {
+          type: Number,
+          value: 100,
+          notify: true,
+          observer: 'newGeo'
+        },
+        w: {
+          type: Number,
+          value: 100,
+          notify: true,
+          observer: 'newGeo'
+        }
+      },
+      attached: function () {
+        this.extentChanged();
+        this.async(function() {
+          this.newGeo();
+        });
+      },
+      extentChanged: function () {
+        if (this.extent) {
+          this.w = this.h = this.d = this.extent;
+        }
+      },
+      newGeo: function () {
+        //console.log("New Geo called");
+        this.object = new THREE.BoxGeometry(this.w, this.h, this.d);
+        if(Polymer.dom(this).parentNode)
+          Polymer.dom(this).parentNode.addGeom(this.object);
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-sphere">
+  <script>
+    Polymer({
+      is: 'three-js-sphere',
+      properties: {
+        r: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        }
+      },
+      attached: function () {
+        this.async(function() {
+          this.newGeo();
+        });
+      },
+      newGeo: function () {
+        this.object = new THREE.SphereGeometry(this.r, 32, 16);
+        if(Polymer.dom(this).parentNode)
+          Polymer.dom(this).parentNode.addGeom(this.object);
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-cylinder">
+  <script>
+    Polymer({
+      is: 'three-js-cylinder',
+      properties: {
+        bottom: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        },
+        height: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        },
+        top: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        }
+      },
+      attached: function () {
+        this.async(function() {
+          this.newGeo();
+        });
+      },
+      newGeo: function () {
+        this.object = new THREE.CylinderGeometry(this.top, this.bottom, this.height, 32, 16);
+        if(Polymer.dom(this).parentNode)
+          Polymer.dom(this).parentNode.addGeom(this.object);      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-torus">
+  <script>
+    Polymer({
+      is: 'three-js-torus',
+      properties: {
+        r: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        },
+        tube: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        }
+      },
+      attached: function () {
+        this.async(function() {
+          this.newGeo();
+        });
+      },
+      newGeo: function () {
+        this.object = new THREE.TorusGeometry(this.r, this.tube, 32, 32);
+        if(Polymer.dom(this).parentNode)
+          Polymer.dom(this).parentNode.addGeom(this.object);      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-pyramid">
+<script>
+  Polymer({
+    is: 'three-js-pyramid',
+    properties: {
+      base: {
+        type: Number,
+        value: 5,
+        notify: true,
+        observer: 'newGeo'
+      },
+      height: {
+        type: Number,
+        value: 10,
+        notify: true,
+        observer: 'newGeo'
+      }
+    },
+    attached: function () {
+      this.async(function() {
+        this.newGeo();
+      });
+    },
+    newGeo: function () {
+      var pyramid = new THREE.Geometry();
+      pyramid.vertices.push(new THREE.Vector3(0, 0, 0));
+      pyramid.vertices.push(new THREE.Vector3(this.base, 0, 0));
+      pyramid.vertices.push(new THREE.Vector3(this.base, 0, this.base));
+      pyramid.vertices.push(new THREE.Vector3(0, 0, this.base));
+      pyramid.vertices.push(new THREE.Vector3(this.base / 2, this.height, this.base / 2));
+      pyramid.faces.push(new THREE.Face3(0, 1, 4));
+      pyramid.faces.push(new THREE.Face3(1, 2, 4));
+      pyramid.faces.push(new THREE.Face3(3, 4, 2));
+      pyramid.faces.push(new THREE.Face3(3, 0, 4));
+      pyramid.faces.push(new THREE.Face3(0, 2, 1));
+      pyramid.faces.push(new THREE.Face3(0, 3, 2));
+      pyramid.computeFaceNormals();
+      pyramid.computeBoundingSphere();
+      this.object = pyramid;
+      if(Polymer.dom(this).parentNode)
+        Polymer.dom(this).parentNode.addGeom(this.object);    }
+  });
+</script>
+</dom-module>
+
+<dom-module id="three-js-plane">
+  <script>
+    Polymer({
+      is: 'three-js-plane',
+      properties: {
+        w: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        },
+        h: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        },
+      },
+      attached: function () {
+        this.async(function() {
+          this.newGeo();
+        });
+      },
+      newGeo: function () {
+        this.object = new THREE.PlaneBufferGeometry(this.w, this.h, 1, 1);
+        if(Polymer.dom(this).parentNode)
+          Polymer.dom(this).parentNode.addGeom(this.object);
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-dodecahedron">
+  <script>
+    Polymer({
+      is: 'three-js-dodecahedron',
+      properties: {
+        r: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        },
+        detail: {
+          type: Number,
+          value: 0,
+          notify: true,
+          observer: 'newGeo'
+        }
+      },
+      attached: function () {
+        this.async(function() {
+          this.newGeo();
+        });
+      },
+      newGeo: function () {
+        this.object = new THREE.DodecahedronGeometry(this.r, this.detail);
+        if(Polymer.dom(this).parentNode)
+          Polymer.dom(this).parentNode.addGeom(this.object);
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-icosahedron">
+  <script>
+    Polymer({
+      is: 'three-js-icosahedron',
+      properties: {
+        r: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        },
+        detail: {
+          type: Number,
+          value: 0,
+          notify: true,
+          observer: 'newGeo'
+        }
+      },
+      attached: function () {
+        this.async(function() {
+          this.newGeo();
+        });
+      },
+      newGeo: function () {
+        this.object = new THREE.IcosahedronGeometry(this.r, this.detail);
+        if(Polymer.dom(this).parentNode)
+          Polymer.dom(this).parentNode.addGeom(this.object);
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-octahedron">
+  <script>
+    Polymer({
+      is: 'three-js-octahedron',
+      properties: {
+        r: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        },
+        detail: {
+          type: Number,
+          value: 0,
+          notify: true,
+          observer: 'newGeo'
+        }
+      },
+      attached: function () {
+        this.async(function() {
+          this.newGeo();
+        });
+      },
+      newGeo: function () {
+        this.object = new THREE.OctahedronGeometry(this.r, this.detail);
+        if(Polymer.dom(this).parentNode)
+          Polymer.dom(this).parentNode.addGeom(this.object);
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-tetrahedron">
+  <script>
+    Polymer({
+      is: 'three-js-tetrahedron',
+      properties: {
+        r: {
+          type: Number,
+          value: 10,
+          notify: true,
+          observer: 'newGeo'
+        },
+        detail: {
+          type: Number,
+          value: 0,
+          notify: true,
+          observer: 'newGeo'
+        }
+      },
+      attached: function () {
+        this.async(function() {
+          this.newGeo();
+        });
+      },
+      newGeo: function () {
+        this.object = new THREE.TetrahedronGeometry(this.r, this.detail);
+        if(Polymer.dom(this).parentNode)
+          Polymer.dom(this).parentNode.addGeom(this.object);
+      }
+    });
+  </script>
+</dom-module>
+
+
+<dom-module id="three-js-parametric">
+  <script>
+    Polymer({
+      is: 'three-js-parametric',
+      properties: {
+        slices: {
+          type: Number,
+          notify: true,
+          value: 0
+        },
+        stacks: {
+          type: Number,
+          notify: true,
+          value: 0
+        },
+        x: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        y: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        z: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        vertexcolors: {
+          type: Object,
+          observer: 'newGeo',
+        }
+      },
+      newGeo: function () {
+        this.object = new THREE.Geometry();
+        var verts = this.object.vertices;
+        var faces = this.object.faces;
+        var uvs = this.object.faceVertexUvs[0];
+        this.count = 0;
+        //Keep track of number of vertices added.
+        var i, j, p;
+        var u, v;
+        var slices = Number(this.slices);
+        var stacks = Number(this.stacks);
+        //console.log(slices, stacks);
+        this.length = (slices + 1) * (stacks + 1);
+        //Total number of vertices.
+        var sliceCount = slices + 1;
+        var a, b, c, d;
+        var uva, uvb, uvc, uvd;
+        for (i = 0; i < stacks; i++) {
+          for (j = 0; j < slices; j++) {
+            a = i * sliceCount + j;
+            b = i * sliceCount + j + 1;
+            c = (i + 1) * sliceCount + j + 1;
+            d = (i + 1) * sliceCount + j;
+            uva = new THREE.Vector2(j / slices, i / stacks);
+            uvb = new THREE.Vector2((j + 1) / slices, i / stacks);
+            uvc = new THREE.Vector2((j + 1) / slices, (i + 1) / stacks);
+            uvd = new THREE.Vector2(j / slices, (i + 1) / stacks);
+            faces.push(new THREE.Face3(a, b, d));
+            uvs.push([
+              uva,
+              uvb,
+              uvd
+            ]);
+            faces.push(new THREE.Face3(b, c, d));
+            uvs.push([
+              uvb.clone(),
+              uvc,
+              uvd.clone()
+            ]);
+          }
+        }
+        if (this.x == undefined || this.y ==undefined || this.z == undefined)
+          return;
+        var x = this.x.split(',');
+        var y = this.y.split(',');
+        var z = this.z.split(',');
+        for (i=0;i<x.length;i++)
+        {
+          this.object.vertices.push(new THREE.Vector3(x[i],y[i],z[i]));
+        }
+        if (this.vertexcolors)
+        {
+          var vertexcolors = this.vertexcolors.split(',');
+          for (i=0; i<faces.length; i++)
+          {
+            var a = this.object.faces[i].a
+            var b = this.object.faces[i].b
+            var c = this.object.faces[i].c
+            this.object.faces[i].vertexColors.push(
+              new THREE.Color(vertexcolors[a]),
+              new THREE.Color(vertexcolors[b]),
+              new THREE.Color(vertexcolors[c])
+            )
+          }
+        }
+        this.object.computeFaceNormals();
+        this.object.computeBoundingSphere();
+        this.addToParent();
+      },
+      addToParent: function () {
+        Polymer.dom(this).parentNode.addGeom(this.object);
+      },
+      attached: function () {
+        this.async(function (){
+          this.newGeo();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-line">
+  <script>
+    Polymer({
+      is: 'three-js-line',
+      behaviors: [ThreeJSObjectBehavior],
+      properties: {
+        xs: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        ys: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        zs: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        vertexcolors: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        kind: {
+          type: String,
+          value: "strip"
+        }
+      },
+      kinds: {
+        pieces: "LinePieces",
+        strip: "LineStrip"
+      },
+      newGeo: function () {
+        if(this.object)
+        {
+          this.removeFromParent3();
+        }
+        this.geometry = new THREE.Geometry();
+        if (this.xs == undefined || this.ys ==undefined || this.zs == undefined)
+          return;
+        var x = this.xs.split(',');
+        var y = this.ys.split(',');
+        var z = this.zs.split(',');
+        for (i=0;i<x.length;i++)
+        {
+          this.geometry.vertices.push(new THREE.Vector3(x[i],y[i],z[i]));
+        }
+        if (this.vertexcolors)
+        {
+          var vertexcolors = this.vertexcolors.split(',');
+          for (i=0; i<vertexcolors.length; i++)
+          {
+            this.geometry.colors.push(
+              new THREE.Color(vertexcolors[i])
+            );
+          }
+        }
+        this.createLine()
+      },
+      addMaterial: function (material) {
+        this.material = material;
+        this.createLine();
+      },
+      createLine: function () {
+        var kind = THREE[this.kinds[this.kind]];
+        if (this.geometry && this.material){
+          this.object = new THREE.Line(this.geometry, this.material, kind);
+          this.addToParent3();
+        }
+        else{
+          console.log("Not defined yet")
+        }
+      },
+      attached: function () {
+        this.async(function (){
+          this.newGeo();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-line-material">
+  <script>
+    Polymer({
+      is: 'three-js-line-material',
+      properties: {
+        kind: {
+          type: String,
+          value: "basic"
+        },
+        color: {
+          type: String,
+          value: "#ff0000"
+        },
+        linewidth: {
+          type: Number,
+          value: 1
+        },
+        scale: {
+          type: Number,
+          value: 1
+        },
+        dashSize: {
+          type: Number,
+          value: 3
+        },
+        gapSize: {
+          type: Number,
+          value: 1
+        },
+        linecap: {
+          type: String,
+          value: 'round'
+        },
+        linejoin: {
+          type: String,
+          value: 'round'
+        },
+        colorkind: {
+          type: String,
+          value: 'no'
+        }
+      },
+      colorKinds: {
+        no: "NoColors",
+        face: "FaceColors",
+        vertex: "VertexColors"
+      },
+      kinds: {
+        basic: "LineBasicMaterial",
+        dashed: "LineDashedMaterial"
+      },
+      newMaterial: function () {
+        var kind = this.kinds[this.kind] || this.kinds.basic;
+        var colorkind = this.colorKinds[this.colorkind] || this.colorKinds.no;
+        this.object = new THREE[kind]({
+          color: this.color,
+          linewidth: this.linewidth,
+          //For basic
+          linecap: this.linecap,
+          linejoin: this.linejoin,
+          //For dashed
+          scale: this.scale,
+          dashSize: this.dashSize,
+          gapSize: this.gapSize,
+          //Setting vertex colors
+          vertexColors: THREE[colorkind]
+        });
+        Polymer.dom(this).parentNode.addMaterial(this.object);
+      },
+      attached: function () {
+        this.async(function (){
+          this.newMaterial();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-points">
+  <script>
+    Polymer({
+      is: 'three-js-points',
+      behaviors: [ThreeJSObjectBehavior],
+      properties: {
+        xs: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        ys: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        zs: {
+          type: Object,
+          observer: 'newGeo',
+        },
+        vertexcolors: {
+          type: Object,
+          observer: 'newGeo',
+        },
+      },
+      newGeo: function () {
+        if(this.object)
+        {
+          this.removeFromParent3();
+        }
+        this.geometry = new THREE.Geometry();
+        if (this.xs == undefined || this.ys ==undefined || this.zs == undefined)
+          return;
+        var x = this.xs.split(',');
+        var y = this.ys.split(',');
+        var z = this.zs.split(',');
+        for (i=0;i<x.length;i++)
+        {
+          this.geometry.vertices.push(new THREE.Vector3(x[i],y[i],z[i]));
+        }
+        if (this.vertexcolors)
+        {
+          var vertexcolors = this.vertexcolors.split(',');
+          for (i=0; i<vertexcolors.length; i++)
+          {
+            this.geometry.colors.push(
+              new THREE.Color(vertexcolors[i])
+            );
+          }
+        }
+        this.createPoints()
+      },
+      addMaterial: function (material) {
+        this.material = material;
+        this.createPoints();
+      },
+      createPoints: function () {
+        if (this.geometry && this.material){
+          this.object = new THREE.PointCloud(this.geometry, this.material);
+          this.addToParent3();
+        }
+        else{
+          console.log("Not defined yet")
+        }
+      },
+      attached: function () {
+        this.async(function (){
+          this.newGeo();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-point-material">
+  <script>
+    Polymer({
+      is: 'three-js-point-material',
+      properties: {
+        color: {
+          type: String,
+          value: "#ff0000"
+        },
+        texture: {
+          type: String,
+        },
+        size: {
+          type: Number,
+          value: 1
+        },
+        noattenuation: {
+          type: Boolean,
+          value: false
+        },
+        colorkind: {
+          type: String,
+          value: 'no'
+        },
+        transparent: {
+            type: Boolean,
+            value: false
+        },
+        opacity: {
+            type: Number,
+            value: 1.00
+        },
+        alphatest: {
+            type: Number,
+            value: 0.00
+        }
+      },
+      colorKinds: {
+        no: "NoColors",
+        face: "FaceColors",
+        vertex: "VertexColors"
+      },
+      newMaterial: function () {
+        var colorkind = this.colorKinds[this.colorkind] || this.colorKinds.no;
+        var map = null;
+        if (this.texture)
+        {
+            map = THREE.ImageUtils.loadTexture(this.texture);
+        }
+
+        this.object = new THREE.PointCloudMaterial({
+          color: this.color,
+          size: this.size,
+          sizeAttenuation: !(this.noattenuation),
+          //Setting vertex colors
+          vertexColors: THREE[colorkind],
+          //URL of texture
+          map: map,
+          opacity: this.opacity,
+          transparent: this.transparent,
+          alphaTest: this.alphatest
+        });
+        Polymer.dom(this).parentNode.addMaterial(this.object);
+      },
+      attached: function () {
+        this.async(function (){
+          this.newMaterial();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-data-texture">
+  <script>
+    Polymer({
+      is: 'three-js-data-texture',
+      properties: {
+        data: {
+          type: String,
+          notify: true,
+          observer: 'imageChanged',
+        },
+        width: {
+          type: Number,
+          notify: true,
+          observer: 'imageChanged',
+        },
+        height: {
+          type: Number,
+          notify: true,
+          observer: 'imageChanged',
+        },
+        format: {
+          type: String
+        },
+        type: {
+          type: String
+        },
+        magfilter: {
+          type: String
+        },
+        minfilter: {
+          type: String
+        }
+      },
+      newDataTexture: function () {
+        this.object = new THREE.DataTexture(this.b64decode(this.data), this.width, this.height,
+          THREE[this.format], THREE[this.type]);
+        if (this.magfilter) {
+          this.object.magFilter = THREE[this.magfilter];
+        }
+        if (this.minfilter) {
+          this.object.minFilter = THREE[this.minfilter];
+        }
+        this.object.unpackAlignment = 1;
+        this.object.needsUpdate = true;
+        this.addToParent();
+      },
+      addToParent: function () {
+        Polymer.dom(this).parentNode.uniforms[this.name] = {type: "t", value: this.object};
+      },
+      attached: function () {
+        this.async(function (){
+          this.newDataTexture();
+        });
+      },
+      imageChanged: function() {
+        if (this.object) {
+          this.object.image.data = this.b64decode(this.data);
+          this.object.image.width = this.width;
+          this.object.image.height = this.height;
+          this.object.needsUpdate = true;
+        }
+      },
+      b64decode: function (base64) {
+        // lightly adapted from Niklas
+
+        /*
+        * base64-arraybuffer
+        * https://github.com/niklasvh/base64-arraybuffer
+        *
+        * Copyright (c) 2012 Niklas von Hertzen
+        * Licensed under the MIT license.
+        */
+        var chars =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        var bufferLength = base64.length * 0.75,
+          len = base64.length,
+          i, p = 0,
+          encoded1, encoded2, encoded3, encoded4;
+
+        if (base64[base64.length - 1] === "=") {
+          bufferLength--;
+          if (base64[base64.length - 2] === "=") {
+            bufferLength--;
+          }
+        }
+
+        var bytes = new Uint8Array(bufferLength);
+
+        for (i = 0; i < len; i += 4) {
+          encoded1 = chars.indexOf(base64[i]);
+          encoded2 = chars.indexOf(base64[i + 1]);
+          encoded3 = chars.indexOf(base64[i + 2]);
+          encoded4 = chars.indexOf(base64[i + 3]);
+
+          bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
+          bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
+          bytes[p++] = ((encoded3 & 3) << 6) | (encoded4 & 63);
+        }
+
+        return bytes;
+      },
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-shader-material">
+  <script>
+    Polymer({
+      is: 'three-js-shader-material',
+      properties: {
+        vert: {
+          type: String,
+        },
+        frag: {
+          type: String,
+        },
+        defines: {
+          type: Object,
+        },
+        uniforms: {
+          type: Object,
+        },
+      },
+      newMaterial: function () {
+        this.object = new THREE.ShaderMaterial({
+          vertexShader: this.vert,
+          fragmentShader: this.frag,
+          defines: this.defines,
+          uniforms: this.uniforms,
+        });
+        Polymer.dom(this).parentNode.addMaterial(this.object);
+      },
+      attached: function () {
+        this.async(function (){
+            this.newMaterial();
+        });
+      }
+    });
+
+    try {
+      PropertyHook.setupHook("three-js-shader-material", "uniforms",
+        PropertyHook.patchBefore(function (val, node,prop,prev) {})
+      )
+    } catch (e) {
+      console.warn("three-js-shader-material is only usable with Escher.jl");
+    }
+  </script>
+</dom-module>
+
+<dom-module id="three-js-geometry">
+  <script>
+    Polymer({
+      is: 'three-js-geometry',
+      properties: {
+          x: {
+            type: Object,
+            observer: 'newGeo',
+          },
+          y: {
+            type: Object,
+            observer: 'newGeo',
+          },
+          z: {
+            type: Object,
+            observer: 'newGeo',
+          },
+          faces: {
+            type: Object,
+            observer: 'newGeo',
+          },
+          colors: {
+            type: Object,
+            observer: 'newGeo',
+          },
+          vertexcolors: {
+            type: Object,
+            observer: 'newGeo',
+          },
+      },
+      newGeo: function () {
+        if (this.x == undefined || this.y ==undefined || this.z == undefined || this.faces==undefined)
+          return;
+        var x = this.x.split(',');
+        var y = this.y.split(',');
+        var z = this.z.split(',');
+        var faces = this.faces.split(',');
+        this.object = new THREE.Geometry();
+        for (i=0;i<x.length;i++)
+        {
+          this.object.vertices.push(new THREE.Vector3(x[i],y[i],z[i]));
+        }
+        for (i=0; i<faces.length;i+=3){
+          var face = new THREE.Face3(faces[i], faces[i+1], faces[i+2]);
+          this.object.faces.push(face);
+        }
+        if (this.colors)
+        {
+          var colors = this.colors.split(',');
+          for (i=0; i<colors.length; i++)
+          {
+            this.object.faces[i].color = new THREE.Color(colors[i]);
+          }
+        }
+        if (this.vertexcolors)
+        {
+          var vertexcolors = this.vertexcolors.split(',');
+          for (i=0; i<vertexcolors.length; i++)
+          {
+            this.object.faces[i].vertexColors.push(
+              new THREE.Color(vertexcolors[i]),
+              new THREE.Color(vertexcolors[i+1]),
+              new THREE.Color(vertexcolors[i+2])
+            )
+          }
+        }
+        this.object.computeFaceNormals();
+        this.object.computeBoundingSphere();
+        this.addToParent();
+      },
+      addToParent: function () {
+        Polymer.dom(this).parentNode.addGeom(this.object);
+      },
+      attached: function () {
+        this.async(function (){
+          this.newGeo();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-grid">
+  <script>
+    Polymer({
+      is: 'three-js-grid',
+      properties: {
+        size: {
+          type: Number,
+          notify: true,
+          observer: 'newGrid',
+          value: 10
+        },
+        step: {
+          type: Number,
+          notify: true,
+          observer: 'newGrid',
+          value: 10
+        },
+        colorcenter: {
+          type: String,
+          notify: true,
+          value: "#000000",
+          observer: 'newGrid'
+        },
+        colorgrid: {
+          type: String,
+          notify: true,
+          value: "#000000",
+          observer: 'newGrid'
+        }
+      },
+      behaviors: [ThreeJSObjectBehavior],
+      newGrid: function (){
+        //TODO: Debounce this.
+        if(this.objectParent){
+          this.removeFromParent3();
+        }
+        this.object = new THREE.GridHelper(this.size,this.step);
+        this.object.setColors(this.colorcenter, this.colorgrid);
+        this.addToParent3();
+      },
+      attached: function () {
+        this.async(function (){
+          this.newGrid();
+        });
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-text">
+  <script>
+    Polymer({
+      is: 'three-js-text',
+      properties: {
+        content: {
+          type: String,
+          value: "sss",
+          notify: true,
+          observer: 'newSprite'
+        }
+      },
+      behaviors: [ThreeJSObjectBehavior],
+      attached: function () {
+        this.async(function() {
+          this.newSprite();
+        });
+      },
+      newSprite: function () {
+          var canvas = document.createElement('canvas');
+          var size = 256; // CHANGED
+          canvas.width = size;
+          canvas.height = size;
+          var context = canvas.getContext('2d');
+          context.fillStyle = this.color;
+          context.textAlign = 'center';
+          context.font = '24px Arial';
+          context.fillText(this.content, size / 2, size / 2);
+
+          var amap = new THREE.Texture(canvas);
+          amap.needsUpdate = true;
+
+          var mat = new THREE.SpriteMaterial({
+              map: amap,
+              transparent: false,
+              useScreenCoordinates: false,
+              color: 0xffffff
+          });
+
+          this.object = new THREE.Sprite(mat);
+          console.log(this.object);
+          this.addToParent3();
+      }
+    });
+  </script>
+</dom-module>
+
+<dom-module id="three-js-raycaster">
+  <script>
+    try {
+    Polymer({
+      is: 'three-js-raycaster',
+      behaviors: [EscherMixins.ReactiveSignal],
+      properties: {
+        event: {
+          type: String
+        }
+      },
+      newRaycaster: function () {
+        this.object = new THREE.Raycaster();
+
+        var renderer = this.fire('three-js-get-renderer').detail.renderer;
+        var scene = Polymer.dom(this).parentNode.objectParent.scene;
+        var camera = Polymer.dom(this).parentNode.objectParent.camera;
+
+        if (this.event) {
+            var that = this;
+            renderer.domElement.addEventListener(this.event, function (event) {
+                var boundingBox = renderer.domElement.getBoundingClientRect();
+
+                var x = 2 * ((event.clientX - boundingBox.left) / renderer.domElement.clientWidth) - 1;
+                var y = 2 * ((boundingBox.top - event.clientY) / renderer.domElement.clientHeight) + 1;
+                that.object.setFromCamera(new THREE.Vector2(x, y), camera);
+
+                var elem = that.findElem();
+                var intersects = that.object.intersectObjects(scene.children);
+                if (intersects.length > 0) {
+                    that.update(elem, intersects[0].point);
+                } else {
+                    that.update(elem, {});
+                }
+            }, false);
+        }
+      },
+      attached: function () {
+        this.async(function (){
+            this.newRaycaster();
+        });
+      }
+    });
+    } catch (e) {
+      console.warn("three-js-shader-material is only usable with Escher.jl");
+    }
+  </script>
+</dom-module>

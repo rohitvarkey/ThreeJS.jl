@@ -5,8 +5,8 @@ function updatejs()
 
     download("https://github.com/rohitvarkey/three-js/archive/$file", file)
     run(`unzip -qq $file`)
-    mv("three-js-$version", joinpath(dirname(@__FILE__), "..", "assets", "three-js"), remove_destination=true)
+    mv("three-js-$version", joinpath(dirname(@__FILE__), "..", "assets", "bower_components", "three-js"), remove_destination=true)
 end
 
-# Install the bower_components
+# Install the three-js webcomponents
 mktempdir(dir -> cd(updatejs, dir))
