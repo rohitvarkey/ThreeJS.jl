@@ -1,7 +1,8 @@
-version = "0.8.0"
-
-function updatejs()
-    file = "v$version.zip"
+function updatejs(version = "0.8.0")
+    file = "$version.zip"
+    if (version != "master")
+        file = "v$file"
+    end
 
     download("https://github.com/rohitvarkey/three-js/archive/$file", file)
     run(`unzip -qq $file`)
