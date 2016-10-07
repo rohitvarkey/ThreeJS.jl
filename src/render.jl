@@ -280,15 +280,15 @@ function camera(
     y::Float64,
     z::Float64;
     fov::Float64=45.0,
-    aspect::Float64=16/9,
-    near::Float64=0.1,
-    far::Float64=10000.0
+    aspect=nothing,
+    near::Float64=1.0,
+    far::Float64=1000.0
     )
     Elem(
         :"three-js-camera",
         attributes = Dict(
             :x => x, :y => y,:z => z,
-            :fov => fov,:aspect => aspect, :near => near, :far => far
+            :fov => fov, :aspect => aspect, :near => near, :far => far
         )
     )
 end

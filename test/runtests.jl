@@ -240,9 +240,9 @@ facts("Testing Render Elem Outputs") do
                     :y => 11.0,
                     :z => 12.0,
                     :fov => 45.0,
-                    :aspect => 16/9,
-                    :near => 0.1,
-                    :far => 10000.0
+                    :aspect => nothing,
+                    :near => 1.0,
+                    :far => 1000.0
                 )
             )
     end
