@@ -516,7 +516,7 @@ function datatexture(name::ASCIIString, data::Array{UInt8, 2}; kwds...)
 end
 
 function datatexture(name::AbstractString, data::Array{UInt8, 3}; kwds...)
-    datatexture(name, base64encode(data), 512, 1024; :format => "LuminanceFormat", :type => "UnsignedByteType", kwds...)
+    datatexture(name, base64encode(data), 64 * 1, 64 * 4; :format => "LuminanceFormat", :type => "UnsignedByteType", kwds...)
 end
 
 """
