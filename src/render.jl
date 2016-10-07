@@ -515,6 +515,9 @@ function datatexture(name::ASCIIString, data::Array{UInt8, 2}; kwds...)
         :format => "LuminanceFormat", :type => "UnsignedByteType", kwds...)
 end
 
+function datatexture(name::AbstractString, data::Array{UInt8, 3}; kwds...)
+    datatexture(name, base64encode(data), 512, 1024; :format => "LuminanceFormat", :type => "UnsignedByteType", kwds...)
+end
 
 """
 Creates a point cloud tag.
