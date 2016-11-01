@@ -71,7 +71,7 @@ the `assets/bower_components/three-js` will get you all set up! This is done
 by adding the following line to your HTML file.
 
 ```html
-<link rel="import" href="assets/bower_components/three-js/three-js.html>
+<link rel="import" href="assets/bower_components/three-js/three-js.html">
 ```
 
 ### How to create a scene?
